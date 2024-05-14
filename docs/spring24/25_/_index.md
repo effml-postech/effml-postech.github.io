@@ -36,67 +36,67 @@ Model interpolation is a technique that blends two or more models to create an i
 
 ## Permutation-based Merging
 ### Feed-Forward Layers
-In this section, we explain how the authors of the paper used permutation to find the similarities between two distinct models and merge them. Given two models $\theta_A$ and $\theta_B$ trained from distinct initializations, the authors compute post-activation features for each layer or sublayer parameter $\text{W}_l\subset \theta$ in order to compute the similar parts across models. The researchers compute $d$-dimensional activations across $n$ tokens from both models $\text{X}_A, \text{X}_B\in \mathbb{R}^{n\times d}$. Then, the feature relatedness via cross-correlation is computed as
+In this section, we explain how the authors of the paper used permutation to find the similarities between two distinct models and merge them. Given two models {{< katex >}}\theta_A{{< /katex >}} and {{< /katex >}}\theta_B{{< /katex >}} trained from distinct initializations, the authors compute post-activation features for each layer or sublayer parameter {{< katex >}}\text{W}_l\subset \theta{{< /katex >}} in order to compute the similar parts across models. The researchers compute {{< katex >}}d{{< /katex >}}-dimensional activations across {{< katex >}}n{{< /katex >}} tokens from both models {{< katex >}}\text{X}_A, \text{X}_B\in \mathbb{R}^{n\times d}{{< /katex >}}. Then, the feature relatedness via cross-correlation is computed as
 
-<p>$$
+<p>{{< katex display=true >}}
 C=\text{corr}(\text{X}_A, \text{X}_B)=\frac{\mathbb{E}[(\text{X}_A-\boldsymbol{\mu}_{\text{X}_A})^\text{T}(\text{X}_B-\boldsymbol{\mu}_{\text{X}_B})]}{\boldsymbol{\sigma}_{\text{X}_A}\boldsymbol{\sigma}_{\text{X}_B}},
-$$</p>
+{{< /katex >}}</p>
 
-where $\boldsymbol{\sigma}$ is a standard deviation vector, and $\boldsymbol{\mu}$ is a mean vector. The features are standardized since the magnitude of features values can vary greatly depending on the initialization. Next, the permutation that gives the highest correlation score is computed, and is declared as the optimal computation. More specifically, given $C\in\mathbb{R}^{d\times d}$ and a permutation mapping $\pi$, the optimal permutation is computed as follows:
+where {{< katex >}}\boldsymbol{\sigma}{{< /katex >}} is a standard deviation vector, and {{< katex >}}\boldsymbol{\mu}{{< /katex >}} is a mean vector. The features are standardized since the magnitude of features values can vary greatly depending on the initialization. Next, the permutation that gives the highest correlation score is computed, and is declared as the optimal computation. More specifically, given {{< katex >}}C\in\mathbb{R}^{d\times d}{{< /katex >}} and a permutation mapping {{< katex >}}\pi{{< /katex >}}, the optimal permutation is computed as follows:
 
-$$
+{{< katex display=true >}}
 \text{arg}\max_\pi \sum_{i=1}^{d} C(i, \pi(i)).
-$$
+{{< /katex >}}
 
 cf. The above problem is solved using the Jonker-Volgenant algorithm.
 
-Next, the permutation mapping $\pi$ is converted to a permutation matrix $\text{P}$. The matrix is then multiplied to the original weight matrix of $B$ denoted as $\text{W}_l^B \subset \theta_B$. Then the permuted weight matrix $\text{P}\text{W}_l^B$ closely resembles the weight $A$, denoted as $\text{W}_l^A \subset \theta_A$. Denoting the modified model parameters as $\theta_B'$, the final merged model is computed as $\lambda\theta_A+(1-\lambda)\theta_B$ for some $\lambda\in[0,1]$.
-cf. If permutation matrix $\text{P}$ is multiplied in layer $l$, then $\text{P}^{\text{T}}=\text{P}^{-1}$ is applied in the next layer to unpermute the ordering, i.e., 
+Next, the permutation mapping {{< katex >}}\pi{{< /katex >}} is converted to a permutation matrix {{< katex >}}\text{P}{{< /katex >}}. The matrix is then multiplied to the original weight matrix of {{< katex >}}B{{< /katex >}} denoted as {{< katex >}}\text{W}_l^B \subset \theta_B{{< /katex >}}. Then the permuted weight matrix {{< katex >}}\text{P}\text{W}_l^B{{< /katex >}} closely resembles the weight {{< katex >}}A{{< /katex >}}, denoted as {{< katex >}}\text{W}_l^A \subset \theta_A{{< /katex >}}. Denoting the modified model parameters as {{< katex >}}\theta_B'{{< /katex >}}, the final merged model is computed as {{< katex >}}\lambda\theta_A+(1-\lambda)\theta_B{{< /katex >}} for some {{< katex >}}\lambda\in[0,1]{{< /katex >}}.
+cf. If permutation matrix {{< katex >}}\text{P}{{< /katex >}} is multiplied in layer {{< katex >}}l{{< /katex >}}, then {{< katex >}}\text{P}^{\text{T}}=\text{P}^{-1}{{< /katex >}} is applied in the next layer to unpermute the ordering, i.e., 
 
-<p>$$
+<p>{{< katex display=true >}}
 \text{W}_{l+1}^{B'} \leftarrow \text{W}_{l+1}^{B}\text{P}^{\text{T}}.
-$$</p>
+{{< /katex >}}</p>
 
 ### Multi-head Attentions
-<p>Multi-head attention parameters include parameters from key, query, value, and linear layer each denoted as $\text{W}_K$, $\text{W}_Q$, $\text{W}_V$, and $\text{W}_O$. For each key, query, and value weights, the whole parameter $\text{W} \in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}$ is partitioned into $H$ attention heads each of output dimension $d_k = d_{\text{model}}/H$. Permutation should be operated on each attention head separately, in order to apply a permutation to full weight matrices and maintain the functional equivalence of the overall model. This is because the final hidden vector from MHA reflects a concatenation of the result from each head, which are computed separately with weights $\text{W}_{K_i} ,\text{W}_{Q_i} , \text{W}_{V_i}$ for head $i$. In the paper's case, since the models are trained from different initializations, the correspondence of their attention heads may differ in addition to the correspondence of features within each head. The features are extracted just after the attention computation and before the linear layer. The features are used to compute $C$, and then the correlation matrix is partitioned by heads into $d_k \times d_k$ correlation matrices, for each potential attention head pair. Next, optimal permutation for each unique head pair $(j, k)$ is computed. Each head's internal permutation is computed and stored, and the cost is computed as</p>
+<p>Multi-head attention parameters include parameters from key, query, value, and linear layer each denoted as {{< katex >}}\text{W}_K{{< /katex >}}, {{< katex >}}\text{W}_Q{{< /katex >}}, {{< katex >}}\text{W}_V{{< /katex >}}, and {{< katex >}}\text{W}_O{{< /katex >}}. For each key, query, and value weights, the whole parameter {{< katex >}}\text{W} \in \mathbb{R}^{d_{\text{model}} \times d_{\text{model}}}{{< /katex >}} is partitioned into {{< katex >}}H{{< /katex >}} attention heads each of output dimension {{< katex >}}d_k = d_{\text{model}}/H{{< /katex >}}. Permutation should be operated on each attention head separately, in order to apply a permutation to full weight matrices and maintain the functional equivalence of the overall model. This is because the final hidden vector from MHA reflects a concatenation of the result from each head, which are computed separately with weights {{< katex >}}\text{W}_{K_i} ,\text{W}_{Q_i} , \text{W}_{V_i}{{< /katex >}} for head {{< katex >}}i{{< /katex >}}. In the paper's case, since the models are trained from different initializations, the correspondence of their attention heads may differ in addition to the correspondence of features within each head. The features are extracted just after the attention computation and before the linear layer. The features are used to compute {{< katex >}}C{{< /katex >}}, and then the correlation matrix is partitioned by heads into {{< katex >}}d_k \times d_k{{< /katex >}} correlation matrices, for each potential attention head pair. Next, optimal permutation for each unique head pair {{< katex >}}(j, k){{< /katex >}} is computed. Each head's internal permutation is computed and stored, and the cost is computed as</p>
 
-$$
+{{< katex display=true >}}
 \text{cost}(j,k)=\max_\pi \sum_{i=1}^{d_k} C_{jk}(i,\pi(i)),
-$$
+{{< /katex >}}
 
-where $C_{jk}$ refers to the specific partition of the overall correlation matrix. The outer head correspondence permutation is computed as 
+where {{< katex >}}C_{jk}{{< /katex >}} refers to the specific partition of the overall correlation matrix. The outer head correspondence permutation is computed as 
 
-$$
+{{< katex display=true >}}
 \pi_{\text{outer}}=\text{arg}\max_\pi \sum_{h=1}^{H} \text{cost}(h,\pi(h)).
-$$
+{{< /katex >}}
 
 <p align="center">
     <img src=figures/algorithm1.png width="400"> 
 </p>
 
-The algorithm outputs a permuting matrix $\text{P}_{\text{MHA}}$, which is applied to each of $\text{W}_V$, $\text{W}_K$ and $\text{W}_Q$.
+The algorithm outputs a permuting matrix {{< katex >}}\text{P}_{\text{MHA}}{{< /katex >}}, which is applied to each of {{< katex >}}\text{W}_V{{< /katex >}}, {{< katex >}}\text{W}_K{{< /katex >}} and {{< katex >}}\text{W}_Q{{< /katex >}}.
 
 #### Residual Connections
 Each transformer layer comes with two residual connections, as can be seen from FIgure 1. The residual connections can be formulated as follows:
 
-$$
+{{< katex display=true >}}
 \begin{align}
 x_a^r&=\text{LN}(\text{W}_O \text{MHA}(x) + x),\\
 x_f^r&=\text{LN}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + x_a^r).
 \end{align}
-$$
+{{< /katex >}}
 
 The input and output of both sublayers are added to create a new output. This implies that if a permutation operation is applied to the output state, the permutation should be the same for both addends. Also, since the inputs passes through the LayerNorm module, the permutation to the output should also permute the features of the LayerNorm module also. Ignoring the parameters of the LayerNorm, 
 
-$$
+{{< katex display=true >}}
 \begin{align}
 \text{P}x_f^r&=\text{P}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + x_a^r)\\
 &=\text{P}\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + \text{P}x_a^r\\
 &=\text{P}\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + \text{P}(\text{W}_O \text{MHA}(x) + x)
 \end{align}
-$$
+{{< /katex >}}
 
-Since the input to each layer must be permuted ($\text{P}x$), and the output of each layer is also permuted ($\text{P}x_f^r$), the entire transformer architecture uses the same $\{\text{P}, \text{P}^{\text{T}}\}$ matrices for all weights involved in residual connections.
+Since the input to each layer must be permuted ({{< katex >}}\text{P}x{{< /katex >}}), and the output of each layer is also permuted ({{< katex >}}\text{P}x_f^r{{< /katex >}}), the entire transformer architecture uses the same {{< katex >}}\{\text{P}, \text{P}^{\text{T}}\}{{< /katex >}} matrices for all weights involved in residual connections.
 
 ## Results
 
