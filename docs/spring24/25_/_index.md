@@ -82,20 +82,25 @@ The algorithm returns a permuting matrix {{< katex >}}\text{P}_{\text{MHA}}{{< /
 Each transformer layer comes with two residual connections, as can be seen from FIgure 1. The residual connections can be formulated as follows:
 
 {{< katex display=true >}}
-\begin{align}
-x_a^r&=\text{LN}(\text{W}_O \text{MHA}(x) + x),\\
+x_a^r&=\text{LN}(\text{W}_O \text{MHA}(x) + x),
+{{< /katex >}}
+
+{{< katex display=true >}}
 x_f^r&=\text{LN}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + x_a^r).
-\end{align}
 {{< /katex >}}
 
 The input and output of both sublayers are added to create a new output. This implies that if a permutation operation is applied to the output state, the permutation should be the same for both addends. Also, since the inputs passes through the LayerNorm module, the permutation to the output should also permute the features of the LayerNorm module also. Ignoring the parameters of the LayerNorm,
 
 {{< katex display=true >}}
-\begin{align}
-\text{P}x_f^r&=\text{P}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + x_a^r)\\
-&=\text{P}\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + \text{P}x_a^r\\
+\text{P}x_f^r&=\text{P}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + x_a^r)
+{{< /katex >}}
+
+{{< katex display=true >}}
+&=\text{P}\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + \text{P}x_a^r
+{{< /katex >}}
+
+{{< katex display=true >}}
 &=\text{P}\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) + \text{P}(\text{W}_O \text{MHA}(x) + x)
-\end{align}
 {{< /katex >}}
 
 Since the input to each layer must be permuted ({{< katex >}}\text{P}x{{< /katex >}}), and the output of each layer is also permuted ({{< katex >}}\text{P}x_f^r{{< /katex >}}), the entire transformer architecture uses the same {{< katex >}}\{\text{P}, \text{P}^{\text{T}}\}{{< /katex >}} matrices for all weights involved in residual connections.
