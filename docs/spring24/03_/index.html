@@ -689,17 +689,14 @@ as <em>ops</em>.</li>
 </ul>
 </li>
 </ul>
-<p align="center">
-    <span>
+<span>
   \(f^* &amp; \triangleq \alpha \cdot f\left(x_1, \ldots, x_k\right)\)
 </span>
 
-<pre><code><span>
+<span>
   \( f_{\text {grad }}^*\left(x_1, \ldots x_k, g\right)_i &amp; \triangleq \beta_i \cdot f_{\text {grad }}\left(x_1, \ldots x_k, g\right)_i, \forall i \in[1 . . k] \)
 </span>
 
-</code></pre>
-</p>
 <ul>
 <li>
 <p>Scaled computational graph</p>
@@ -808,21 +805,23 @@ as <em>ops</em>.</li>
 <p>Using the unit scaling recipe, we first build a scaled op, and then a full scaled layer. Consider a scaled projection op with learnable weights:</p>
 <p align="center">
     <span>
-  \( \operatorname{matmul}^*(X, W) &amp; =\alpha \cdot X W \)
+  \( \operatorname{matmul}^*(X,W) =\alpha \cdot X W \)
 </span>
-
-<pre><code><span>
-  \( \operatorname{matmul}_{\text {grad }}^*(X, W, G)_1 &amp; =\beta_1 \cdot G W^{\top}  \)
-</span>
-
-
-<span>
-  \( \operatorname{matmul}_{\text {grad }}^*(X, W, G)_2 &amp; =\beta_2 \cdot X^{\top} G \)
-</span>
-
-</code></pre>
+ 
 </p>
-for input <span>
+<p align="center">
+    <span>
+  \( \operatorname{matmul}_{\text {grad }}^*(X, W, G)_1 = \beta_1 \cdot G W^{\top} \)
+</span>
+   
+</p>   
+<p align="center">
+    <span>
+  \( \operatorname{matmul}_{\text {grad }}^*(X, W, G)_2 = \beta_2 \cdot X^{\top} G \)
+</span>
+
+</p>  
+<p>for input <span>
   \( X \in \mathbb{R}^{b \times m}  \)
 </span>
 , weight  <span>
@@ -834,7 +833,7 @@ for input <span>
  and incoming gradients <span>
   \( G \in \mathbb{R}^{b \times n} \)
 </span>
-
+</p>
 <p>We show code for the above in Figure 3, which also gives a scaled layer for the Transformer FFN</p>
 <p align="center">
     <img src='./Figure3.PNG' width="900">
@@ -882,6 +881,9 @@ for input <span>
 <ul>
 <li>
 <p>Experimental Setup</p>
+<ul>
+<li>To evaluate the advantages of unit scaling, we assess BERTBASE and BERTLARGE models, which typically struggle with loss scaling.</li>
+</ul>
 </li>
 <li>
 <p>Results</p>
