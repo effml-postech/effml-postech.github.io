@@ -808,7 +808,13 @@ https://github.com/alex-shpak/hugo-book
   <img src="BlogPost/Untitled.png" alt="." width=\textwidth > 
 </p>
 <p align="center">
-  <img src="BlogPost/Untitled1.png" alt="." width=\textwidth > 
+  Fig 3. Post-edit performance of various metrics for Llama3-8b model using MEMIT and ROME on various layers. Eqch layer is edited with 1000 facts, one at a time and non-sequentially.
+</p>
+<p align="center">
+  <img src="BlogPost/Untitled 1.png" alt="." width=\textwidth > 
+</p>
+<p align="center">
+  Fig 4. Post-edit performance of various metrics on Llama2-7b for MEMIT on various layers.
 </p>
 <p>Evaluation results showed that layer 1 for Llama-3 outperformed on numerous metrics. Furthermore this trend was also shown in previous version, Llama-2, as seen in Figure 6. Here, MEMIT and ROME have very similar performance for model editing across layer of a model.</p>
 <p>→ Why? : Both algorithms optimize for the <strong>same objective</strong> with difference in the memorization constraints. This shows that memorization constraints plays minor effect on editing performance.</p>
@@ -823,13 +829,13 @@ https://github.com/alex-shpak/hugo-book
 <ul>
 <li>Targeting layer1 in Llama-3 with  batch size 16, 64, 256, 1024, and 4096 for Batched editing.</li>
 </ul>
-<p align="center">
-    <img src="BlogPost/Untitled2.png" alt="." > 
-</p>
 <p><strong>Evaluation Results of Batch Editing</strong></p>
 <p align="center">
-    <img src="BlogPost/Untitled3.png" alt="." >
-    <img src="BlogPost/Untitled4.png" alt="." > 
+    <img src="BlogPost/Untitled 2.png" alt="." >
+    <img src="BlogPost/Untitled 3.png" alt="." > 
+</p>
+<p align="center">
+  Fig 5. Various metric results (PS, NS, ES, S) after a batch edit (16, 64, 256, 1024, 4096) on MEMIT and EMMET respectively.
 </p>
 <p>For both MEMIT &amp; EMMET editing, metrics are seen to consistently fall with larger batches, with <strong>NS</strong> being the most pronounced to fall. <strong>ES</strong> is most resilient metric to edits. <strong>PS</strong>, only metric to do so, seen to increase dramatically between batch sizes of 16 and 64.
 The similar trend between two editing techniques reflect the similarity in their optimization objectives.</p>
@@ -838,7 +844,11 @@ The similar trend between two editing techniques reflect the similarity in their
 <p>This work proposes optimal way to scale model editing that strikes a balance between Batch Editing &amp; Sequential Editing.</p>
 <p><strong>Sequential-batched editing</strong> sequentially edit many batch of facts at a time. And the experiment was conducted going from batch size of 1 up to 4096. (1, 64, 256, 1024, 4096)</p>
 <p align="center">
-    <img src="BlogPost/Untitled5.png" alt="." > 
+    <img src="BlogPost/Untitled 4.png" alt="." > 
+    <img src="BlogPost/Untitled 5.png" alt="." > 
+</p>
+<p align="center">
+  Fig 6.  Single layer sequential editing performance for various batch sizes on MEMIT and EMMET respectively.
 </p>
 <p>Experimental results according to figures above showed that <strong>larger batch sizes are actually worse for model performance than sequential edits with smaller batches</strong>. In contrast, larger batch sizes seem to be better for metrics in NS : while batch edits are less successful in general, it is better in preserving locality of edits. This results were concluded to optimal batch size of 1024 for both MEMIT and EMMET. Increasing batch-size beyond that lead to larger model degradation and better editing results can be achieved by sequential-batched editing with smaller batch sizes.</p>
 <h2 id="conclusion">

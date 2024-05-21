@@ -3,13 +3,17 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" MIXTURE OF LORA EXPERTS # Background # Mixture of LoRA experts # Results # Analyisis and Limitations # ">
+<meta name="description" content="MIXTURE OF LORA EXPERTS # Background # What is LoRA? # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
+Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model&rsquo;s weights frozen and adding trainable low-rank decomposition matrices.
+In the above figure, only the matrices A and B are trained, with dimensions (d x r) and (r x d) respectively.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/08_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" MIXTURE OF LORA EXPERTS # Background # Mixture of LoRA experts # Results # Analyisis and Limitations # ">
+  <meta property="og:description" content="MIXTURE OF LORA EXPERTS # Background # What is LoRA? # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
+Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model’s weights frozen and adding trainable low-rank decomposition matrices.
+In the above figure, only the matrices A and B are trained, with dimensions (d x r) and (r x d) respectively.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>08 | Efficient ML Systems</title>
@@ -608,8 +612,20 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#background">Background</a></li>
-    <li><a href="#mixture-of-lora-experts-1">Mixture of LoRA experts</a></li>
+    <li><a href="#background">Background</a>
+      <ul>
+        <li><a href="#what-is-lora">What is LoRA?</a></li>
+        <li><a href="#loras-composistion">LoRAs Composistion</a></li>
+        <li><a href="#mixture-of-experts">Mixture-of-Experts</a></li>
+      </ul>
+    </li>
+    <li><a href="#mixture-of-lora-experts-1">Mixture of LoRA experts</a>
+      <ul>
+        <li><a href="#motivations">Motivations</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#training">Training</a></li>
+      </ul>
+    </li>
     <li><a href="#results">Results</a></li>
     <li><a href="#analyisis-and-limitations">Analyisis and Limitations</a></li>
   </ul>
@@ -628,14 +644,48 @@ https://github.com/alex-shpak/hugo-book
   MIXTURE OF LORA EXPERTS
   <a class="anchor" href="#mixture-of-lora-experts">#</a>
 </h1>
+<!--
+제목으로 바꾸기
+처음에 어그로 끌 수 있는 내용 먼저
+-->
 <h2 id="background">
   Background
   <a class="anchor" href="#background">#</a>
 </h2>
+<h3 id="what-is-lora">
+  What is LoRA?
+  <a class="anchor" href="#what-is-lora">#</a>
+</h3>
+<p><em>LoRA is a methodology for effective fine-tuning large-scale pretrained models.</em></p>
+<p>Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model&rsquo;s weights frozen and adding trainable low-rank decomposition matrices.</p>
+<p align="center">
+    <img src=./LoRA.png> 
+</p>
+<p>In the above figure, only the matrices A and B are trained, with dimensions (d x r) and (r x d) respectively. By setting r &laquo; d, the number of parameters to be trained can be reduced. These trained matrices are then added to the existing pretrained weights, allowing tuning without affecting the inference speed of the original model.</p>
+<h3 id="loras-composistion">
+  LoRAs Composistion
+  <a class="anchor" href="#loras-composistion">#</a>
+</h3>
+<h3 id="mixture-of-experts">
+  Mixture-of-Experts
+  <a class="anchor" href="#mixture-of-experts">#</a>
+</h3>
 <h2 id="mixture-of-lora-experts-1">
   Mixture of LoRA experts
   <a class="anchor" href="#mixture-of-lora-experts-1">#</a>
 </h2>
+<h3 id="motivations">
+  Motivations
+  <a class="anchor" href="#motivations">#</a>
+</h3>
+<h3 id="method">
+  Method
+  <a class="anchor" href="#method">#</a>
+</h3>
+<h3 id="training">
+  Training
+  <a class="anchor" href="#training">#</a>
+</h3>
 <h2 id="results">
   Results
   <a class="anchor" href="#results">#</a>
@@ -698,8 +748,20 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#background">Background</a></li>
-    <li><a href="#mixture-of-lora-experts-1">Mixture of LoRA experts</a></li>
+    <li><a href="#background">Background</a>
+      <ul>
+        <li><a href="#what-is-lora">What is LoRA?</a></li>
+        <li><a href="#loras-composistion">LoRAs Composistion</a></li>
+        <li><a href="#mixture-of-experts">Mixture-of-Experts</a></li>
+      </ul>
+    </li>
+    <li><a href="#mixture-of-lora-experts-1">Mixture of LoRA experts</a>
+      <ul>
+        <li><a href="#motivations">Motivations</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#training">Training</a></li>
+      </ul>
+    </li>
     <li><a href="#results">Results</a></li>
     <li><a href="#analyisis-and-limitations">Analyisis and Limitations</a></li>
   </ul>

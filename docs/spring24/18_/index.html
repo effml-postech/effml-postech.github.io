@@ -3,15 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
-Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # Method: ViTAR # 1. Adaptive Token Merger (ATM Module) # 2. Fuzzy Positional Encoding (FPE) # Experiments # ">
+<meta name="description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
+Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # Method: ViTAR # 1. Adaptive Token Merger (ATM Module) # 2. Fuzzy Positional Encoding (FPE) # Vision Transformer Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/18_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
-Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # Method: ViTAR # 1. Adaptive Token Merger (ATM Module) # 2. Fuzzy Positional Encoding (FPE) # Experiments # ">
+  <meta property="og:description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
+Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # Method: ViTAR # 1. Adaptive Token Merger (ATM Module) # 2. Fuzzy Positional Encoding (FPE) # Vision Transformer Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>18 | Efficient ML Systems</title>
@@ -662,6 +662,9 @@ https://github.com/alex-shpak/hugo-book
   2. Fuzzy Positional Encoding (FPE)
   <a class="anchor" href="#2-fuzzy-positional-encoding-fpe">#</a>
 </h3>
+<p>Vision Transformer Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability. To improve this, ResFormer proposed adding depth-wise convolution to the existing positional encoding method when performing global-local positional embedding, enabling it to work well even with unseen resolutions. (Chu et al., 2023; Tian et al., 2023).</p>
+<p>However, convolution-based positional embedding requires adjacent patches to fully extract and utilize spatial features. Therefore, it is not suitable for self-supervised learning methods like masked auto-encoding (MAE), which require masking parts of image patches. This limitation poses challenges for large-scale training.</p>
+<p>Fuzzy Positional Encoding(FPE) differs from the previously mentioned methods. It enhances the model&rsquo;s resolution robustness without introducing specific spatial structures like convolutions. Therefore, it can be applied to self-supervised learning frameworks. This property enables ViTAR to be applied to large-scale, unlabeled training sets for training, aiming to obtain a more powerful vision foundation model.</p>
 <p align="center">
   <img src="./FPE.png" alt="." width="500" height="300" > 
 </p>
