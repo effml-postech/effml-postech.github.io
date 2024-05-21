@@ -3,13 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" # ">
+<meta name="description" content="Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length # Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou Reviewer: Hyunho Kook
+1. Introduction # Recently, Large Language Models (LLMs) have been gaining popularity. The impressive performance and versatility demonstrated by large models above a certain level have started to be utilized in various fields. However, as the size of the models grows, the size of the data that the models are expected to process is also increasing.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/10_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" # ">
+  <meta property="og:description" content="Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length # Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou Reviewer: Hyunho Kook
+1. Introduction # Recently, Large Language Models (LLMs) have been gaining popularity. The impressive performance and versatility demonstrated by large models above a certain level have started to be utilized in various fields. However, as the size of the models grows, the size of the data that the models are expected to process is also increasing.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>10 | Efficient ML Systems</title>
@@ -18,7 +20,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/10_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.37cc41db99c2813c1ebf54f7f11ab4ae3930489fc33550e4de78bf62f09af415.js" integrity="sha256-N8xB25nCgTwev1T38Rq0rjkwSJ/DNVDk3ni/YvCa9BU=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
 
   
 
@@ -606,7 +608,23 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-introduction">1. Introduction</a></li>
+    <li><a href="#2-mega-exponential-moving-average-with-gated-attention">2. MEGA (exponential Moving avErage with Gated Attention)</a></li>
+    <li><a href="#3-methods">3. Methods</a>
+      <ul>
+        <li><a href="#cema-extending-multi-dimensional-damped-ema-to-complex-domain">CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)</a></li>
+        <li><a href="#timestep-normalization">Timestep Normalization</a></li>
+        <li><a href="#normalized-attention">Normalized Attention</a></li>
+        <li><a href="#2-hop-residual-connection">2-hop Residual Connection</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-experiments">4. Experiments</a></li>
+    <li><a href="#5-related-works">5. Related Works</a></li>
+    <li><a href="#6-discussion">6. Discussion</a></li>
+  </ul>
+</nav>
 
 
 
@@ -617,10 +635,76 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
+  <article class="markdown book-article"><h1 id="megalodon-efficient-llm-pretraining-and-inference-with-unlimited-context-length">
+  Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length
+  <a class="anchor" href="#megalodon-efficient-llm-pretraining-and-inference-with-unlimited-context-length">#</a>
 </h1>
+<p>Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou
+Reviewer: Hyunho Kook</p>
+<p><img src="./Megalodon.jpg" alt="Megalodon" /></p>
+<h2 id="1-introduction">
+  1. Introduction
+  <a class="anchor" href="#1-introduction">#</a>
+</h2>
+<p>Recently, Large Language Models (LLMs) have been gaining popularity. The impressive performance and versatility demonstrated by large models above a certain level have started to be utilized in various fields. However, as the size of the models grows, the size of the data that the models are expected to process is also increasing. Examples of this include processing currently open issues by inputting a GitHub repository or translating a large volume of books without losing context. In addition, the ability to maintain context and carry on a conversation for an extended period within a single chat is also sometimes required. The transformer, which is the foundation model of modern LLMs, exhibits vulnerabilities in this regard. Firstly, since it uses KV cache, memory usage increases rapidly as the sequence length grows, and it has a computational complexity proportional to the square of the sequence length.</p>
+<p>To address this problem, the authors propose a method that inherits and advances MEGA (exponential moving average with gated attention), the predecessor of this paper. The overall contributions are as follows:</p>
+<ol>
+<li><strong>CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)</strong>, an extension of Exponential Moving Average (EMA) to the complex domain, is proposed.</li>
+<li><strong>Timestep Normalization, an extension of Group Norm to the timestep domain</strong>, is proposed as an alternative to Layer Norm.</li>
+<li><strong>Normalized Attention</strong>, which performs normalization during attention computation, is proposed.</li>
+<li><strong>2-hop Residual Connection</strong>, which composes residual connections in 2-hop units, is proposed.</li>
+</ol>
+<p>By employing these methods, the authors have created a transformer architecture that is linear with respect to context length. They have also addressed the issues encountered in the previous research, MEGA, which were (i) low performance and (ii) the need for different architecture structures for each data type or task.</p>
+<h2 id="2-mega-exponential-moving-average-with-gated-attention">
+  2. MEGA (exponential Moving avErage with Gated Attention)
+  <a class="anchor" href="#2-mega-exponential-moving-average-with-gated-attention">#</a>
+</h2>
+<h2 id="3-methods">
+  3. Methods
+  <a class="anchor" href="#3-methods">#</a>
+</h2>
+<h3 id="cema-extending-multi-dimensional-damped-ema-to-complex-domain">
+  CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)
+  <a class="anchor" href="#cema-extending-multi-dimensional-damped-ema-to-complex-domain">#</a>
+</h3>
+<h3 id="timestep-normalization">
+  Timestep Normalization
+  <a class="anchor" href="#timestep-normalization">#</a>
+</h3>
+<h3 id="normalized-attention">
+  Normalized Attention
+  <a class="anchor" href="#normalized-attention">#</a>
+</h3>
+<h3 id="2-hop-residual-connection">
+  2-hop Residual Connection
+  <a class="anchor" href="#2-hop-residual-connection">#</a>
+</h3>
+<h2 id="4-experiments">
+  4. Experiments
+  <a class="anchor" href="#4-experiments">#</a>
+</h2>
+<h2 id="5-related-works">
+  5. Related Works
+  <a class="anchor" href="#5-related-works">#</a>
+</h2>
+<p>Mamba</p>
+<h2 id="6-discussion">
+  6. Discussion
+  <a class="anchor" href="#6-discussion">#</a>
+</h2>
+<p>In my opinion, there are a few potential limitations that are not extensively discussed in the paper:</p>
+<ol>
+<li>
+<p><strong>Reliance on CEMA for Out-of-Chunk Context</strong>: The self-attention mechanism in MEGALODON is applied within each chunk. For data that falls completely outside the chunk boundaries, the model relies solely on CEMA for processing. However, CEMA is a causal mechanism, which means it may struggle to adequately capture the influence of distant future content on earlier parts of the sequence. This limitation could potentially hinder the model&rsquo;s ability to handle long-range dependencies that span across multiple chunks.</p>
+</li>
+<li>
+<p><strong>Complexity of the Architecture</strong>: Compared to the traditional Transformer layer, the MEGALODON architecture is considerably more complex. It requires the computation of EMA, including the complex domain, for each token. Additionally, several normalization and attention components have been introduced, such as Timestep Normalization, which further increases the complexity of the model compared to the previous works.</p>
+</li>
+<li>
+<p><strong>Limited Exploration of Downstream Tasks</strong>: While the paper demonstrates the effectiveness of MEGALODON on long-context question answering tasks from the Scrolls dataset, the range of downstream tasks explored is relatively narrow. Evaluating the model&rsquo;s performance on a broader set of tasks, such as summarization, dialogue generation, and composition, would provide a more comprehensive assessment of its capabilities and potential limitations.</p>
+</li>
+</ol>
+<p>Despite these limitations, MEGALODON presents a promising direction for efficient long-context modeling. In my opinion, this kind of efficent and linear processing of <strong>memory</strong> can be a breakthrough for long-context LLMs.</p>
 </article>
  
       
@@ -630,9 +714,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/0947bc5271fafa666a5b1d8cea6a555fa66e3cb5" title='Last modified by effml-postech | May 14, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/bf89231105c65f21ce0853e8daf41d28d65268af" title='Last modified by kookhh0827 | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 14, 2024</span>
+      <span>May 21, 2024</span>
     </a>
   </div>
 
@@ -673,7 +757,23 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-introduction">1. Introduction</a></li>
+    <li><a href="#2-mega-exponential-moving-average-with-gated-attention">2. MEGA (exponential Moving avErage with Gated Attention)</a></li>
+    <li><a href="#3-methods">3. Methods</a>
+      <ul>
+        <li><a href="#cema-extending-multi-dimensional-damped-ema-to-complex-domain">CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)</a></li>
+        <li><a href="#timestep-normalization">Timestep Normalization</a></li>
+        <li><a href="#normalized-attention">Normalized Attention</a></li>
+        <li><a href="#2-hop-residual-connection">2-hop Residual Connection</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-experiments">4. Experiments</a></li>
+    <li><a href="#5-related-works">5. Related Works</a></li>
+    <li><a href="#6-discussion">6. Discussion</a></li>
+  </ul>
+</nav>
 
 
  

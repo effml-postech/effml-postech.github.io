@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Experiments &amp; Results # Whats the Optimal Layer for Model Editing? # Investigating the effectiveness of hidden states in LLMS for recalling facts using causal tracing showed thjat subject’s last token within the feed-forward networks at intermediate layer plays a significant role. (Meng et al., 2022b)
+Motivation : However, later work showed that layers deemed important during causal tracing did not always translate to model editing performance. Therefore, this work focused on finding the optimal layer for model editing layer empirically.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/01_/Blog-Post/">
+  <meta property="og:site_name" content="Efficient ML Systems">
+  <meta property="og:title" content="Efficient ML Systems">
+  <meta property="og:description" content="Experiments &amp; Results # Whats the Optimal Layer for Model Editing? # Investigating the effectiveness of hidden states in LLMS for recalling facts using causal tracing showed thjat subject’s last token within the feed-forward networks at intermediate layer plays a significant role. (Meng et al., 2022b)
+Motivation : However, later work showed that layers deemed important during causal tracing did not always translate to model editing performance. Therefore, this work focused on finding the optimal layer for model editing layer empirically.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2024-05-21T17:38:46+09:00">
+<title>Blog Post | Efficient ML Systems</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" >
+<link rel="canonical" href="http://localhost:1313/docs/spring24/01_/Blog-Post/">
+<link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
+  <script defer src="/flexsearch.min.js"></script>
+  <script defer src="/en.search.min.d45cd4ae516eccf60886e07deaf5a944f6afefeb168485361debe1e26bc503d7.js" integrity="sha256-1FzUrlFuzPYIhuB96vWpRPav7&#43;sWhIU2Hevh4mvFA9c=" crossorigin="anonymous"></script>
+
+  
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Efficient ML Systems</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-8c2bdf4d8f82cc2d8f16541464d61b3d" class="toggle" checked />
+    <label for="section-8c2bdf4d8f82cc2d8f16541464d61b3d" class="flex justify-between">
+      <a role="button" class="">Spring24</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/00_taco_example/" class="">00 Taco Example</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/01_/" class="">01</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/01_/Blog-Post/" class="active">Blog Post</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/02_/" class="">02</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/03_/" class="">03</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/04_/" class="">04</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/05_/" class="">05</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/06_/" class="">06</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/07_/" class="">07</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/08_/" class="">08</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/09_/" class="">09</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/10_/" class="">10</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/11_/" class="">11</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/12_/" class="">12</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/13_/" class="">13</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/15_/" class="">15</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/16_/" class="">16</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/17_/" class="">17</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/18_/" class="">18</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/19_/" class="">19</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/20_/" class="">20</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/21_/" class="">21</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/22_/" class="">22</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/23_/" class="">23</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/24_/" class="">24</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/25_/" class="">25</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Blog Post</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#experiments--results">Experiments &amp; Results</a>
+      <ul>
+        <li><a href="#whats-the-optimal-layer-for-model-editing">Whats the Optimal Layer for Model Editing?</a></li>
+        <li><a href="#optimal-way-of-scaling-up-model-editing"><strong>Optimal</strong> way of Scaling Up model editing?</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h2 id="experiments--results">
+  Experiments &amp; Results
+  <a class="anchor" href="#experiments--results">#</a>
+</h2>
+<h3 id="whats-the-optimal-layer-for-model-editing">
+  Whats the Optimal Layer for Model Editing?
+  <a class="anchor" href="#whats-the-optimal-layer-for-model-editing">#</a>
+</h3>
+<p>Investigating the effectiveness of hidden states in LLMS for recalling facts using causal tracing showed thjat subject’s last token within the feed-forward networks at intermediate layer plays a significant role. <a href="https://arxiv.org/pdf/2210.07229">(Meng et al., 2022b)</a></p>
+<p><strong>Motivation</strong> : However, later work showed that layers deemed important during causal tracing did not always translate to model editing performance. Therefore, this work focused on finding the optimal layer for model editing layer empirically.</p>
+<p><strong>Steps for finding optimal layer</strong></p>
+<ol>
+<li>Make 1000 non-sequential edits from the CounterFact(Meng et al., 2022a) dataset at each layer of the Llama-3 model.</li>
+<li>Calculate various model metrics(ES, PS, NS, S) to evaluate their impact.</li>
+<li>The layer that achieves the highest score is selected as the most suitable for targeted interventions.</li>
+</ol>
+<p align="center">
+  <img src="Blog%20Post/Untitled.png" alt="." width=\textwidth > 
+</p>
+<p align="center">
+  <img src="Blog%20Post/Untitled%201.png" alt="." width=\textwidth > 
+</p>
+<p>Evaluation results showed that layer 1 for Llama-3 outperformed on numerous metrics. Furthermore this trend was also shown in previous version, Llama-2, as seen in Figure 6. Here, MEMIT and ROME have very similar performance for model editing across layer of a model.</p>
+<p>→ Why? : Both algorithms optimize for the <strong>same objective</strong> with difference in the memorization constraints. This shows that memorization constraints plays minor effect on editing performance.</p>
+<h3 id="optimal-way-of-scaling-up-model-editing">
+  <strong>Optimal</strong> way of Scaling Up model editing?
+  <a class="anchor" href="#optimal-way-of-scaling-up-model-editing">#</a>
+</h3>
+<p>After finding the optimal layer, scaling of model editing on the same model can happen in two ways : <strong>batch editing</strong> &amp; <strong>sequential editing</strong>.</p>
+<p><strong>Batch Editing :</strong></p>
+<p>A large number(batch size) of knowledge edits are performed on the model with the same update. This work stick to editing a single layer of the model.</p>
+<p>Experiment setting</p>
+<ul>
+<li>Targeting layer1 in Llama-3 with  batch size 16, 64, 256, 1024, and 4096 for Batched editing.</li>
+</ul>
+<p align="center">
+    <img src="Blog%20Post/Untitled%202.png" alt="." > 
+</p>
+<p><strong>Evaluation Results of Batch Editing</strong></p>
+<p align="left">
+    <img src="Blog%20Post/Untitled%203.png" alt="." >
+    <img src="Blog%20Post/Untitled%204.png" alt="." > 
+</p>
+<p>For both MEMIT &amp; EMMET editing, metrics are seen to consistently fall with larger batches, with <strong>NS</strong> being the most pronounced to fall. <strong>ES</strong> is most resilient metric to edits. <strong>PS</strong>, only metric to do so, seen to increase dramatically between batch sizes of 16 and 64.
+The similar trend between two editing techniques reflect the similarity in their optimization objectives.</p>
+<p><strong>Sequential Batch Editing :</strong></p>
+<p><strong>Sequential Editing</strong> is an alternate way to scale up model editing where facts are added sequentially to a model.</p>
+<p>This work proposes optimal way to scale model editing that strikes a balance between Batch Editing &amp; Sequential Editing.</p>
+<p><strong>Sequential-batched editing</strong> sequentially edit many batch of facts at a time. And the experiment was conducted going from batch size of 1 up to 4096. (1, 64, 256, 1024, 4096)</p>
+<p align="center">
+    <img src="Blog%20Post/Untitled%205.png" alt="." > 
+</p>
+<p>Experimental results according to figures above showed that larger batch sizes are actually worse for model performance than sequential edits with smaller batches. In contrast, larger batch sizes seem to be better for metrics in NS : while batch edits are less successful in general, it is better in preserving locality of edits. This results were concluded to optimal batch size of 1024 for both MEMIT and EMMET. Increasing batch-size beyond that lead to larger model degradation and better editing results can be achieved by sequential-batched editing with smaller batch sizes.</p>
+<h3 id="conclusion">
+  Conclusion
+  <a class="anchor" href="#conclusion">#</a>
+</h3>
+<p>This work examines several model editing techniques in the context of the newly released Llama-3 model and there are some conclusion as follows:</p>
+<ul>
+<li>Earlier layers may be more optimal intervention points.</li>
+<li>Model editing techniques that share same optimization objectives shows similar trends in layer and editing.</li>
+<li>Smaller, frequent sequential batch size edits have a superior performance.</li>
+<li>Batch size of 1024 for MEMIT and EMMET is optimal batchsize with sequential-batched editing.</li>
+</ul>
+<p>The authors argue that the current trend of pushing towards bigger edit batch sizes for scaling model editing may have limitations. Instead, they propose that future research should focus on methods that combine both batched and sequential editing to optimize performance while minimizing model degradation.</p>
+<p>Future work will include experiments on multi-layer intervention for edits, as well as experiments against other popular models and algorithms, including methods that are hyper-network based</p>
+<ul>
+<li>Provide your own perspectives and discussions, and propose a <strong>future research direction.</strong></li>
+</ul>
+<p>NS의 경우 layer가 뒤로 갔을 때 다시 성능이 좋아진 원인, PS에서 batch size를 증가 시켰을 때 좋아지는 이유를 분석하면 multi layer edit에서 optimal point를 찾는데 도움이 될 수도 있을 것 같음.</p>
+<p>single layer에서 나아가 multi-layer에서 몇 개의 layer edit이 효과적인지 조사.</p>
+<p>batch size가 증가함에 따라 전체적인 metric이 내려가는 상관관계를 emprically말고 이론적으로 밝히면 더욱 효과적으로 model editing 연구에 도움이 될 수 있을 것 같다.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/2febdba2b088630a15dffaf302fb8513e0a130c9" title='Last modified by jgh1020 | May 21, 2024' target="_blank" rel="noopener">
+      <img src="/svg/calendar.svg" class="book-icon" alt="" />
+      <span>May 21, 2024</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/effml-postech/blog-post/edit/main//content/docs/spring24/01_/Blog%20Post.md" target="_blank" rel="noopener">
+      <img src="/svg/edit.svg" class="book-icon" alt="" />
+      <span>Edit this page</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#experiments--results">Experiments &amp; Results</a>
+      <ul>
+        <li><a href="#whats-the-optimal-layer-for-model-editing">Whats the Optimal Layer for Model Editing?</a></li>
+        <li><a href="#optimal-way-of-scaling-up-model-editing"><strong>Optimal</strong> way of Scaling Up model editing?</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

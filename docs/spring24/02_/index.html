@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Spectrally Pruned Gaussian Fields with Neural Compensation (SUNDAE) # *Team: Donggeon Lee, Chiho yoon *Authors: Yang, Runyi, et al
-Summary # Fig1. Comparison of 3D gaussian splatting and proposed SUNDAE Conventional 3D Gaussian Splatting (3DGS) # Pros: Superior rendering speed and quality Cons: High memory consumption Proposed SUNDAE # It constructs a memory-efficient Gaussian field using spectral pruning and neural compensation. It considers the relationship between primitives, reducing memory usage while maintaining rendering quality.">
+Summary # 3D representation, which is the basis for many VR/AR and robotics applications, has long been an area of interest in computer vision and graphics. With the advent of neural radiation fields (NeRFs) Link, several methods have emerged to improve the quality and efficiency of NeRFs.
+Conventional 3D Gaussian Splatting (3DGS) # Fig.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/02_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="Spectrally Pruned Gaussian Fields with Neural Compensation (SUNDAE) # *Team: Donggeon Lee, Chiho yoon *Authors: Yang, Runyi, et al
-Summary # Fig1. Comparison of 3D gaussian splatting and proposed SUNDAE Conventional 3D Gaussian Splatting (3DGS) # Pros: Superior rendering speed and quality Cons: High memory consumption Proposed SUNDAE # It constructs a memory-efficient Gaussian field using spectral pruning and neural compensation. It considers the relationship between primitives, reducing memory usage while maintaining rendering quality.">
+Summary # 3D representation, which is the basis for many VR/AR and robotics applications, has long been an area of interest in computer vision and graphics. With the advent of neural radiation fields (NeRFs) Link, several methods have emerged to improve the quality and efficiency of NeRFs.
+Conventional 3D Gaussian Splatting (3DGS) # Fig.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>02 | Efficient ML Systems</title>
@@ -20,7 +22,7 @@ Summary # Fig1. Comparison of 3D gaussian splatting and proposed SUNDAE Conventi
 <link rel="canonical" href="http://localhost:1313/docs/spring24/02_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.37cc41db99c2813c1ebf54f7f11ab4ae3930489fc33550e4de78bf62f09af415.js" integrity="sha256-N8xB25nCgTwev1T38Rq0rjkwSJ/DNVDk3ni/YvCa9BU=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
 
   
 
@@ -618,13 +620,20 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#introduction">Introduction</a>
       <ul>
-        <li><a href="#3dgs">3DGS</a></li>
+        <li><a href="#3d-gaussian-splatting-3dgs-linkhttpsgithubcomgraphdeco-inriagaussian-splattingtabreadme-ov-file">3D Gaussian Splatting (3DGS) <a href="https://github.com/graphdeco-inria/gaussian-splatting?tab=readme-ov-file">Link</a></a></li>
         <li><a href="#spectral-graph-pruning">Spectral graph pruning</a></li>
         <li><a href="#neural-compensation">Neural compensation</a></li>
         <li><a href="#contributions">Contributions</a></li>
       </ul>
     </li>
-    <li><a href="#methods">Methods</a></li>
+    <li><a href="#methods">Methods</a>
+      <ul>
+        <li><a href="#1-3d-gaussian-splatting-warm-up">1. 3D Gaussian Splatting Warm up</a></li>
+        <li><a href="#2-spectral-graph-pruning">2. Spectral Graph Pruning</a></li>
+        <li><a href="#3-neural-compensation">3. Neural Compensation</a></li>
+        <li><a href="#4-continuous-pruning-as-a-strategy">4. Continuous Pruning as a Strategy</a></li>
+      </ul>
+    </li>
     <li><a href="#results">Results</a>
       <ul>
         <li><a href="#quantitative-results">Quantitative Results</a></li>
@@ -655,28 +664,36 @@ https://github.com/alex-shpak/hugo-book
   Summary
   <a class="anchor" href="#summary">#</a>
 </h2>
-<p align="center">
-    <img src='fig1.png' width="600">
-</p>
-<p align="center">
-    Fig1. Comparison of 3D gaussian splatting and proposed SUNDAE
-</p>
+<p>3D representation, which is the basis for many VR/AR and robotics applications, has long been an area of interest in computer vision and graphics. With the advent of neural radiation fields (NeRFs) <a href="https://dl.acm.org/doi/abs/10.1145/3503250">Link</a>, several methods have emerged to improve the quality and efficiency of NeRFs.</p>
 <h3 id="conventional-3d-gaussian-splatting-3dgs">
   Conventional 3D Gaussian Splatting (3DGS)
   <a class="anchor" href="#conventional-3d-gaussian-splatting-3dgs">#</a>
 </h3>
+<p align="center">
+    <img src='3dgs.png' width="600">
+</p>
+<p align="center">
+    Fig. 1. Comparison of 3D Gaussian Splatting to previous NeRF technologies.
+</p>  
+ One of the recent hot topics in the NeRF field, 3D Gaussian Splatting (3DGS), demonstrates high quality and **particularly fast, near real-time rendering speeds** (about 100FPS).
 <ul>
-<li>Pros: Superior rendering speed and quality</li>
-<li>Cons: High memory consumption</li>
+<li>Pros: Superior <strong>rendering speed</strong> and <strong>quality</strong></li>
+<li>Cons: <strong>High memory consumption</strong></li>
 </ul>
 <h3 id="proposed-sundae">
   Proposed SUNDAE
   <a class="anchor" href="#proposed-sundae">#</a>
 </h3>
+<p align="center">
+    <img src='fig1.png' width="600">
+</p>
+<p align="center">
+    Fig. 2. Comparison of 3D gaussian splatting and proposed SUNDAE
+</p>
 <ul>
-<li>It constructs a memory-efficient Gaussian field using spectral pruning and neural compensation.</li>
+<li>It constructs a <strong>memory-efficient Gaussian field</strong> using spectral pruning and neural compensation.</li>
 <li>It considers the relationship between primitives, reducing memory usage while maintaining rendering quality.</li>
-<li>It significantly reduces memory consumption while preserving high rendering quality.</li>
+<li>It significantly <strong>reduces memory consumption</strong> while <strong>preserving high rendering quality</strong>.</li>
 <li>Code: <a href="https://runyiyang.github.io/projects/SUNDAE/">https://runyiyang.github.io/projects/SUNDAE/</a>.</li>
 </ul>
 <h2 id="introduction">
@@ -687,37 +704,119 @@ https://github.com/alex-shpak/hugo-book
     <img src='fig2.png' width="600">
 </p>
 <p align="center">
-    Fig2. Conceptual illustration of vanilla 3DGS, SUNDAE spectral pruning technique, and neural compensation.
+    Fig. 3. Conceptual illustration of vanilla 3DGS, SUNDAE spectral pruning technique, and neural compensation.
 </p>  
-<h3 id="3dgs">
-  3DGS
-  <a class="anchor" href="#3dgs">#</a>
+<h3 id="3d-gaussian-splatting-3dgs-linkhttpsgithubcomgraphdeco-inriagaussian-splattingtabreadme-ov-file">
+  3D Gaussian Splatting (3DGS) <a href="https://github.com/graphdeco-inria/gaussian-splatting?tab=readme-ov-file">Link</a>
+  <a class="anchor" href="#3d-gaussian-splatting-3dgs-linkhttpsgithubcomgraphdeco-inriagaussian-splattingtabreadme-ov-file">#</a>
 </h3>
-<p>Recently, 3DGS has been proposed as a novel 3D scene representation, utilizing a set of 3D positions, opacity, anisotropic covariance, and spherical harmonic (SH) coefficients to represent a 3D scene (left panel of Fig. 2).
-3DGS demonstrates notable advantages in rendering speed, rendering quality, and training time. But it requires a large storage.</p>
+<p>Recently, 3DGS has been proposed as a <strong>novel 3D scene representation</strong>, utilizing a set of 3D positions, opacity, anisotropic covariance, and spherical harmonic (SH) coefficients to represent a 3D scene (left panel of Fig. 2).
+3DGS demonstrates notable <strong>advantages in rendering speed, rendering quality, and training time</strong>. But it <strong>requires a large storage</strong>.</p>
 <h3 id="spectral-graph-pruning">
   Spectral graph pruning
   <a class="anchor" href="#spectral-graph-pruning">#</a>
 </h3>
-<p>Gaussian fields utilize a collection of Gaussian primitives as the representation of the scene. As these primitives are irregularly distributed in 3D space, we propose a graph-based data structure, rather than regular structures like grids, to capture the relationship between these primitives (middle panel of Fig. 2).</p>
+<p>Gaussian fields utilize a collection of Gaussian primitives as the representation of the scene. As these primitives are irregularly distributed in 3D space, they propose a <strong>graph-based data structure</strong>, rather than regular structures like grids, to capture the relationship between these primitives (middle panel of Fig. 2).</p>
 <h3 id="neural-compensation">
   Neural compensation
   <a class="anchor" href="#neural-compensation">#</a>
 </h3>
-<p>To address an inevitable decrease in rendering quality, they employ a neural compensation head to compensate for this quality loss (right panel of Fig. 2).</p>
+<p>To address an inevitable decrease in rendering quality, they employ a <strong>neural compensation head to compensate for this quality loss</strong> (right panel of Fig. 2).</p>
 <h3 id="contributions">
   Contributions
   <a class="anchor" href="#contributions">#</a>
 </h3>
 <ul>
-<li>A newly proposed primitive pruning framework for Gaussian fields based upon the spectrum of primitive graphs;</li>
-<li>A novel feature splatting and mixing module to compensate for the performance drop caused by the pruning;</li>
+<li>A newly proposed primitive pruning framework for Gaussian fields based upon the spectrum of primitive graphs.</li>
+<li>A novel feature splatting and mixing module to compensate for the performance drop caused by the pruning.</li>
 <li>State-of-the-art results, in terms of both quality and speed, on various benchmarks with low memory footprint.</li>
 </ul>
 <h2 id="methods">
   Methods
   <a class="anchor" href="#methods">#</a>
 </h2>
+<p>We have 4 steps for the method</p>
+<ol>
+<li>3D Gaussian Splatting Warm Up</li>
+<li>Spectral Graph Pruning</li>
+<li>Neural Compensation</li>
+<li>Continuous Pruning as a Strategy</li>
+</ol>
+<p>The overall framework is in Fig.</p>
+<p align="center">
+    <img src='fig3.png' width="600">
+</p>
+<p align="center">
+    Fig. 4. The overall framework of SUNDAE with pipeline and graph-based pruning.
+</p>
+<p>Let’s see how each step works.</p>
+<h3 id="1-3d-gaussian-splatting-warm-up">
+  1. 3D Gaussian Splatting Warm up
+  <a class="anchor" href="#1-3d-gaussian-splatting-warm-up">#</a>
+</h3>
+<p>SUNDAE <strong>initialize Gaussian centers</strong> of the vanilla 3D Gaussian Splating as the first step for generating a dense representation using Gaussian primitives. Then, an <strong>effective densification strategy</strong> is used to increase the primitives.</p>
+<h4 id="--gaussian-primitive-initialization">
+  - Gaussian Primitive Initialization
+  <a class="anchor" href="#--gaussian-primitive-initialization">#</a>
+</h4>
+<p>The point cloud $P_c$ is the first input for representing the 3D scene using Gaussian primitives $P$. Then they turn 3D coordinates $x \in P_c$ into Gaussian primitives $p \in P$ by the following equation:</p>
+<p align="center">
+$p(x)=exp(-1/2(x)^T\Sigma^-1(x))$
+</p>
+<p>where the $\Sigma$ is defined as 3D covariance matrix. They also use an ellipsoid configuration. The decomposition of $\Sigma$ is achieved with scaling matrix $S$ and a rotation matrix $R$, as expressed in the equation:</p>
+<p align="center">
+$\Sigma=RSS^TR^T$
+</p>
+<h4 id="--gaussian-primitive-densification">
+  - Gaussian Primitive Densification
+  <a class="anchor" href="#--gaussian-primitive-densification">#</a>
+</h4>
+<p>They optimize all parameters of Gaussian primitives and integrate a densification strategy to improve representation power during the training process.</p>
+<h3 id="2-spectral-graph-pruning">
+  2. Spectral Graph Pruning
+  <a class="anchor" href="#2-spectral-graph-pruning">#</a>
+</h3>
+<p>After warm-up, a dense representation incurs significant storage consumption. To efficiently prune redundant primitives, they used the <strong>graph signal processing theory</strong> and construct a graph based on Gaussian primitives.</p>
+<h4 id="--graph-signal-processing-preliminaries">
+  - Graph Signal Processing Preliminaries
+  <a class="anchor" href="#--graph-signal-processing-preliminaries">#</a>
+</h4>
+<p><strong>Graph shift</strong>: Graph shift represents the connections between nodes in a weighted graph, typically represented by a weighted adjacency matrix. It quantitatively describes the relationships between nodes using the weights of edges.</p>
+<p><strong>Graph signal</strong>: Graph signal is a mapping assigning values to each node in a graph, utilized to model interactions between nodes.</p>
+<p><strong>Graph Fourier Transform</strong>: Graph Fourier Transform is the process of expanding a graph signal using the eigenbasis of the graph shift, enabling analysis of the structure and interactions within the graph.</p>
+<h4 id="--graph-construction">
+  - Graph Construction
+  <a class="anchor" href="#--graph-construction">#</a>
+</h4>
+<p>Given a set of Gaussian Primitives %P% , they construct a <strong>nearest neighbor graph</strong> with the adjacent matrix $W$ of the graph:</p>
+<p align="center">
+$$
+W_{ij} = \begin{cases} 
+\exp\left( -\frac{\|x_i - x_j\|^2}{2 \sigma^2} \right), & \text{if } \|x_i - x_j\|^2 < \tau \\ 
+0, & \text{otherwise} 
+\end{cases}
+$$
+</p>
+<p>where $x_i$ and $x_j$ are central points in $P$, $\tau$ is a hyperparameter, and $\sigma$ is the variance of the distance matrix.</p>
+<h4 id="--graph-filtering-and-sampling">
+  - Graph Filtering and Sampling
+  <a class="anchor" href="#--graph-filtering-and-sampling">#</a>
+</h4>
+<p>SUNDAE propose a <strong>band-limited graph filter</strong> that combined with a high-frequency filter and low-frequency filter. By doing this, they can catch <strong>both the detailed information and general information</strong>. Design of filters are Haar-like.</p>
+<p>They also prune the abundant primitives according to the response magnitude of the high-pass filter.</p>
+<h3 id="3-neural-compensation">
+  3. Neural Compensation
+  <a class="anchor" href="#3-neural-compensation">#</a>
+</h3>
+<p>There is a decrease in rendering quality for large pruning ratio. To address this, they employ a <strong>neural compresation network</strong> to model the relationship between primitives in the 2D domain.</p>
+<p>They render the 3D Gaussian primitives into neural images in a <strong>differentiable</strong> manner, using the differentiable 3D Gaussian renderer from 3DGS with feature rendering instead of RGB rendering. The center of each Gaussian primitive is projected using a standard point rendering method, and the covariance in the neural image space is calculated.</p>
+<p>The neural image is then computed using the <strong>feature vectors</strong> of Gaussian primitives. A lightweight neural network (U-Net with skip connections) is used to compensate for the quality drop after spectral pruning.</p>
+<p>The overall optimization process is based on the difference between the rendered images and the ground truth images from the dataset. The compensation network and the 3D Gaussian primitives are optimized simultaneously during training, using a loss function that combines L1 loss and D-SSIM loss.</p>
+<h3 id="4-continuous-pruning-as-a-strategy">
+  4. Continuous Pruning as a Strategy
+  <a class="anchor" href="#4-continuous-pruning-as-a-strategy">#</a>
+</h3>
+<p>In addition to the training-then-pruning strategy, a <strong>continuous pruning strategy</strong> is explored. Continuous pruning periodically removes a <strong>specific number or percentage of primitives</strong> during the training process. This aims to lower <strong>peak memory</strong> usage and allow training on GPUs with lower memory. However, it can result in less predictable final memory usage, as the reduction may vary across different scenes. Therefore, continuous pruning is considered an alternative strategy when needed.</p>
 <h2 id="results">
   Results
   <a class="anchor" href="#results">#</a>
@@ -746,7 +845,7 @@ https://github.com/alex-shpak/hugo-book
     <img src='fig5.png' width="600">
 </p>
 <p align="center">
-    Fig3. Qualitative results of SUNDAE.
+    Fig5. Qualitative results of SUNDAE.
 </p>  
 <p>The qualitative results demonstrate that SUNDAE achieves comparable novel view synthesis quality with significantly lower memory consumption (1% or 10%).</p>
 <ul>
@@ -761,7 +860,7 @@ https://github.com/alex-shpak/hugo-book
     <img src='fig7.png' width="600">
 </p>
 <p align="center">
-    Fig4. Ablations experiment on the ratio 𝛾 of the bandlimited filter of graph based pruning.
+    Fig6. Ablations experiment on the ratio 𝛾 of the bandlimited filter of graph based pruning.
 </p>  
 <ul>
 <li><strong>Band-limited ratio of Graph-based pruning:</strong>
@@ -780,7 +879,7 @@ https://github.com/alex-shpak/hugo-book
     <img src='fig6.png' width="600">
 </p>
 <p align="center">
-    Fig 5. Visualization with and without neural compensation.
+    Fig. 7. Visualization with and without neural compensation.
 </p>  
 <ul>
 <li><strong>The compensation performance of the network:</strong>
@@ -812,9 +911,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/38fc1dba17a15a76bf6ba4546fbe730d2c11595c" title='Last modified by YoonChiHo | May 20, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/857f1dadb72bb8eadf1749f309099b75c277a096" title='Last modified by YoonChiHo | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 20, 2024</span>
+      <span>May 21, 2024</span>
     </a>
   </div>
 
@@ -865,13 +964,20 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#introduction">Introduction</a>
       <ul>
-        <li><a href="#3dgs">3DGS</a></li>
+        <li><a href="#3d-gaussian-splatting-3dgs-linkhttpsgithubcomgraphdeco-inriagaussian-splattingtabreadme-ov-file">3D Gaussian Splatting (3DGS) <a href="https://github.com/graphdeco-inria/gaussian-splatting?tab=readme-ov-file">Link</a></a></li>
         <li><a href="#spectral-graph-pruning">Spectral graph pruning</a></li>
         <li><a href="#neural-compensation">Neural compensation</a></li>
         <li><a href="#contributions">Contributions</a></li>
       </ul>
     </li>
-    <li><a href="#methods">Methods</a></li>
+    <li><a href="#methods">Methods</a>
+      <ul>
+        <li><a href="#1-3d-gaussian-splatting-warm-up">1. 3D Gaussian Splatting Warm up</a></li>
+        <li><a href="#2-spectral-graph-pruning">2. Spectral Graph Pruning</a></li>
+        <li><a href="#3-neural-compensation">3. Neural Compensation</a></li>
+        <li><a href="#4-continuous-pruning-as-a-strategy">4. Continuous Pruning as a Strategy</a></li>
+      </ul>
+    </li>
     <li><a href="#results">Results</a>
       <ul>
         <li><a href="#quantitative-results">Quantitative Results</a></li>

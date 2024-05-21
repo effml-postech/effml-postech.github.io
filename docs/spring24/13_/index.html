@@ -3,15 +3,13 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes. This inconsistency can lead to suboptimal performance, particularly when scaling up models.
-The concept of µ-Parameterization (µP) provides a potential solution to this problem.">
+<meta name="description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes. This inconsistency can lead to suboptimal performance, particularly when scaling up models, resulting in inefficient training processes and less effective models.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/13_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes. This inconsistency can lead to suboptimal performance, particularly when scaling up models.
-The concept of µ-Parameterization (µP) provides a potential solution to this problem.">
+  <meta property="og:description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes. This inconsistency can lead to suboptimal performance, particularly when scaling up models, resulting in inefficient training processes and less effective models.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>13 | Efficient ML Systems</title>
@@ -20,7 +18,7 @@ The concept of µ-Parameterization (µP) provides a potential solution to this p
 <link rel="canonical" href="http://localhost:1313/docs/spring24/13_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.a4f1e870b1a123bbd9075a3a0ac7cb7ffc0af740da258961ca4eb786cfa38fcb.js" integrity="sha256-pPHocLGhI7vZB1o6CsfLf/wK90DaJYlhyk63hs&#43;jj8s=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
 
   
 
@@ -625,8 +623,8 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#ablation-experiment">Ablation Experiment</a>
       <ul>
-        <li><a href="#setup--objective">Setup &amp; objective</a></li>
-        <li><a href="#baseline--summary">baseline &amp; Summary</a></li>
+        <li><a href="#setup--objective">Setup &amp; Objective</a></li>
+        <li><a href="#baseline--summary">Baseline &amp; Summary</a></li>
         <li><a href="#projection-biases">Projection Biases</a></li>
         <li><a href="#rms-norm-gainvector--scalar--embedding-normalization">RMS Norm gain(vector &amp; scalar) &amp; Embedding normalization</a></li>
         <li><a href="#query-initialization">Query Initialization</a></li>
@@ -641,7 +639,11 @@ https://github.com/alex-shpak/hugo-book
       </ul>
     </li>
     <li><a href="#related-works">Related Works</a></li>
-    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#conclusion">Conclusion</a>
+      <ul>
+        <li><a href="#personal-insights-and-future-directions">Personal Insights and Future Directions</a></li>
+      </ul>
+    </li>
     <li><a href="#references">References</a></li>
   </ul>
 </nav>
@@ -663,11 +665,11 @@ https://github.com/alex-shpak/hugo-book
   Introduction
   <a class="anchor" href="#introduction">#</a>
 </h2>
-<p>In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes. This inconsistency can lead to suboptimal performance, particularly when scaling up models.</p>
+<p>In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. <strong>However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes.</strong> <em>This inconsistency can lead to suboptimal performance, particularly when scaling up models, resulting in inefficient training processes and less effective models.</em> As models grow larger, the tuning process becomes increasingly costly and time-consuming.</p>
 <p>The concept of <strong>µ-Parameterization (µP)</strong> provides a potential solution to this problem. µP offers scaling rules for model initialization and learning rates, enabling zero-shot hyperparameter transfer from small models to larger ones. This technique promises stable training and optimal hyperparameters at scale with minimal cost. Despite its potential, µP has not been widely adopted due to its complexity and the need for further empirical validation.</p>
-<p>In this blog post, we delve into the details of µ-Parameterization, its underlying principles, and its practical applications as explored in the paper &ldquo;A Large-Scale Exploration of µ-Transfer&rdquo; by Lucas Dax Lingle.</p>
-<p><img src="https://github.com/Choo-Minhye/--Transfer-Review/assets/45410726/6910e90e-4415-4c5d-9fc1-ae89cb170762" alt="neural_network svg" /></p>
-<p><em>Figure 1: Conceptual illustration of neural network scaling.</em></p>
+<p><img src="https://github.com/Choo-Minhye/--Transfer-Review/assets/45410726/0d3c8046-98aa-4b2a-b337-40e280853f8d" alt="compare" /></p>
+<p><em><a href="https://www.microsoft.com/en-us/research/blog/%C2%B5transfer-a-technique-for-hyperparameter-tuning-of-enormous-neural-networks/">Figure 1</a> : In the default parameterization in PyTorch, the graph on the left, the activation scales diverge in width after one step of training. But in µP, the graph on the right, the activation scales change by a consistent amount regardless of width for any training step. The y-axis shows the change of network activation scales on a fixed input after t=0, 1, 2, 3, and 4 steps of training as the width of the model varies, which is shown along the x-axis. .</em></p>
+<p><strong>In this blog post,</strong> we delve into the details of µ-Parameterization, its underlying principles, and its practical applications as explored in the paper &ldquo;A Large-Scale Exploration of µ-Transfer&rdquo; by Lucas Dax Lingle.</p>
 <h2 id="what-is-µ-parameterization">
   What is µ-Parameterization?
   <a class="anchor" href="#what-is-%c2%b5-parameterization">#</a>
@@ -676,14 +678,23 @@ https://github.com/alex-shpak/hugo-book
   Concept and Principles
   <a class="anchor" href="#concept-and-principles">#</a>
 </h3>
-<p>µ-Parameterization (µP) is a set of rules for initializing neural networks and setting learning rates that allows for the seamless transfer of hyperparameters from small proxy models to larger target models. This approach is grounded in a Gaussian Process interpretation of deep neural networks, where the width of the network (number of neurons per layer) is a critical factor.</p>
+<p><strong>µ-Parameterization (µP)</strong> is a set of rules for initializing neural networks and setting learning rates that allows for the seamless transfer of hyperparameters from small proxy models to larger target models. This approach is grounded in a Gaussian Process interpretation of deep neural networks, where the width of the network (number of neurons per layer) is a critical factor.</p>
 <p>The core idea is to scale the initialization and learning rates based on the width of the network. The general formulation of µP when training with the Adam optimizer and using an i.i.d. Gaussian initialization is as follows:</p>
 <ol>
 <li>
-<p><strong>Initialization Variance</strong>: Parameters are initialized with a variance that scales inversely with the width of the layer. For example, if the width of a layer is <em><strong>M</strong></em>, then the initialization variance for weight matrices  <em><strong>W<sub>AQ</sub>, W<sub>AK</sub>, W<sub>AV</sub></strong></em> is $\frac{1}{M}$.</p>
+<p><strong>Initialization Variance</strong>: Parameters are initialized with a variance that scales inversely with the width of the layer. For example, if the width of a layer is <em><strong>M</strong></em>, then the initialization variance for weight matrices  <em><strong>W<sub>AQ</sub>, W<sub>AK</sub>, W<sub>AV</sub></strong></em> is 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(\frac{1}{M}\)
+</span>
+.</p>
 </li>
 <li>
-<p><strong>Learning Rate</strong>: The learning rate for each parameter is scaled based on the width of the network. For instance, the learning rate for the same weight matrices <em><strong>W<sub>AQ</sub>, W<sub>AK</sub>, W<sub>AV</sub></strong></em> is <em><strong>$\frac{\alpha P}{M}$</strong></em>, where <em><strong>$\alpha$</strong></em> is the base learning rate and <em><strong>P</strong></em> is a fixed proxy model width.</p>
+<p><strong>Learning Rate</strong>: The learning rate for each parameter is scaled based on the width of the network. For instance, the learning rate for the same weight matrices <em><strong>W<sub>AQ</sub>, W<sub>AK</sub>, W<sub>AV</sub></strong></em> is <span>
+  \(\frac{αP}{M}\)
+</span>
+, where <em><strong>α</strong></em> is the base learning rate and <em><strong>P</strong></em> is a fixed proxy model width.</p>
 </li>
 </ol>
 <p>These scaling rules ensure that the behavior of small and large models remains consistent, facilitating the transfer of optimal hyperparameters across different model sizes.</p>
@@ -750,6 +761,10 @@ https://github.com/alex-shpak/hugo-book
   µ-Transfer
   <a class="anchor" href="#%c2%b5-transfer">#</a>
 </h2>
+<div align="center">
+    <img src="https://github.com/Choo-Minhye/--Transfer-Review/assets/45410726/a0e97a77-c379-439c-afa2-405608d80fe3" alt="utransfer"/>
+<p><em><a href="https://ar5iv.labs.arxiv.org/html/2203.03466">Figure 2</a> : Illustration of µ-Transfer</em></p>
+</div>
 <p>One of the significant advantages of µ-Parameterization is the concept of µ-Transfer. This method allows hyperparameters, such as learning rates, found optimal in small models to be transferred directly to larger models without the need for extensive re-tuning. This process is particularly beneficial for scaling models efficiently and maintaining consistent performance across different model sizes.</p>
 <h3 id="steps-in-µ-transfer">
   Steps in µ-Transfer
@@ -786,19 +801,16 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#ablation-experiment">#</a>
 </h2>
 <h3 id="setup--objective">
-  Setup &amp; objective
+  Setup &amp; Objective
   <a class="anchor" href="#setup--objective">#</a>
 </h3>
 <p>The objective of these experiments is to examine how various methods that can enhance performance affect the actual transfer of learning rates from smaller width models to larger models with µP and their impact on performance in reality. While the existing µP aimed at transferring initialization and learning rates, this experiment focused on the learning rate, an important hyperparameter in large transformer models. <br/>
-The experiments were implemented using Jax/Flax on TPU V3, and the optimal learning rate was determined by measuring the validation loss. Models with widths of 
-<link rel="stylesheet" href="/katex/katex.min.css" />
-<script defer src="/katex/katex.min.js"></script>
-<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+The experiments were implemented using Jax/Flax on TPU V3, and the optimal learning rate was determined by measuring the validation loss. Models with widths of <span>
   \(M\)
 </span>
  = {128, 512, 2048} have parameters ranging from 4.7M to 1.2B, with the depth fixed at L = 24. The reason for focusing solely on width and not depth is that in the case of depthwise µP, only one linear layer is used per residual block, whereas transformers use at least two layers. So, in this experiment, width is the main change to control the # of parameters.<br/></p>
 <h3 id="baseline--summary">
-  baseline &amp; Summary
+  Baseline &amp; Summary
   <a class="anchor" href="#baseline--summary">#</a>
 </h3>
 <p><img src="https://github.com/simct/test/assets/127532891/5c0e4f35-043c-4e1f-abbf-9b166b457fbb" alt="baseline" />
@@ -1014,28 +1026,45 @@ To verify if transfer is possible over a larger scale difference, experiments wa
 <p>To summarize the contributions of the paper and consider the future works, this section summarizes the contents of a relevant research paper and explains its works and limitations.</p>
 <ul>
 <li><a href="https://arxiv.org/abs/2203.03466">Tensor Programs V: Tuning large neural networks via zero-shot hyperparameter transfer</a> <br/>
-The performance of µ-Transfer, which reduces computation by tuning a small model and then transferring the obtained hyperparameters to a large model instead of tuning the large parameter model directly, was demonstrated experimentally. <br/>
-<img src="https://github.com/simct/test/assets/127532891/09c64922-425d-4bbc-850a-36ca097e5fb7" alt="relate1" /><br/>
-The paper experimentally confirmed that when Standard Parameterization was applied to MLP and Transformer models, the hyperparameter stability was low. However, using µ Parameterization enabled stable transfer by using width-128 network and width-8192 network. <br/>
-The experiement sweeped the width and depth by changing only one of the hyperparameters—learning rate, output weight multiplier, initialization standard deviation, and learning rate schedule to check if they transfer across scale dimensions. Optimal hyperparameters transfered well across scale dimensions when the minimum width, depth, batch size, sequence length, and training steps were met. However, unlike the changes in width where hyperparameter transfer occured to wider models, the transfer to deeper models was less effective. The reason is same as the main paper&rsquo;s fixed depth and the experiments in this paper also adjusted the scale by fixing the depth and only varying the width.<br/>
-In this paper, experiments were conducted to evaluate the efficiency and performance of µ-Transfer using various models: from a 10M to 40M Transformer on IWSLT14 De-En, from a 15M to 211M Transformer on WMT14 En-De, from a 13M to 110M BERT and to 350M BERT-large. The largest model tested was the GPT-3, where the width is shrunk from 4096 to 256, resulting in a scale difference from 40M to 6.7B, representing a 168x scale difference. The total tuning cost was only 7% of total pretraining cost and the hyperparameter was stable across the scale.<br/><br/></li>
+The performance of µ-Transfer, which reduces computation by tuning a small model and then transferring the obtained hyperparameters to a large model instead of tuning the large parameter model directly, was demonstrated experimentally. <br/></li>
 </ul>
+<div align="center">
+<img src="https://github.com/simct/test/assets/127532891/09c64922-425d-4bbc-850a-36ca097e5fb7" alt="relate1"/>
+<p><em>Figure : (1) MLP with SP (2) MLP with µP (3) transformer with SP (4) transformer with µP</em></p>
+</div>
+<br/>
+The paper experimentally confirmed that when Standard Parameterization was applied to MLP and Transformer models, the hyperparameter stability was low. However, using µ Parameterization enabled stable transfer by using width-128 network and width-8192 network. <br/>
+The experiement sweeped the width and depth by changing only one of the hyperparameters—learning rate, output weight multiplier, initialization standard deviation, and learning rate schedule to check if they transfer across scale dimensions. Optimal hyperparameters transfered well across scale dimensions when the minimum width, depth, batch size, sequence length, and training steps were met. However, unlike the changes in width where hyperparameter transfer occured to wider models, the transfer to deeper models was less effective. The reason is same as the main paper's fixed depth and the experiments in this paper also adjusted the scale by fixing the depth and only varying the width.<br/>
+In this paper, experiments were conducted to evaluate the efficiency and performance of µ-Transfer using various models: from a 10M to 40M Transformer on IWSLT14 De-En, from a 15M to 211M Transformer on WMT14 En-De, from a 13M to 110M BERT and to 350M BERT-large. The largest model tested was the GPT-3, where the width is shrunk from 4096 to 256, resulting in a scale difference from 40M to 6.7B, representing a 168x scale difference. The total tuning cost was only 7% of total pretraining cost and the hyperparameter was stable across the scale.<br/><br/>
 <p>Contribution of the main paper : The performance of µ-Transfer, which has been proven effective with a scale difference of up to 168x, was experimentally confirmed to be reliable even with a scale difference of up to 5000x. The paper also conducted experiments not only comparing SP (Standard Parameterization) and µP (µ Parameterization) overall but also by changing specific elements such as attention scale.</p>
 <h2 id="conclusion">
   Conclusion
   <a class="anchor" href="#conclusion">#</a>
 </h2>
-<p>The paper aim to demonstrate that the transfer properties observed in the baseline with µP can be maintained across most scenarios. It also shows that µP outperforms standard parameterization (SP) and confirms the efficacy of part-by-part transfer for elements like attention scale and unembedding initialization, thereby validating the superiority of µP. Furthermore, it shows that transfer is feasible for models ranging from 2M to 10B parameters(5000x), suggesting applicability to larger models.<br/>
-However, some issues are identified where optimal learning rate transfer does not occur, or performance decline in large models. For example, trainable RMSNorm gain and decoupled weight decay does not function properly for learning rate transfer. Although transfer is observed with projection biases and cosine scheduling, there is no performance improvement or even a decline.<br/>
-The nice performance of µ-Transfer demonstrated in this paper is expected to be highly beneficial in the current AI landscape, where model sizes are continually increasing. However, since it is not always feasible to tune hyperparameters for large models, further research is required.<br/><br/>
-The suggested further researchs are as follows.</p>
+<p>The paper demonstrates that the transfer properties observed with µ-Parameterization (µP) can be maintained across most scenarios. µP outperforms standard parameterization (SP) and confirms the efficacy of part-by-part transfer for elements like attention scale and unembedding initialization, validating µP&rsquo;s superiority. Additionally, it shows that transfer is feasible for models ranging from 2M to 10B parameters (5000x), suggesting applicability to larger models.<br/>
+However, some issues are identified where optimal learning rate transfer does not occur, or there is a performance decline in large models. For instance, trainable RMSNorm gain and decoupled weight decay do not function properly for learning rate transfer. Although transfer is observed with projection biases and cosine scheduling, there is no performance improvement or even a decline.<br/>
+The impressive performance of µ-Transfer demonstrated in this paper is expected to be highly beneficial in the current AI landscape, where model sizes are continually increasing. However, tuning hyperparameters for large models is not always feasible, indicating a need for further research.
+<br/><br/></p>
+<p>The suggested further research areas are as follows:</p>
 <ul>
-<li>Detailed explanation and analysis of each experiment, investigating the causes of transfer failures and potential solutions through the expansion of each experiment (experiments on specific SP elements, experiments with various batch sizes)</li>
-<li>Scaling adjustment through depth rather than width and transferability</li>
-<li>Transferability of other hyperparameters
+<li>Detailed explanation and analysis of each experiment, investigating the causes of transfer failures and potential solutions through the expansion of each experiment (e.g., experiments on specific SP elements, experiments with various batch sizes).</li>
+<li>Scaling adjustment through depth rather than width and exploring its transferability.</li>
+<li>Transferability of other hyperparameters.
 <br/><br/></li>
 </ul>
-<p>The significance of this paper lies in summarizing the impact of various methods on performance and transfer under µ through ablation experiments. Nonetheless, a limitation is the focus on many ablations without conducting additional experiments for more detailed results. Although results are summarized in tables, comprehensive analysis is lacking. For instance, in cases where transfer fail, the differences in optimal learning rates between small and large models were relatively minor, suggesting potential for achieving transfer with further exploration or improvement. However, no additional experiments is implemented to investigate these possibilities. Due to the structural issues of transformers, scaling adjustments through depth make transfer more challenging. However, research on architectures that enable scaling adjustments through depth, as well as width, could increase the model&rsquo;s flexibility. Additionally, while the current paper focuses solely on the learning rate, it is necessary to expand the scope of transfer by experimenting with other hyperparameters such as the output weight multiplier, initialization standard deviation, and learning rate schedule, as seen in related work.<br/></p>
+<h3 id="personal-insights-and-future-directions">
+  Personal Insights and Future Directions
+  <a class="anchor" href="#personal-insights-and-future-directions">#</a>
+</h3>
+<p>The significance of this paper lies in summarizing the impact of various methods on performance and transfer under µ through ablation experiments. However, it is limited by focusing on many ablations without additional experiments for detailed results, leading to a lack of comprehensive analysis. For instance, where transfer fails, minor differences in optimal learning rates between small and large models suggest potential for improvement, but no further experiments were conducted. Structural issues in transformers make scaling adjustments through depth challenging, and research on architectures that allow adjustments through both depth and width could increase flexibility. Additionally, expanding the scope of transfer to include other hyperparameters like the output weight multiplier, initialization standard deviation, and learning rate schedule is necessary.<br/></p>
+<p>We also believe µ-Parameterization offers a promising solution to one of the significant bottlenecks in training large neural networks. Its potential to standardize and simplify the hyperparameter tuning process is a substantial step forward. However, the complexity of its implementation and the need for more empirical validation remain hurdles to its widespread adoption.</p>
+<p>To fully realize the benefits of µP, the following future research directions are proposed:</p>
+<ol>
+<li><strong>Empirical Validation</strong>: Conduct large-scale studies across various types of neural networks and applications to validate µP’s effectiveness and identify any limitations.</li>
+<li><strong>Tool Development</strong>: Create user-friendly tools and libraries that automate the µP scaling process, making it more accessible to practitioners.</li>
+<li><strong>Hybrid Approaches</strong>: Explore combining µP with other optimization methods like LAMB to further enhance training efficiency and performance.</li>
+</ol>
+<p>By addressing these future research directions, the full potential of µ-Parameterization can be unlocked, paving the way for more efficient and effective neural network training methodologies.</p>
 <h2 id="references">
   References
   <a class="anchor" href="#references">#</a>
@@ -1061,7 +1090,7 @@ abs/1911.02150, 2019. URL <a href="https://arxiv.org/abs/1911.02150">https://arx
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/6a51edb5f546791719761469f70bd83d20b0d0ca" title='Last modified by ChoiJeonghyun | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/7d42231e77b1b1845705f14cdc6c3268785d179f" title='Last modified by ChoiJeonghyun | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 21, 2024</span>
     </a>
@@ -1121,8 +1150,8 @@ abs/1911.02150, 2019. URL <a href="https://arxiv.org/abs/1911.02150">https://arx
     </li>
     <li><a href="#ablation-experiment">Ablation Experiment</a>
       <ul>
-        <li><a href="#setup--objective">Setup &amp; objective</a></li>
-        <li><a href="#baseline--summary">baseline &amp; Summary</a></li>
+        <li><a href="#setup--objective">Setup &amp; Objective</a></li>
+        <li><a href="#baseline--summary">Baseline &amp; Summary</a></li>
         <li><a href="#projection-biases">Projection Biases</a></li>
         <li><a href="#rms-norm-gainvector--scalar--embedding-normalization">RMS Norm gain(vector &amp; scalar) &amp; Embedding normalization</a></li>
         <li><a href="#query-initialization">Query Initialization</a></li>
@@ -1137,7 +1166,11 @@ abs/1911.02150, 2019. URL <a href="https://arxiv.org/abs/1911.02150">https://arx
       </ul>
     </li>
     <li><a href="#related-works">Related Works</a></li>
-    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#conclusion">Conclusion</a>
+      <ul>
+        <li><a href="#personal-insights-and-future-directions">Personal Insights and Future Directions</a></li>
+      </ul>
+    </li>
     <li><a href="#references">References</a></li>
   </ul>
 </nav>
