@@ -3,15 +3,17 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Beyond Language Models: Byte Models are Digital World Simulators # Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun
-Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.">
+<meta name="description" content="Beyond Language Models: Byte Models are Digital World Simulators # Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun Links: Paper, GitHub, Hugging Face, Official Project Page
+Posted by Dohun Kim and Yeongwoo Kim
+bGPT: from Language Models to Byte Models # Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/23_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Beyond Language Models: Byte Models are Digital World Simulators # Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun
-Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.">
+  <meta property="og:description" content="Beyond Language Models: Byte Models are Digital World Simulators # Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun Links: Paper, GitHub, Hugging Face, Official Project Page
+Posted by Dohun Kim and Yeongwoo Kim
+bGPT: from Language Models to Byte Models # Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>23 | Efficient ML Systems</title>
@@ -610,14 +612,17 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#bgpt-from-language-models-to-byte-models">bGPT: from Language Models to Byte Models</a></li>
+    <li><a href="#proposed-bgpt-framework">Proposed bGPT Framework</a>
       <ul>
-        <li><a href="#exploring-bgpt"><strong>Exploring bGPT</strong></a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#training-objectives">Training Objectives</a></li>
         <li><a href="#applications">Applications</a></li>
         <li><a href="#experiment">Experiment</a></li>
         <li><a href="#conclusion-and-future-work"><strong>Conclusion and Future Work</strong></a></li>
       </ul>
     </li>
+    <li><a href="#references">References</a></li>
   </ul>
 </nav>
 
@@ -631,22 +636,39 @@ https://github.com/alex-shpak/hugo-book
       
       
   <article class="markdown book-article"><h1 id="beyond-language-models-byte-models-are-digital-world-simulators">
-  <strong>Beyond Language Models: Byte Models are Digital World Simulators</strong>
+  Beyond Language Models: Byte Models are Digital World Simulators
   <a class="anchor" href="#beyond-language-models-byte-models-are-digital-world-simulators">#</a>
 </h1>
-<p><em>Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun</em></p>
+<p><em>Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun</em> <br>
+<em>Links: <a href="https://arxiv.org/abs/2402.19155">Paper</a>, <a href="https://github.com/sanderwood/bgpt">GitHub</a>, <a href="https://huggingface.co/sander-wood/bgpt">Hugging Face</a>, <a href="https://byte-gpt.github.io/">Official Project Page</a></em></p>
+<p><em>Posted by Dohun Kim and Yeongwoo Kim</em></p>
+<h2 id="bgpt-from-language-models-to-byte-models">
+  bGPT: from Language Models to Byte Models
+  <a class="anchor" href="#bgpt-from-language-models-to-byte-models">#</a>
+</h2>
 <p>Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.</p>
-<p>In this paper, bGPT is introduced. bGPT is designed to model digital data at the byte level and is optimized to effectively process byte sequences. It has demonstrated performance comparable to specialized models across various modalities, including text, audio, and images, and offers new possibilities for predicting, simulating, and diagnosing hardware operations. Designed to predict and understand bytes, bGPT provides a deeper understanding of and interaction with digital systems.</p>
-<p align="center">
-    <img src=framework.JPG width="600"> 
-</p>
-The bGPT framework simulates digital systems using native binary data. It integrates diverse data types into a single model by treating everything as a byte sequence.
-<hr>
-<h3 id="exploring-bgpt">
-  <strong>Exploring bGPT</strong>
-  <a class="anchor" href="#exploring-bgpt">#</a>
+<p><img src="framework.JPG" alt="bgpt_framework" /> <br>
+<em><a href="https://byte-gpt.github.io/">Figure 1</a>: The bGPT framework simulates digital systems using native binary data. It integrates diverse data types into a single model by treating everything as a byte sequence.</em></p>
+<p>In this paper, bGPT is introduced. bGPT is designed to model digital data at the byte level and is optimized to effectively process byte sequences. It has demonstrated performance comparable to specialized models across various modalities, including text, audio, and images, and offers new possibilities for predicting, simulating, and diagnosing algorithms or hardware operations. Designed to predict and understand bytes, bGPT provides a deeper understanding of and interaction with digital systems.</p>
+<p>The main contributions of this paper are as follows:</p>
+<ul>
+<li><strong>bGPT</strong>, a model with <em>next-byte prediction</em> is presented to simulate digital systems</li>
+<li><strong>Hierarchical Transformer architecture</strong> is adapted to handle byte sequences efficiently.</li>
+<li><strong>In-depth analysis</strong> of bGPT&rsquo;s performance on text, audio, and image data is provided.</li>
+<li><strong>Novel benchmarks</strong> are introduced to show bGPT&rsquo;s capabilities for digital world modeling.</li>
+</ul>
+<h2 id="proposed-bgpt-framework">
+  Proposed bGPT Framework
+  <a class="anchor" href="#proposed-bgpt-framework">#</a>
+</h2>
+<h3 id="architecture">
+  Architecture
+  <a class="anchor" href="#architecture">#</a>
 </h3>
-<p><em><strong>Architecture</strong></em></p>
+<p align="center">
+  <img src=architecture.JPG width="600">
+</p>
+<p><em><a href="https://byte-gpt.github.io/">Figure 2</a>: The hierachical Transformer architecture of bGPT. It segments sequence of bytes into a sequence of patches, to balance the need for long sequences and computational efficiency.</em></p>
 <p>Learning patterns in digital systems at the byte level provides a unified approach to integrating various data types, but the high resolution of bytes results in long sequences that significantly increase computational costs. This issue is especially pronounced in transformer-based models, limiting the efficiency and scalability of processing binary data.
 bGPT is equipped with a hierarchical structure designed to efficiently handle entire byte sequences. This structure segments a sequence of byte
 
@@ -689,16 +711,19 @@ bGPT is equipped with a hierarchical structure designed to efficiently handle en
 </span>
  represents the <code>&lt;eop&gt;</code> (end-of-patch).</p>
 <p><em><strong>Components</strong></em></p>
-<p align="center">
-    <img src=architecture.JPG width="600"> 
-</p>
 <ul>
 <li><strong>Linear Projection Layer</strong>: Each byte patch is mapped to a high-dimensional feature space through a linear projection layer. During this process, each byte is encoded into a 257-dimensional vector, which includes the 256 possible byte values and a special <code>&lt;eop&gt;</code> (end-of-patch) token.</li>
 <li><strong>Patch-Level Decoder</strong>: The embedded patches are processed by a patch-level decoder. This decoder plays a role in predicting the features of the next patch from the embedding of each patch, thereby learning the structural patterns of the entire dataset.</li>
 <li><strong>Byte-Level Decoder</strong>: Based on the predicted patch features, the byte sequence within each patch is reconstructed. The byte-level decoder uses the features of each patch to predict the next byte within that patch, processing the detailed information of the entire byte sequence.</li>
 </ul>
-<p><em><strong>Model Training</strong></em></p>
-<p><strong>1. Generative Modeling</strong></p>
+<h3 id="training-objectives">
+  Training Objectives
+  <a class="anchor" href="#training-objectives">#</a>
+</h3>
+<h4 id="1-generative-modeling">
+  1. Generative Modeling
+  <a class="anchor" href="#1-generative-modeling">#</a>
+</h4>
 <p>This approach requires the model to predict the next byte in a given byte sequence. The model takes the byte sequence <span>
   \(B = \{b_1, b_2, \ldots, b_T\}\)
 </span>
@@ -711,7 +736,10 @@ bGPT is equipped with a hierarchical structure designed to efficiently handle en
   \(\mathcal{L}_{\text{GEN}}(\theta) = - \sum_{i=1}^{T-1} \log p(b_{i&#43;1} \mid b_1, b_2, \ldots, b_i; \theta)\)
 </span>
 </p>
-<p><strong>2. Classification</strong></p>
+<h4 id="2-classification">
+  2. Classification
+  <a class="anchor" href="#2-classification">#</a>
+</h4>
 <p>Based on the knowledge acquired through generative modeling, bGPT can also be applied to classification tasks for labeled datasets. In this process, the model takes a byte sequence as input and predicts the category to which that sequence belongs.
 For classification tasks, the loss function used is the cross-entropy loss, which ensures that the model accurately outputs the prediction probabilities for each category.</p>
 <span>
@@ -879,6 +907,11 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
 <li>Expanding the model and dataset sizes to accommodate a wider range of native binary data and handle larger digital media files such as high-resolution images and videos.</li>
 <li>Improving performance in underexplored tasks involving native binary data across various application domains.</li>
 </ul>
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<p><a href="https://arxiv.org/abs/2402.19155">Beyond Language Models: Byte Models are Digital World Simulators (arXiv)</a> <br></p>
 </article>
  
       
@@ -933,14 +966,17 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
   
 <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#bgpt-from-language-models-to-byte-models">bGPT: from Language Models to Byte Models</a></li>
+    <li><a href="#proposed-bgpt-framework">Proposed bGPT Framework</a>
       <ul>
-        <li><a href="#exploring-bgpt"><strong>Exploring bGPT</strong></a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#training-objectives">Training Objectives</a></li>
         <li><a href="#applications">Applications</a></li>
         <li><a href="#experiment">Experiment</a></li>
         <li><a href="#conclusion-and-future-work"><strong>Conclusion and Future Work</strong></a></li>
       </ul>
     </li>
+    <li><a href="#references">References</a></li>
   </ul>
 </nav>
 

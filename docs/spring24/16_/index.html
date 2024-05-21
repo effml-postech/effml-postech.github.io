@@ -614,8 +614,19 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#understanding-the-problem-uniform-computation-in-transformers"><strong>Understanding the problem: Uniform computation in Transformers</strong></a></li>
     <li><a href="#conditional-computation-for-transformers"><strong>Conditional Computation for transformers</strong></a></li>
     <li><a href="#overview-to-mixture-of-depths-mod"><strong>Overview to Mixture-of-Depths (MoD)</strong></a></li>
-    <li><a href="#capacity-based-routing-schemes"><strong>Capacity based routing schemes</strong></a></li>
-    <li><a href="#implementation-detail"><strong>Implementation detail</strong></a></li>
+    <li><a href="#capacity-based-routing-schemes"><strong>Capacity based routing schemes</strong></a>
+      <ul>
+        <li><a href="#token-choice-routing">Token-choice routing</a></li>
+        <li><a href="#expert-choice-routing">Expert-choice routing</a></li>
+        <li><a href="#expert-choice-mod">Expert-choice MoD</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementation-detail"><strong>Implementation detail</strong></a>
+      <ul>
+        <li><a href="#1-calculate-routing-weight">1. Calculate routing weight</a></li>
+        <li><a href="#2-select-top-k-tokens">2. Select top-k tokens</a></li>
+      </ul>
+    </li>
     <li><a href="#open-source-mod"><strong>Open source MoD</strong></a></li>
     <li><a href="#conclusion-and-discussion"><strong>Conclusion and discussion</strong></a></li>
     <li><a href="#some-resources"><strong>Some resources</strong></a></li>
@@ -647,21 +658,23 @@ This image was produced using DALL·E 3.
 </h2>
 <p>“Choice and concentration” is an effective strategies for achieving success in problems. Sometimes, it is not necessary to consume same amount of effort and time into all problems. Expending energy on trivial issues may fail to concentrate on what truly matters. Similarly, in language models, there is a technique that does not focus equally on all tokens but allocates less budget to non-essential tokens. This technique is called conditional computation.</p>
 <p>In this post, We will explain conditional computation strategies for Transformers, focusing on a technology announced this year called <strong>Mixture-of-Texture.</strong></p>
-<p>paper:  <a href="https://arxiv.org/abs/2404.02258"><U>Mixture-of-Depths: Dynamically allocating compute in transformer-based language models</U></a></p>
+<p>paper:  <a href="https://arxiv.org/abs/2404.02258"><U>Mixture-of-Depths: Dynamically allocating compute in transformer-based language models</U></a>{:target=&quot;_blank&quot;}</p>
+<p>paper: <a href="https://arxiv.org/abs/2404.02258" target="_blank"> Mixture-of-Depths: Dynamically allocating compute in transformer-based language models </a></p>
 <p>Let&rsquo;s dive in!</p>
 <h2 id="understanding-the-problem-uniform-computation-in-transformers">
   <strong>Understanding the problem: Uniform computation in Transformers</strong>
   <a class="anchor" href="#understanding-the-problem-uniform-computation-in-transformers">#</a>
 </h2>
-<p>These days, most language models are based on Transformers, and we stack these blocks to make big models. When given an input sequence, tokens pass through these blocks to predict the next token. The problem is that the models spread computations uniformly across input sequences. Transformers use the same amount of computation for essential tokens as for non-essential ones. For instance, predicting a token within a sentence is cheaper than predicting the first token of the next sentence. Researchers want to address this issue by making Transformers focus their computations on the tokens that is important.</p>
+<p>These days, most language models are based on Transformers, and we stack these blocks to make big models. When given an input sequence, tokens pass through these blocks to predict the next token. The problem is that the models spread computations uniformly across input sequences. Transformers use the same amount of computation for essential tokens as for non-essential ones. For instance, predicting a token within a sentence is cheaper than predicting the first token of the next sentence. Researchers want to address this issue by making Transformers focus on important tokens by allocating less computing resources.</p>
 <h2 id="conditional-computation-for-transformers">
   <strong>Conditional Computation for transformers</strong>
   <a class="anchor" href="#conditional-computation-for-transformers">#</a>
 </h2>
 <ul>
 <li>
-<p>Early exiting</p>
-<p>Early Exit method is a method when the model decides to end computation on a given token, allowing it skips the remaining layers. Difference between MoD is, MoD can choose whether skip middle layer or not, but Early Exit method can&rsquo;t.</p>
+<p>Early exiting
+early exiting
+Early Exit method is a method when the model decides to end computation on a given token, allowing it skips the remaining layers. Difference between MoD is, MoD can choose whether skip middle layer or not, but Early Exit method can&rsquo;t.</p>
 </li>
 <li>
 <p>CoLT5</p>
@@ -675,6 +688,7 @@ This image was produced using DALL·E 3.
   <strong>Overview to Mixture-of-Depths (MoD)</strong>
   <a class="anchor" href="#overview-to-mixture-of-depths-mod">#</a>
 </h2>
+<p>Self-attention + MLP, Residual Connection 중 고른다는 내용. MoE는 넓이를 줄였지만, MoD는 깊이에 해당한다는 내용.</p>
 <p align="center">
     <img src=./Mixture-of-Depths.png> 
 </p>
@@ -685,28 +699,45 @@ Difference between MoD is, MoD chooses path to transformer or to residual connec
   <strong>Capacity based routing schemes</strong>
   <a class="anchor" href="#capacity-based-routing-schemes">#</a>
 </h2>
-<ul>
-<li>
-<p>Token-choice routing</p>
-</li>
-<li>
-<p>Expert-choice routing</p>
-</li>
-<li>
-<p>Expert-choice MoD</p>
-</li>
-</ul>
+<p>Routing implementation is the most crucial part of MoD. The authors compare three routing strategies, demonstrating that MoD is an efficient approach.</p>
+<p align="center">
+    <img src=./Routing_Schemes.png> 
+</p>
+<h3 id="token-choice-routing">
+  Token-choice routing
+  <a class="anchor" href="#token-choice-routing">#</a>
+</h3>
+<p>Token-choice routing is a method where each tokens select the path it will follow. The router produces probability distributions for each token across the computational paths. Based on this distribution, each token chooses its preferred path at each layer.</p>
+<p>In token-choice routing, tokens have the flexibility to select their path, allowing for dynamic processing. However, this can lead to path balancing issues as all tokens might preger on the same path. It causes potential overloads on specific paths. To mitigate it, auxility loss is used to ensure that most tokens do not prefer on a single path.</p>
+<h3 id="expert-choice-routing">
+  Expert-choice routing
+  <a class="anchor" href="#expert-choice-routing">#</a>
+</h3>
+<p>Expert-choice routing is the reverse of token-choice routing. Similar to token-choice routing, the router produces a probability distribution for each token. In expert-choice routing, instead of tokens selecting their paths, each path selects the top-k tokwns based on the tokens&rsquo; preferences.</p>
+<p>Using this method ensures that each paths receives k tokens, maintauing balance among the paths. However, some tokens may not be selected beacuse there might be common tokens that multiple paths prefer.</p>
+<h3 id="expert-choice-mod">
+  Expert-choice MoD
+  <a class="anchor" href="#expert-choice-mod">#</a>
+</h3>
 <h2 id="implementation-detail">
   <strong>Implementation detail</strong>
   <a class="anchor" href="#implementation-detail">#</a>
 </h2>
+<h3 id="1-calculate-routing-weight">
+  1. Calculate routing weight
+  <a class="anchor" href="#1-calculate-routing-weight">#</a>
+</h3>
 
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \[x^{l&#43;1}_i=\begin{cases}r^{l}_i f_i(\tilde{X}^l)&#43;x^{l}_i, &amp; r^{l}_i &gt;  P_\beta(R^l)\\x^{l}_i, &amp; r^{l}_i &lt;  P_\beta(R^l)\end{cases}\]
+  \[x^{l&#43;1}_i=\begin{cases}r^{l}_i f_i(\tilde{X}^l)&#43;x^{l}_i, &amp;    \text{if } r^{l}_i &gt;  P_\beta(R^l)\\x^{l}_i, &amp; \text{if }r^{l}_i &lt;  P_\beta(R^l)\end{cases}\]
 </span>
 
+<h3 id="2-select-top-k-tokens">
+  2. Select top-k tokens
+  <a class="anchor" href="#2-select-top-k-tokens">#</a>
+</h3>
 <p>논문 요약</p>
 <h2 id="open-source-mod">
   <strong>Open source MoD</strong>
@@ -781,8 +812,19 @@ Difference between MoD is, MoD chooses path to transformer or to residual connec
     <li><a href="#understanding-the-problem-uniform-computation-in-transformers"><strong>Understanding the problem: Uniform computation in Transformers</strong></a></li>
     <li><a href="#conditional-computation-for-transformers"><strong>Conditional Computation for transformers</strong></a></li>
     <li><a href="#overview-to-mixture-of-depths-mod"><strong>Overview to Mixture-of-Depths (MoD)</strong></a></li>
-    <li><a href="#capacity-based-routing-schemes"><strong>Capacity based routing schemes</strong></a></li>
-    <li><a href="#implementation-detail"><strong>Implementation detail</strong></a></li>
+    <li><a href="#capacity-based-routing-schemes"><strong>Capacity based routing schemes</strong></a>
+      <ul>
+        <li><a href="#token-choice-routing">Token-choice routing</a></li>
+        <li><a href="#expert-choice-routing">Expert-choice routing</a></li>
+        <li><a href="#expert-choice-mod">Expert-choice MoD</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementation-detail"><strong>Implementation detail</strong></a>
+      <ul>
+        <li><a href="#1-calculate-routing-weight">1. Calculate routing weight</a></li>
+        <li><a href="#2-select-top-k-tokens">2. Select top-k tokens</a></li>
+      </ul>
+    </li>
     <li><a href="#open-source-mod"><strong>Open source MoD</strong></a></li>
     <li><a href="#conclusion-and-discussion"><strong>Conclusion and discussion</strong></a></li>
     <li><a href="#some-resources"><strong>Some resources</strong></a></li>

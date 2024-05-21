@@ -3,17 +3,19 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
+<meta name="description" content="test: \lbrace$x_{11}, x_{22}$\rbrace
+Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
 Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
-1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time. In this report, we especially focus on the &ldquo;knowledge edit&rdquo; problem.">
+1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/22_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
+  <meta property="og:description" content="test: \lbrace$x_{11}, x_{22}$\rbrace
+Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
 Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
-1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time. In this report, we especially focus on the “knowledge edit” problem.">
+1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>22 | Efficient ML Systems</title>
@@ -621,7 +623,11 @@ https://github.com/alex-shpak/hugo-book
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a></li>
+    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
     <li><a href="#4-memory-operations">4. Memory Operations</a></li>
     <li><a href="#5-results">5. Results</a>
       <ul>
@@ -646,7 +652,8 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="larimar-large-language-models-with-episodic-memory-control">
+  <article class="markdown book-article"><p>test: \lbrace$x_{11}, x_{22}$\rbrace</p>
+<h1 id="larimar-large-language-models-with-episodic-memory-control">
   Larimar: Large Language Models with Episodic Memory Control
   <a class="anchor" href="#larimar-large-language-models-with-episodic-memory-control">#</a>
 </h1>
@@ -757,8 +764,21 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
 <p align="center">
     Fig7. Larimar architecture
 </p>
-<p>Let&rsquo;s see how it works with details.</p>
-<p>First of all, the memory <strong>M</strong> in Fig7 has to be trained so as to approximate the distribution of <strong>X</strong> (<strong>X</strong> is an exchangeable-order invariant episode: <strong>X</strong>={x_1, &hellip;, x_N}, a subset of the input data consisting of <strong>N</strong> samples). To do so, the model maximize the conditional log-likelihood of ln<em>p</em> (<strong>X</strong>|<strong>M</strong>). In this way, the model learns to compress <strong>X</strong> in a memory <strong>M</strong>, which then becomes a distributed associative memory.</p>
+<p>Let&rsquo;s see how it works in two stages.</p>
+<h4 id="3-1-training">
+  3-1. Training
+  <a class="anchor" href="#3-1-training">#</a>
+</h4>
+<h5 id="1-writing">
+  (1) Writing
+  <a class="anchor" href="#1-writing">#</a>
+</h5>
+<p>The memory <strong>M</strong> in Fig7 has to be trained so as to approximate the distribution of <strong>X</strong> (<strong>X</strong> is an exchangeable-order invariant episode: <strong>X</strong> = { $x_{1}$, &hellip;, $x_{N}$ }, a subset of the input data consisting of <strong>N</strong> samples). To do so, the model is trained to maximize the conditional log-likelihood of ln<em>p</em> (<strong>X</strong>|<strong>M</strong>). In this way, the model learns to compress <strong>X</strong> in a memory <strong>M</strong>, which then becomes a distributed associative memory.</p>
+<h5 id="2-reading">
+  (2) Reading
+  <a class="anchor" href="#2-reading">#</a>
+</h5>
+<p>The reading weight matrix, <strong>W</strong>, is a random variable to enforce generative ability of the model. Memory readouts are obtained as <strong>Z</strong>_{readout} = <strong>WM</strong>.</p>
 <p>Next, writing weight and reading weight
 consider how to determine the writing weight and reading weight.</p>
 <p>First of all, let&rsquo;s consider the write operation (green arrows in Fig7). Data episode of length N is transformed into a latent vector through an encoder. Then, the posterior memory M given the data Z and the writing weight W0 is calculated [8].</p>
@@ -945,7 +965,11 @@ processing in the latent space, Larimar is also efficient is terms of number of 
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a></li>
+    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
     <li><a href="#4-memory-operations">4. Memory Operations</a></li>
     <li><a href="#5-results">5. Results</a>
       <ul>

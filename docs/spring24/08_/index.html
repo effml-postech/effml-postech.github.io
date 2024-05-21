@@ -667,11 +667,11 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#loras-composistion">#</a>
 </h3>
 <p>The common solution to further improve the performance of LoRA is to compose multiple trained LoRAs. Research on LoRA composition can be broadly categorized into the following two methodologies.</p>
-<p><strong>Linear arithmetic composition.</strong></p>
+<p><strong>Linear arithmetic composition.</strong> It is a method of directly adding multiple LoRAs. This approach is simple and has been effective in the NLP and Vision-Language domain, but it can result in the loss of pre-trained model&rsquo;s generative capabilities or the individual characteristics of each LoRA.</p>
+<p><strong>Reference tuning-based composition</strong> tackles the above limitations of linear arithmetic method by introducing gradient fusion and controllable sampling, but is requires retaining when incorporating different LoRAs or creating new masks, which results non-trivial computational costs.</p>
 <p align="center">
-    <img src=./linear_com.png> 
+    <img src=./lora_comp.png> 
 </p>
-<p><strong>Reference tuning-based composition.</strong></p>
 <h3 id="mixture-of-experts">
   Mixture-of-Experts
   <a class="anchor" href="#mixture-of-experts">#</a>
@@ -684,6 +684,17 @@ https://github.com/alex-shpak/hugo-book
   Motivations
   <a class="anchor" href="#motivations">#</a>
 </h3>
+<ol>
+<li>Direct linear arithmetic composition reduced the generative power of the model, while normalized linear arithmetic composition retained the generative power of the model but lost its LORA character.
+<p align="center">
+ <img src=./motiv1_1.png align="center" width="32%">
+ <img src=./motiv1_2.png align="center" width="32%">
+ <img src=./motiv1_3.png align="center" width="32%">
+ <figcaption align="center">
+</li>
+</ol>
+</p>
+2. Each layer of the trained LoRA represented a unique characteristic, which cumulatively defined the overall properties of the LoRA.
 <h3 id="method">
   Method
   <a class="anchor" href="#method">#</a>
