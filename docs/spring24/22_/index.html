@@ -22,7 +22,7 @@ Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
 <link rel="canonical" href="http://localhost:1313/docs/spring24/22_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.e1356f20dccae35e9ba3cad4988954dd54d0d3e408358924da8bfa045ac57d62.js" integrity="sha256-4TVvINzK416bo8rUmIlU3VTQ0&#43;QINYkk2ov6BFrFfWI=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.a4f1e870b1a123bbd9075a3a0ac7cb7ffc0af740da258961ca4eb786cfa38fcb.js" integrity="sha256-pPHocLGhI7vZB1o6CsfLf/wK90DaJYlhyk63hs&#43;jj8s=" crossorigin="anonymous"></script>
 
   
 
@@ -670,19 +670,19 @@ https://github.com/alex-shpak/hugo-book
     <img src='knowledge update.png' width="600">
 </p>
 <p align="center">
-    (Fig1. Knowledge update: New knowledge should be injected constantly [2])
+    Fig1. Knowledge update: New knowledge should be injected constantly [2]
 </p>
 <p align="center">
     <img src='context length generalization.png' width="600">
 </p>
 <p align="center">
-    (Fig2. Context length generalization: The ability to quickly update the LLM can help with "input context length generalization problem" [3])
+    Fig2. Context length generalization: The ability to quickly update the LLM can help with "input context length generalization problem" [3]
 </p>
 <p align="center">
     <img src='selective fact forgetting.png' width="600">
 </p>
 <p align="center">
-    (Fig3. Selective fact forgetting: LLMs should forget personal & sensitive data [4])
+    Fig3. Selective fact forgetting: LLMs should forget personal & sensitive data [4]
 </p>
 <h3 id="memory-network">
   Memory network
@@ -695,7 +695,7 @@ https://github.com/alex-shpak/hugo-book
     <img src='QA.PNG' width="600">
 </p>
 <p align="center">
-    (Fig4. Example of QA [5])
+    Fig4. Example of QA [5]
 </p>
 <h3 id="neocortex-hippocampus-interactions">
   Neocortex-Hippocampus interactions
@@ -706,7 +706,7 @@ https://github.com/alex-shpak/hugo-book
     <img src=brain.png width="400"> 
 </p>
 <p align="center">
-    (Fig5. Neocortex and the Hippocampus)
+    Fig5. Neocortex and the Hippocampus
 </p>
 The Complementary Learning Systems (CLS) theory proposes a model that combines these complementary learning systems of the hippocampus and neocortex. The interaction between the neocortex and hippocampus in the brain is known to promote adaptive behavior through memorization and generalization. Furthermore, it is suggested that memory consolidation from the hippocampus to the neocortex is facilitated by the activation synchronized with multiple exact or false replays of the encoded experience in the hippocampus. This implies that the hippocampus functions as a generative associative network.
 <h2 id="2-contributions">
@@ -742,7 +742,7 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
     <img src='architecture.png' width="800">
 </p>
 <p align="center">
-    (Fig6. Larimar architecture)
+    Fig6. Larimar architecture
 </p>
 <p>First, let&rsquo;s</p>
 <p>sparse distributed memory is used for stroing and retrieving large amounts of information without focusing on the accuracy but on similarity of information. - wiki</p>
@@ -763,7 +763,7 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
     <img src='wall_clock_time _result.PNG' width="800">
 </p>
 <p align="center">
-    (Fig8. Comparison between different editing methods and the wall clock time for a single edit)
+    Fig7. Comparison between different editing methods and the wall clock time for a single edit
 </p>
 The experiment was conducted on a single A100 GPU. Comparing the wall clock time for each editing method across 10 single edits, as shown in Fig8, Larimar was found to be approximately 4-10 times faster than the existing ROME and GRACE methods. Additionally, Larimar demonstrates the ability to address sequential edits, batch edits, and forgetting/deletion, which were not previously addressed in existing work.
 <h3 id="single-fact-editing">
@@ -775,19 +775,21 @@ The experiment was conducted on a single A100 GPU. Comparing the wall clock time
     <img src='Single_fact_editing_result.PNG' width="500">
 </p>
 <p align="center">
-    (Fig9.Single fact edit performanceon CounterFact dataset comparing with baseline. Top two best systems are highlighted.)
+    Fig8.Single fact edit performanceon CounterFact dataset comparing with baseline. Top two best systems are highlighted.
 </p>
 The results are shown in Fig 9. Edit Success measures the percentage of cases where the edited result has a higher probability than the original result, while Paraphrase evaluates whether the model achieves the same performance using paraphrase prompts. Neighborhood assesses the model's ability to retain knowledge about the original object. Larimar demonstrates comparable performance in editing new facts and handling prompts.
 <h3 id="sequential-fact-editing">
   Sequential Fact Editing
   <a class="anchor" href="#sequential-fact-editing">#</a>
 </h3>
+<p>To check sequential fact editing, Test retention rate(TRR) and edit retention rate(ERR) are used. TRR check how well an edited model retains its performence on tis original testing data. Larminar decoder&rsquo;s perplexity was tested on 1000 random test samples from wikitext using a separate language model.  In comparison, baseline models compute TRR from mean F1 scores from 1000 random samples of NQ data. ERR check how well an edited model retains previous edits. This paper, ERR was evaluated by F1 score after 1000 sequential edits when querying the memory with the encoded query Zquery for each written fact.</p>
 <p align="center">
     <img src='sequential_fact_editing_result.PNG' width="450">
 </p>
 <p align="center">
-    (Fig10. Selective fact forgetting: LLMs should forget personal & sensitive data)
+    Fig9. Selective fact forgetting: LLMs should forget personal & sensitive data
 </p>
+According to the figure 9, Larimar’s comparable ERR performance to GRACE, while preserving its original test set performance.Larimar-1.3B achieves editing speeds approximately 10 or more times faster than GRACE on GPT-2 XL.
 <h3 id="selective-forgetting">
   Selective Forgetting
   <a class="anchor" href="#selective-forgetting">#</a>
@@ -796,7 +798,7 @@ The results are shown in Fig 9. Edit Success measures the percentage of cases wh
     <img src='memoryerase_result.PNG' width="500">
 </p>
 <p align="center">
-    (Fig11. Selective fact forgetting: LLMs should forget personal & sensitive data)
+    Fig10. Selective fact forgetting: LLMs should forget personal & sensitive data
 </p>
 <h3 id="recall-performance">
   Recall Performance
@@ -806,7 +808,7 @@ The results are shown in Fig 9. Edit Success measures the percentage of cases wh
     <img src='recall_performance_result.PNG' width="750">
 </p>
 <p align="center">
-    (Fig12. Selective fact forgetting: LLMs should forget personal & sensitive data)
+    Fig11. Selective fact forgetting: LLMs should forget personal & sensitive data
 </p>
 <h2 id="6-conclusion">
   6. Conclusion
@@ -828,7 +830,6 @@ The results are shown in Fig 9. Edit Success measures the percentage of cases wh
 -&gt; Memory Networks</p>
 <p>[6] <a href="https://openreview.net/forum?id=Harn4_EZBw">https://openreview.net/forum?id=Harn4_EZBw</a>
 -&gt; Generative Pseudo-Inverse Memory</p>
-<p><a href="https://arxiv.org/abs/2403.11901">https://arxiv.org/abs/2403.11901</a></p>
 <p><a href="https://www.rallyware.com/blog/the_neuroscience_behind_successful_talent_development">brain figure</a></p>
 </article>
  
@@ -839,7 +840,7 @@ The results are shown in Fig 9. Edit Success measures the percentage of cases wh
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/46ccce409aba32ce49b802b1aa1e121f294e4c97" title='Last modified by skjang238 | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/cb1325311b093dc5ebdac9f8429106e71fae08e1" title='Last modified by kangnam4123 | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 21, 2024</span>
     </a>

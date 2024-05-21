@@ -24,7 +24,7 @@ Large Language models ( LLMs ) like GPT-2, LLaMa have become increasingly import
 <link rel="canonical" href="http://localhost:1313/docs/spring24/17_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.e1356f20dccae35e9ba3cad4988954dd54d0d3e408358924da8bfa045ac57d62.js" integrity="sha256-4TVvINzK416bo8rUmIlU3VTQ0&#43;QINYkk2ov6BFrFfWI=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.a4f1e870b1a123bbd9075a3a0ac7cb7ffc0af740da258961ca4eb786cfa38fcb.js" integrity="sha256-pPHocLGhI7vZB1o6CsfLf/wK90DaJYlhyk63hs&#43;jj8s=" crossorigin="anonymous"></script>
 
   
 
@@ -683,7 +683,7 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#random-hadamard-transform-doesnt-change-the-result">#</a>
 </h2>
 <p>In the concept of computational invariance theorem, small changes in input parameters do not cause the output difference if the algorithm is stable.  When applying this to a transformer-based large language model (LLM), it implies that rotating the coordinate system of activations between weight and computation blocks using an orthogonal matrix does not alter the model&rsquo;s output. According to this theory, instead of using any matrix X that constitutes the transformer, you can use <em>X</em>′=<em>UXV</em> where U and V are orthogonal matrices, and the computational results will remain unchanged.</p>
-<p>If the number or proportion of outliers in 𝑋′ is less than that in 𝑋, the information loss during quantization can be reduced. The paper &ldquo;A&rdquo; demonstrates that multiplying a matrix by orthogonal matrices on both sides reduces the value of max⁡(𝑋)/mean(𝑋). This means that the presence of extreme values relative to the average is diminished, leading to a more uniform distribution of values within the matrix. However, performing 𝑈𝑋𝑉 also incurs overhead, so selecting orthogonal matrices 𝑈 and 𝑉 that minimize this overhead is essential.</p>
+<p>If the number or proportion of outliers in 𝑋′ is less than that in 𝑋, the information loss during quantization can be reduced. <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/0df38cd13520747e1e64e5b123a78ef8-Abstract-Conference.html">QuIP</a> demonstrates that multiplying a matrix by orthogonal matrices on both sides reduces the value of max⁡(𝑋)/mean(𝑋). This means that the presence of extreme values relative to the average is diminished, leading to a more uniform distribution of values within the matrix. However, performing 𝑈𝑋𝑉 also incurs overhead, so selecting orthogonal matrices 𝑈 and 𝑉 that minimize this overhead is essential.</p>
 <p>QuaRot uses <strong>Random Hadamard transformation</strong> because the result PPL is lower, so random Hadamard transformation is better than random matrix.</p>
 <table>
 <thead>
@@ -853,7 +853,7 @@ https://github.com/alex-shpak/hugo-book
 <p><strong>Toward Quantization + Pruning</strong></p>
 <ul>
 <li>One of the authors, Dan Alistarh, has papers on <a href="https://arxiv.org/abs/2210.17323">GPTQ</a> and <a href="https://proceedings.neurips.cc/paper/1992/file/303ed4c69846ab36c2904d3ba8573050-Paper.pdf">OBS</a>. GPTQ focuses on reconstructing matrices after quantization, while OBS deals with reconstructing models after pruning. Both papers share a common foundation in using the Hessian matrix and employ various optimization techniques such as Wood-Fisher. Combining these two approaches, the <a href="https://arxiv.org/abs/2208.11580">OBC</a> study explores methods to preserve the accuracy of networks that undergo both pruning and quantization.</li>
-<li>Another paper involving the author demonstrates that SliceGPT similarly achieves effective pruning by employing the concept of computational invariance when multiplying orthogonal matrices. By analyzing the properties of orthogonal matrices in both QuaRot and SliceGPT, I believe it is possible to achieve quantization and pruning simultaneously.</li>
+<li><a href="https://arxiv.org/abs/2401.15024">SliceGPT</a> similarly achieves effective pruning by employing the concept of computational invariance when multiplying orthogonal matrices. By analyzing the properties of orthogonal matrices in both QuaRot and SliceGPT, I believe it is possible to achieve quantization and pruning simultaneously.</li>
 </ul>
 </li>
 <li>
@@ -878,9 +878,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/ae05c8475775343296296db3f324cb0b5491b430" title='Last modified by MinJungGyu | May 20, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/caa6827e15e793a0de56b0b37701cc1b50d15517" title='Last modified by mjyun01 | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 20, 2024</span>
+      <span>May 21, 2024</span>
     </a>
   </div>
 
