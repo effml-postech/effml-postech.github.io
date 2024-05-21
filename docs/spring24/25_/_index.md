@@ -339,6 +339,22 @@ Further research is possible, examining the proposed techniques on a more compli
 
 
 ## References
-https://arxiv.org/abs/2403.00986
+Paper: https://arxiv.org/abs/2403.00986
 
-[Loss landscape figure](https://arxiv.org/abs/1712.09913)
+Attention mechanism: https://arxiv.org/abs/1706.03762
+
+Loss landscape explanation:  https://arxiv.org/abs/1712.09913
+
+BERT: https://aclanthology.org/N19-1423/
+
+MultiBERTs: https://arxiv.org/abs/2106.16163
+
+Wikitext-103 benchmark: https://arxiv.org/abs/1609.07843
+
+Books corpus: https://www.cv-foundation.org/openaccess/content_iccv_2015/html/Zhu_Aligning_Books_and_ICCV_2015_paper.html
+
+GLUE: https://arxiv.org/abs/1804.07461
+
+WNLI: https://arxiv.org/abs/1810.04805
+
+Loss barrier: https://arxiv.org/abs/1803.0363
