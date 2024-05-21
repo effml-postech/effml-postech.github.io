@@ -24,7 +24,7 @@ Large Language models ( LLMs ) like GPT-2, LLaMa have become increasingly import
 <link rel="canonical" href="http://localhost:1313/docs/spring24/17_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.c6e5f64589a55dcb16209f6b6cf56c358b32499975ba19ce4d0e7bcaf6b71192.js" integrity="sha256-xuX2RYmlXcsWIJ9rbPVsNYsySZl1uhnOTQ57yva3EZI=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.ccea2d6bfe34a6273b26facfbc70770555805e4717c6f6840a8bb19ca8a879ef.js" integrity="sha256-zOota/40pic7JvrPvHB3BVWAXkcXxvaECouxnKioee8=" crossorigin="anonymous"></script>
 
   
 
@@ -710,7 +710,7 @@ https://github.com/alex-shpak/hugo-book
 </tbody>
 </table>
 <p>Random Hadamard transformation matrix H is described below :
-display: block 
+
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
@@ -720,10 +720,10 @@ display: block
 \end{bmatrix}, \quad H_{2^n} = H_2 \otimes H_{2^{n-1}} \]
 </span>
 </p>
-<p>display: block <span>
+<span>
   \[H&#39; = H \cdot \mathrm{diag}(s), \quad s \sim \mathrm{Uniform}(\{-1, &#43;1\})\]
 </span>
-</p>
+
 <p>This transformation pairs elements to perform simultaneous computations, allowing the matrix-vector multiplication between matrix 𝐻 and vector 𝑥 to be executed using only 𝑂(𝑑log⁡𝑑) addition operations without any multiplications, as illustrated below:</p>
 <img src="./hadamard_2.png">
 ---
@@ -740,20 +740,20 @@ display: block
   <a class="anchor" href="#step-1-a-weight-modification">#</a>
 </h3>
 <p>Note that the multiplication of two orthogonal matrices generates identical matrix, so inserting Q and Q^T between linear layers doesn’t change any output.</p>
-<p>display: block <span>
+<span>
   \[I = Q Q^T, XQQ^TW =  XW\]
 </span>
-</p>
+
 <p>Considering LayerNorm or RMSNorm at the start of the transformer multiplying some orthogonal matrices does not change output. Also, we can fuse the scaling operation of RMSNorm’s : diag(a) into an adjacent weight matrix.</p>
-<p>display: block <span>
+<span>
   \[RMSNorm(X) = x_i \leftarrow \frac{x_i}{||x_i||} = ( \frac{x_i * Q}{||x_i||} ) Q^T = RMSNorm (XQ^T)Q\]
 </span>
-</p>
+
 <p>So for all weights after the RMSNorm layer, the weight becomes :</p>
-<p>display: block <span>
+<span>
   \[W \leftarrow Q^T diag(a) W, Q = Hdiag(s)\]
 </span>
-</p>
+
 <h3 id="step-1-b-rotate-ffn">
   Step 1-b. Rotate FFN
   <a class="anchor" href="#step-1-b-rotate-ffn">#</a>
@@ -766,39 +766,39 @@ display: block
   <a class="anchor" href="#step-1-c-attention-value-projection">#</a>
 </h3>
 <p>This step applies Hadamard transformations to the value and output projection matrices in the attention block throughout both offline weight modification and online activation transformation. Since value and output projection weight are multiplied in each head, two matrices can be transformed using the Hadamard matrix without changing the result of attention.</p>
-<p>display: block <span>
-  \[W_v^{(h)} \leftarrow W_v^{(h)}H_{d_h}\\W_{out}^{(h)} \leftarrow H_{d_h} W_{out}^{(h)}  \]
+<span>
+  \[W_v^{(h)} \leftarrow W_v^{(h)}H_{d_h} \\ W_{out}^{(h)} \leftarrow H_{d_h} W_{out}^{(h)}  \]
 </span>
-</p>
+
 <p>This transformation can be represented with Kronecker multiplication in the point of full attention computation view.</p>
-<p>display: block <span>
+<span>
   \[W_v \leftarrow W_v(I\otimes H_{d_h})\\W_{out}\leftarrow (I\otimes H_{d_h}) W_{out}  \]
 </span>
-</p>
+
 <p>The following simple lemma defines the remaining Hadamard operation after modification.</p>
-<p>display: block <span>
+<span>
   \[H_{a\times b}= (I\otimes H_{b}) (H_{a}\otimes I )\]
 </span>
-</p>
+
 <p>This defines the remaining Hadamard operation as the later term of the upper lemma, which results in a modification of the online forward path.</p>
-<p>display: block <span>
+<span>
   \[Z \leftarrow Z(H_{n_h} \otimes I)\]
 </span>
-</p>
+
 <h3 id="step-1-d-key-rotation">
   Step 1-d. Key Rotation
   <a class="anchor" href="#step-1-d-key-rotation">#</a>
 </h3>
 <p>This step applies Hadamard transformation to the key vectors in the attention module. Utilizing the RoPE method (Su et al., 2021), the positional encoding is directly attended to query and key vectors. This reshapes the attention score computation equation into a modification-convenient form.</p>
-<p>display: block <span>
+<span>
   \[\text{Score}=\text{Softmax}(\alpha \text{Pos}(Q_h) \text{Pos}(K_h^T)\odot M)\]
 </span>
-</p>
+
 <p>The Hadamard transformation is applied to both position encoded query and key vectors similar to step 1-c.</p>
-<p>display: block <span>
+<span>
   \[\text{Pos}(Q) = \text{Pos}(XW_q)   \leftarrow \text{Pos}(XW_q)(I\otimes H_{d_h})\\\text{Pos}(K) = \text{Pos}(XW_k)   \leftarrow \text{Pos}(XW_k)(I\otimes H_{d_h})  \]
 </span>
-</p>
+
 <p>Note that this transformation can be applied without changing final attention scores since both queries and keys are rotated, therefore no remaining Hadamard transformation exists.</p>
 <p><img src="./figure4.PNG" alt="title" /></p>
 <hr>
@@ -859,7 +859,7 @@ display: block
 <li>
 <p><strong>Nonlinear layer Quantization</strong></p>
 <ul>
-<li>This paper discusses performing quantization in an end-to-end manner. However, it lacks detailed explanations regarding operations in layers known to require higher bitwidth, such as the input to the softmax function, gelu, and residual operations in layer normalization. Therefore, future research could potentially extend this approach to include all these operations using only low bitwidth integer calculations.</li>
+<li>This paper discusses performing quantization in an end-to-end manner. However, it lacks detailed explanations regarding operations in layers known to require higher bitwidth, such as the input to the softmax function, gelu, and residual operations in layer normalization. Therefore, future research could potentially extend this approach to include all these operations using only low-bitwidth integer calculations.</li>
 </ul>
 </li>
 <li>
@@ -878,7 +878,7 @@ display: block
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/f9bf4be4955ef600491d13d5528ae01b1ac7cfdb" title='Last modified by mjyun01 | May 20, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/22a879f55ec99c4179bb3cca09489a3d6e7b38d8" title='Last modified by effml-postech | May 20, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 20, 2024</span>
     </a>

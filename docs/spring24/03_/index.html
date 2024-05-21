@@ -18,7 +18,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/03_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.c6e5f64589a55dcb16209f6b6cf56c358b32499975ba19ce4d0e7bcaf6b71192.js" integrity="sha256-xuX2RYmlXcsWIJ9rbPVsNYsySZl1uhnOTQ57yva3EZI=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.ccea2d6bfe34a6273b26facfbc70770555805e4717c6f6840a8bb19ca8a879ef.js" integrity="sha256-zOota/40pic7JvrPvHB3BVWAXkcXxvaECouxnKioee8=" crossorigin="anonymous"></script>
 
   
 
@@ -689,14 +689,18 @@ as <em>ops</em>.</li>
 </ul>
 </li>
 </ul>
+<p align="center">
 <span>
   \(f^* &amp; \triangleq \alpha \cdot f\left(x_1, \ldots, x_k\right)\)
 </span>
 
+</p>  
+<p align="center">  
 <span>
   \( f_{\text {grad }}^*\left(x_1, \ldots x_k, g\right)_i &amp; \triangleq \beta_i \cdot f_{\text {grad }}\left(x_1, \ldots x_k, g\right)_i, \forall i \in[1 . . k] \)
 </span>
 
+</p>  
 <ul>
 <li>
 <p>Scaled computational graph</p>
@@ -902,11 +906,27 @@ as <em>ops</em>.</li>
   <a class="anchor" href="#related-work">#</a>
 </h2>
 <p><strong>Variance scaling analysis</strong></p>
+<ul>
+<li>Variance scaling and residual networks, along with normalization variants, complement unit scaling, which considers both activation and gradient norms. The reparameterization implied by unit scaling, utilized in analyzing deep network training dynamics, applies scaling factors locally throughout the compute graph, akin to training hyperparameter scaling.</li>
+</ul>
 <p><strong>FP8 inference</strong></p>
+<ul>
+<li>FP8 training lacks hardware support, yet accelerated 8-bit inference is becoming more prevalent through integer quantization to INT8. While this process often leads to reduced accuracy, recent efforts aim to enhance efficient INT8 quantization. FP8 adoption allows accelerated inference in the same format as training, promising significant improvements in the simplicity and accuracy of 8-bit inference.</li>
+</ul>
 <h2 id="discussion">
   Discussion
   <a class="anchor" href="#discussion">#</a>
 </h2>
+<p><strong>Compute overhead</strong></p>
+<ul>
+<li>Unit scaling introduces minimal compute overhead by adding scaling operations that can be fused into preceding operations, resulting in negligible memory-access cost. While basic loss scaling operates similarly, automatic loss scaling may incur additional overhead due to occasional batch discards, particularly noticeable in FP8. Proposed automatic per-tensor scaling schemes may introduce overhead, depending on software and hardware characteristics, as they trade off accuracy for complexity. In contrast, unit scaling with fixed precomputed scaling factors offers a simpler alternative without such complexities.</li>
+</ul>
+<p><strong>Broader impact</strong></p>
+<ul>
+<li>With the potential for unit scaling to effectively train larger models, concerns arise about issues such as toxicity, misinformation, privacy concerns, and environmental damage. To address these challenges, various methods have been proposed, including AI feedback, anti-experts, and baked-in safety models.</li>
+</ul>
+<p><strong>Conclusion</strong>
+Unit scaling has demonstrated to address the complexities of low-precision training, providing a simpler and more granular solution, even enabling the training of BERTLARGE without loss scaling for the first time, even in FP8.</p>
 </article>
  
       
@@ -916,7 +936,7 @@ as <em>ops</em>.</li>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/b5c69a8d6fa11560475531403f85e1e4dc46708b" title='Last modified by effml-postech | May 20, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a8c9a7f35c21d6bd20f409f5b4618452485db97c" title='Last modified by effml-postech | May 20, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 20, 2024</span>
     </a>

@@ -3,13 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" # ">
+<meta name="description" content="Is Bigger Edit Batch Size Always Better? - An Empirical Study on Model Editing with Llama-3 # Authors: Junsang Yoon, Akshat Gupta, Gopala Anumanchipalli
+Background # What is model editing? # Fig 1. Concept of model editing.[Editing Large Language Models: Problems, Methods, and Opportunities](https://arxiv.org/pdf/2305.13172) The rapidly evolving field of artificial intelligence faces the challenge of keeping large language models (LLMs) up-to-date with new information, as traditional retraining methods are time-consuming and resource-intensive.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/01_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" # ">
+  <meta property="og:description" content="Is Bigger Edit Batch Size Always Better? - An Empirical Study on Model Editing with Llama-3 # Authors: Junsang Yoon, Akshat Gupta, Gopala Anumanchipalli
+Background # What is model editing? # Fig 1. Concept of model editing.[Editing Large Language Models: Problems, Methods, and Opportunities](https://arxiv.org/pdf/2305.13172) The rapidly evolving field of artificial intelligence faces the challenge of keeping large language models (LLMs) up-to-date with new information, as traditional retraining methods are time-consuming and resource-intensive.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>01 | Efficient ML Systems</title>
@@ -18,7 +20,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/01_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.c6e5f64589a55dcb16209f6b6cf56c358b32499975ba19ce4d0e7bcaf6b71192.js" integrity="sha256-xuX2RYmlXcsWIJ9rbPVsNYsySZl1uhnOTQ57yva3EZI=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.ccea2d6bfe34a6273b26facfbc70770555805e4717c6f6840a8bb19ca8a879ef.js" integrity="sha256-zOota/40pic7JvrPvHB3BVWAXkcXxvaECouxnKioee8=" crossorigin="anonymous"></script>
 
   
 
@@ -606,7 +608,17 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#background">Background</a>
+      <ul>
+        <li><a href="#what-is-__model-editing__">What is <strong>model editing</strong>?</a></li>
+        <li><a href="#how-model-editing-works">How model editing works?</a></li>
+        <li><a href="#how-model-editing-performance-is-estimated">How model editing performance is estimated?</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -617,10 +629,73 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
+  <article class="markdown book-article"><h1 id="is-bigger-edit-batch-size-always-better---an-empirical-study-on-model-editing-with-llama-3">
+  <strong>Is Bigger Edit Batch Size Always Better? - An Empirical Study on Model Editing with Llama-3</strong>
+  <a class="anchor" href="#is-bigger-edit-batch-size-always-better---an-empirical-study-on-model-editing-with-llama-3">#</a>
 </h1>
+<p><em>Authors: Junsang Yoon, Akshat Gupta, Gopala Anumanchipalli</em></p>
+<h2 id="background">
+  Background
+  <a class="anchor" href="#background">#</a>
+</h2>
+<h3 id="what-is-__model-editing__">
+  What is <strong>model editing</strong>?
+  <a class="anchor" href="#what-is-__model-editing__">#</a>
+</h3>
+<p align="center">
+  <img src="./model_editing.PNG" alt="." width="500" height="300" > 
+</p>
+<p align="center">
+  Fig 1. Concept of model editing.[Editing Large Language Models: Problems, Methods, and Opportunities](https://arxiv.org/pdf/2305.13172)
+</p>
+<p>The rapidly evolving field of artificial intelligence faces the challenge of keeping large language models (LLMs) up-to-date with new information, as traditional retraining methods are time-consuming and resource-intensive. As shown in figure, an alternative is <strong>model editing</strong> proposed in <a href="https://openreview.net/pdf?id=HJedXaEtvS">(Sinitsin et al., 2020)</a>. It enables data-efficient alterations to the behavior of models.</p>
+<p align="center">
+  <img src="./memit_concept.PNG" alt="." width="450" height="220" >
+</p>
+<p align="center">
+  Fig 2. Example of model editing in case of MEMIT.
+</p>
+<p>Model editing modifies stored facts within a model and corrects inaccuracies without retraining. Techniques such as <strong>ROME</strong> (Rank-One Model Editing) <a href="https://arxiv.org/pdf/2202.05262">(Meng et al., 2022a)</a>, <strong>MEMIT</strong> (Mass Editing Memory in Transformer) <a href="https://arxiv.org/pdf/2210.07229">(Meng et al., 2022b)</a>, and <strong>EMMET</strong> (Equality-constrained Mass Model Editing algorithm for Transformers) <a href="https://arxiv.org/pdf/2401.07453">(Gupta et al., 2024)</a>, known as &ldquo;locate-and-edit&rdquo; algorithms, have emerged to optimize the preservation-memorization (PM) objective. These methods <strong>directly modify</strong> specific areas of the model and are applicable to any transformer-based LLMs, offering a more efficient way to update models without retraining.</p>
+<h3 id="how-model-editing-works">
+  How model editing works?
+  <a class="anchor" href="#how-model-editing-works">#</a>
+</h3>
+<p>For a relation <strong>(s, r, o)</strong> expressed as a tuple in the form of <strong>(subject, relation, object)</strong>. In model editing, we aim to update the memory of the existing model with new facts by learning about a new object <strong>(s, r, o*)</strong>. Model editing directly reform the weight by objective function, called the preservation-memorization objective. This objective consists of two parts, a <strong>preservation term</strong> and a <strong>memorization term</strong>. Below equation shows how ROME works with preservation term and memorization term.</p>
+<p align="center">
+  
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \[    \operatorname{argmin}_{\hat{W}} =\alpha \cdot X W
+  \]
+</span>
+ 
+</p>
+<h3 id="how-model-editing-performance-is-estimated">
+  How model editing performance is estimated?
+  <a class="anchor" href="#how-model-editing-performance-is-estimated">#</a>
+</h3>
+<p>Model performance is estimated with 4 main scores, and they are denoted as follow.</p>
+<h4 id="__efficacy-score-es__">
+  <strong>Efficacy Score (ES)</strong>
+  <a class="anchor" href="#__efficacy-score-es__">#</a>
+</h4>
+<p>It measures if the new fact, we want to edit, is successfully edited to model. It is measured by percentage where P(new fact) &gt; P(old fact) for query prompt.</p>
+<h4 id="__paraphrase-score-ps__">
+  <strong>Paraphrase Score (PS)</strong>
+  <a class="anchor" href="#__paraphrase-score-ps__">#</a>
+</h4>
+<p>It measures model&rsquo;s ability to generalize following an edit. It is measured by where P(new fact) &gt; P(old fact) under paraphrases of the query prompt.</p>
+<h4 id="__neighborhood-score-ns__">
+  <strong>Neighborhood Score (NS)</strong>
+  <a class="anchor" href="#__neighborhood-score-ns__">#</a>
+</h4>
+<p>It represents the locality of model editing. It measures the impact of edit process on adjacent stored facts within the model. It quantifies the percentage of nearby facts that remain unchanged after edit.</p>
+<h4 id="__composite-score-s__">
+  <strong>Composite Score (S)</strong>
+  <a class="anchor" href="#__composite-score-s__">#</a>
+</h4>
+<p>It combines aspect of edit success, generalization, and locality. It is calculated as the harmonic mean of Edit Success (ES), Paraphrase Score (PS), and Neighborhood Score (NS). It provies overall efficacy of model edits.</p>
 </article>
  
       
@@ -673,7 +748,17 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#background">Background</a>
+      <ul>
+        <li><a href="#what-is-__model-editing__">What is <strong>model editing</strong>?</a></li>
+        <li><a href="#how-model-editing-works">How model editing works?</a></li>
+        <li><a href="#how-model-editing-performance-is-estimated">How model editing performance is estimated?</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
  
