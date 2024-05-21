@@ -3,15 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Mixture-of-Depths: Dynamically allocating compute in transformer-based language models # Authors: Dativd Raposo(Google DeepMind) and Adam Santoro(Google DeepMind) et.al
-“Choice and concentration” is an effective strategies for completing tasks with overall success. It is not necessary to consume same amount of effort and time into all problems. If we expend our energy on trivial issues, we may fail to concentrate on what truly matters. Similary, a technique was introduced that allows languge models to allocate less budget to non-essential tokens instead of focusing equally on all tokens.">
+<meta name="description" content="Accelerating Transformers via Conditional Computation: As Aspect of Mixture of Depths # Posted by: Inkwan Hwang, Minjae Park
+This image was produced using DALL·E 3. Introduction # “Choice and concentration” is an effective strategies for achieving success in problems. Sometimes, it is not necessary to consume same amount of effort and time into all problems. Expending energy on trivial issues may fail to concentrate on what truly matters. Similarly, in language models, there is a technique that does not focus equally on all tokens but allocates less budget to non-essential tokens.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/16_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Mixture-of-Depths: Dynamically allocating compute in transformer-based language models # Authors: Dativd Raposo(Google DeepMind) and Adam Santoro(Google DeepMind) et.al
-“Choice and concentration” is an effective strategies for completing tasks with overall success. It is not necessary to consume same amount of effort and time into all problems. If we expend our energy on trivial issues, we may fail to concentrate on what truly matters. Similary, a technique was introduced that allows languge models to allocate less budget to non-essential tokens instead of focusing equally on all tokens.">
+  <meta property="og:description" content="Accelerating Transformers via Conditional Computation: As Aspect of Mixture of Depths # Posted by: Inkwan Hwang, Minjae Park
+This image was produced using DALL·E 3. Introduction # “Choice and concentration” is an effective strategies for achieving success in problems. Sometimes, it is not necessary to consume same amount of effort and time into all problems. Expending energy on trivial issues may fail to concentrate on what truly matters. Similarly, in language models, there is a technique that does not focus equally on all tokens but allocates less budget to non-essential tokens.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>16 | Efficient ML Systems</title>
@@ -20,7 +20,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/16_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
 
   
 
@@ -610,18 +610,15 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#background"><strong>Background</strong></a>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
-    <li><a href="#implementing-mixture-of-depth-transformers"><strong>Implementing Mixture-of-Depth Transformers</strong></a>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
-    <li><a href="#results--discussion"><strong>Results &amp; Discussion</strong></a></li>
-    <li><a href="#references"><strong>References</strong></a></li>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#understanding-the-challenge-uniform-computation-in-transformers">Understanding the challenge: Uniform computation in Transformers</a></li>
+    <li><a href="#conditional-computation-for-transformers">Conditional Computation for transformers</a></li>
+    <li><a href="#overview-to-mixture-of-depths-mod">Overview to Mixture-of-Depths (MoD)</a></li>
+    <li><a href="#capacity-based-routing-schemes">Capacity based routing schemes</a></li>
+    <li><a href="#implementation-detail">Implementation detail</a></li>
+    <li><a href="#open-source-mod">Open source MoD</a></li>
+    <li><a href="#conclusion-and-discussion">Conclusion and discussion</a></li>
+    <li><a href="#some-resources">Some resources</a></li>
   </ul>
 </nav>
 
@@ -634,99 +631,83 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="mixture-of-depths-dynamically-allocating-compute-in-transformer-based-language-models">
-  <strong>Mixture-of-Depths: Dynamically allocating compute in transformer-based language models</strong>
-  <a class="anchor" href="#mixture-of-depths-dynamically-allocating-compute-in-transformer-based-language-models">#</a>
+  <article class="markdown book-article"><h1 id="accelerating-transformers-via-conditional-computation-as-aspect-of-mixture-of-depths">
+  <strong>Accelerating Transformers via Conditional Computation: As Aspect of Mixture of Depths</strong>
+  <a class="anchor" href="#accelerating-transformers-via-conditional-computation-as-aspect-of-mixture-of-depths">#</a>
 </h1>
-<p><em>Authors: Dativd Raposo(Google DeepMind) and Adam Santoro(Google DeepMind) et.al</em></p>
-<p>“Choice and concentration” is an effective strategies for completing tasks with overall success. It is not necessary to consume same amount of effort and time into all problems. If we expend our energy on trivial issues, we may fail to concentrate on what truly matters. Similary, a technique was introduced that allows languge models to allocate less budget to non-essential tokens instead of focusing equally on all tokens.</p>
-<p>The tremendous technique developed by Google DeepMind Researchers is called Miture-of-Depths, or MoD for short. In this blog post, we take a look at building blocks of MoD and how they works.</p>
-<p>This paper insists that all problems do not require same amount of time to solve in real world and also in language models like Transformer.<br>
-But, Transformer models spread FLOPs <strong>&lsquo;uniformly&rsquo;</strong> across input sequences, which is inefficient!<br>
-Therefore there are many efforts like &ldquo;early exiting&rdquo; to reduce total FLOPs &amp; <strong>&lsquo;dynamically&rsquo;</strong> allocate compute budgets.<br>
-However, these methods do not work well due to hardware constraints.<br>
-So, the methods should be sophistically addressed like harmonious with current hardware stack &amp; known tensor sizes that are selected to maximize hardware utilization.</p>
+<p><em>Posted by: Inkwan Hwang, Minjae Park</em></p>
+<p align="center">
+    <img src=./Pondering_Transformer.jpg> 
+</p>
+This image was produced using DALL·E 3.
+<h2 id="introduction">
+  Introduction
+  <a class="anchor" href="#introduction">#</a>
+</h2>
+<p>“Choice and concentration” is an effective strategies for achieving success in problems. Sometimes, it is not necessary to consume same amount of effort and time into all problems. Expending energy on trivial issues may fail to concentrate on what truly matters. Similarly, in language models, there is a technique that does not focus equally on all tokens but allocates less budget to non-essential tokens. This technique is called conditional computation.</p>
+<p>In this post, We will explain conditional computation strategies for Transformers, focusing on a technology announced this year called <strong>Mixture-of-Texture.</strong></p>
+<p>paper:  <a href="https://arxiv.org/abs/2404.02258"><U>Mixture-of-Depths: Dynamically allocating compute in transformer-based language models</U></a></p>
+<p>Let&rsquo;s dive in!</p>
+<h2 id="understanding-the-challenge-uniform-computation-in-transformers">
+  Understanding the challenge: Uniform computation in Transformers
+  <a class="anchor" href="#understanding-the-challenge-uniform-computation-in-transformers">#</a>
+</h2>
+<h2 id="conditional-computation-for-transformers">
+  Conditional Computation for transformers
+  <a class="anchor" href="#conditional-computation-for-transformers">#</a>
+</h2>
+<ul>
+<li>
+<p>Early exiting</p>
+<p>Early Exit method is a method when the model decides to end computation on a given token, allowing it skips the remaining layers. Difference between MoD is, MoD can choose whether skip middle layer or not, but Early Exit method can&rsquo;t.</p>
+</li>
+<li>
+<p>CoLT5</p>
+</li>
+<li>
+<p>Mixture of Experts (MoE)</p>
+<p>MoE is an model which consists of parallel expert models which is fitted to certain domains. Like MoD, token-level routing decisions are made across the network depth. Difference between MoD is, MoD chooses path to transformer or to residual connection, MoE chooses path to transformer(Expert) or to transformer(Expert) or both.</p>
+</li>
+</ul>
+<h2 id="overview-to-mixture-of-depths-mod">
+  Overview to Mixture-of-Depths (MoD)
+  <a class="anchor" href="#overview-to-mixture-of-depths-mod">#</a>
+</h2>
 <p align="center">
     <img src=./Mixture-of-Depths.png> 
 </p>
-<p align="center">
-    (Fig 1. Description of overall MoD & comparison between Vanilla Transformer & Early Exit method)
-</p>
-<p>Therefore, the things that authors of this paper contributed in this paper are listed as follows:</p>
-<ol>
-<li>Suggestion of method(Mixture-of-Depths, MoD) which limits the total FLOPs by choosing only k tokens which process into Attention + mlp layer.</li>
-<li>Comparing this method with vanilla Transformer(isoFLOP) &amp;  Mixture-of-Experts(MoE) &amp; Combined version of MoE + MoD = MoDE</li>
-<li>With this method, MoD achieves better performance than vanilla Transformer in isoFLOPs &amp; faster inference speed.</li>
-</ol>
-<h2 id="background">
-  <strong>Background</strong>
-  <a class="anchor" href="#background">#</a>
-</h2>
-<h4 id="early-exit-method">
-  Early Exit method
-  <a class="anchor" href="#early-exit-method">#</a>
-</h4>
-<p align="center">
-    <img src=./earlyexit.png> 
-</p>
-<p align="center">
-    (Fig 2. Early Exit method)
-</p>
-<p>Early Exit method is a method when the model decides to end computation on a given token, then model skips the remaining layers.<br>
-Difference between MoD is, MoD can choose whether skip middle layer or not, but Early Exit method can&rsquo;t.</p>
-<h4 id="what-is-moe">
-  What is MoE?
-  <a class="anchor" href="#what-is-moe">#</a>
-</h4>
-<p align="center">
-    <img src=./moe.png> 
-</p>
-<p align="center">
-    (Fig 3. Diagram of MoE)
-</p>
-<p>MoE is an model which consists of parallel expert models which is fitted to certain domains.<br>
-Like MoD, token-level routing decisions are made across the network depth.<br>
+<p>MoE is an model which consists of parallel expert models which is fitted to certain domains.
+Like MoD, token-level routing decisions are made across the network depth.
 Difference between MoD is, MoD chooses path to transformer or to residual connection, MoE chooses path to transformer(Expert) or to transformer(Expert) or both.</p>
-<h2 id="implementing-mixture-of-depth-transformers">
-  <strong>Implementing Mixture-of-Depth Transformers</strong>
-  <a class="anchor" href="#implementing-mixture-of-depth-transformers">#</a>
+<h2 id="capacity-based-routing-schemes">
+  Capacity based routing schemes
+  <a class="anchor" href="#capacity-based-routing-schemes">#</a>
 </h2>
-<p>High-level strategy of Mixture-of-Depths is as follows:</p>
-<h4 id="defining-a-compute-budget">
-  <strong>Defining a compute budget</strong>
-  <a class="anchor" href="#defining-a-compute-budget">#</a>
-</h4>
 <ul>
-<li>First, to make smaller compute budget per forward pass than vanila transformer, we limit the number of tokens in a sequence for computations like self-attention and MLP. This concept, called <strong>capacity</strong>, defines the total tokens processed and determines the FLOPs required.</li>
-<li>For example, in vanila transformers, capacity($T$) covers all tokens, but in MoE transformers, it&rsquo;s dividing among multiple experts.</li>
-<li>Lowering computation capacity can reduce the compute budget per forward pass without performance loss if the model learns to prioritize important tokens.</li>
+<li>Token-choice routing</li>
+<li>Expert-choice routing</li>
+<li>Expert-choice MoD</li>
 </ul>
-<h4 id="routing-around-transformer-blocks">
-  <strong>Routing around transformer blocks</strong>
-  <a class="anchor" href="#routing-around-transformer-blocks">#</a>
-</h4>
-<h4 id="routing-schemes">
-  <strong>Routing schemes</strong>
-  <a class="anchor" href="#routing-schemes">#</a>
-</h4>
-<h4 id="routing-implementation">
-  <strong>Routing implementation</strong>
-  <a class="anchor" href="#routing-implementation">#</a>
-</h4>
-<h4 id="sampling">
-  <strong>Sampling</strong>
-  <a class="anchor" href="#sampling">#</a>
-</h4>
-<h2 id="results--discussion">
-  <strong>Results &amp; Discussion</strong>
-  <a class="anchor" href="#results--discussion">#</a>
+<h2 id="implementation-detail">
+  Implementation detail
+  <a class="anchor" href="#implementation-detail">#</a>
 </h2>
-<h2 id="references">
-  <strong>References</strong>
-  <a class="anchor" href="#references">#</a>
+<p>논문 요약</p>
+<h2 id="open-source-mod">
+  Open source MoD
+  <a class="anchor" href="#open-source-mod">#</a>
 </h2>
-<p>Fig 2. <a href="https://www.sciencedirect.com/science/article/pii/S0893608022002532">https://www.sciencedirect.com/science/article/pii/S0893608022002532</a><br>
-Fig 3. <a href="https://deepgram.com/learn/mixture-of-experts-ml-model-guide">https://deepgram.com/learn/mixture-of-experts-ml-model-guide</a></p>
+<p><a href="https://github.com/astramind-ai/Mixture-of-depths">https://github.com/astramind-ai/Mixture-of-depths</a></p>
+<h2 id="conclusion-and-discussion">
+  Conclusion and discussion
+  <a class="anchor" href="#conclusion-and-discussion">#</a>
+</h2>
+<p>논문 요약 + 내 생각</p>
+<h2 id="some-resources">
+  Some resources
+  <a class="anchor" href="#some-resources">#</a>
+</h2>
+<p>참고문헌 정리</p>
 </article>
  
       
@@ -736,9 +717,9 @@ Fig 3. <a href="https://deepgram.com/learn/mixture-of-experts-ml-model-guide">ht
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/80235bfdda3b5ce0b1eedf3f3ee79f823d375863" title='Last modified by effml-postech | May 20, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/743e7e54811e787c81bda17df23a0d49789f225c" title='Last modified by Inkwan Hwang | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 20, 2024</span>
+      <span>May 21, 2024</span>
     </a>
   </div>
 
@@ -781,18 +762,15 @@ Fig 3. <a href="https://deepgram.com/learn/mixture-of-experts-ml-model-guide">ht
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#background"><strong>Background</strong></a>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
-    <li><a href="#implementing-mixture-of-depth-transformers"><strong>Implementing Mixture-of-Depth Transformers</strong></a>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
-    <li><a href="#results--discussion"><strong>Results &amp; Discussion</strong></a></li>
-    <li><a href="#references"><strong>References</strong></a></li>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#understanding-the-challenge-uniform-computation-in-transformers">Understanding the challenge: Uniform computation in Transformers</a></li>
+    <li><a href="#conditional-computation-for-transformers">Conditional Computation for transformers</a></li>
+    <li><a href="#overview-to-mixture-of-depths-mod">Overview to Mixture-of-Depths (MoD)</a></li>
+    <li><a href="#capacity-based-routing-schemes">Capacity based routing schemes</a></li>
+    <li><a href="#implementation-detail">Implementation detail</a></li>
+    <li><a href="#open-source-mod">Open source MoD</a></li>
+    <li><a href="#conclusion-and-discussion">Conclusion and discussion</a></li>
+    <li><a href="#some-resources">Some resources</a></li>
   </ul>
 </nav>
 

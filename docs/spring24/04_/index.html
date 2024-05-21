@@ -3,15 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" Better &amp; Faster Large Language Models via Multi-token Prediction # *Team: Jinoh Cho, Seonghyeon Park *Authors: Gloeckle et al. *Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay
-Preliminaries # ">
+<meta name="description" content="Better &amp; Faster Large Language Models via Multi-token Prediction # Posted by Jinoh Cho and Seonghyeon Park
+Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay Preliminaries # Language Modeling and Next-Token Prediction Task # Standard language modeling involves learning from a large text corpus $x_1, \ldots, x_T$ by implementing a next-token prediction task. The goal is to minimize the cross-entropy loss, defined as:">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/04_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" Better &amp; Faster Large Language Models via Multi-token Prediction # *Team: Jinoh Cho, Seonghyeon Park *Authors: Gloeckle et al. *Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay
-Preliminaries # ">
+  <meta property="og:description" content="Better &amp; Faster Large Language Models via Multi-token Prediction # Posted by Jinoh Cho and Seonghyeon Park
+Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay Preliminaries # Language Modeling and Next-Token Prediction Task # Standard language modeling involves learning from a large text corpus $x_1, \ldots, x_T$ by implementing a next-token prediction task. The goal is to minimize the cross-entropy loss, defined as:">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>04 | Efficient ML Systems</title>
@@ -20,7 +20,7 @@ Preliminaries # ">
 <link rel="canonical" href="http://localhost:1313/docs/spring24/04_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
 
   
 
@@ -608,7 +608,24 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#language-modeling-and-next-token-prediction-task">Language Modeling and Next-Token Prediction Task</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#multi-token-prediction-task">Multi-Token Prediction Task</a></li>
+        <li><a href="#memory-efficient-implementation">Memory-Efficient Implementation</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -623,13 +640,42 @@ https://github.com/alex-shpak/hugo-book
   Better &amp; Faster Large Language Models via Multi-token Prediction
   <a class="anchor" href="#better--faster-large-language-models-via-multi-token-prediction">#</a>
 </h1>
-<p>*Team: Jinoh Cho, Seonghyeon Park
-*Authors: Gloeckle et al.
-*Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay</p>
+<p><em>Posted by Jinoh Cho and Seonghyeon Park</em></p>
+<ul>
+<li>Authors: Gloeckle et al.</li>
+<li>Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay</li>
+</ul>
 <h1 id="preliminaries">
   Preliminaries
   <a class="anchor" href="#preliminaries">#</a>
 </h1>
+<h3 id="language-modeling-and-next-token-prediction-task">
+  Language Modeling and Next-Token Prediction Task
+  <a class="anchor" href="#language-modeling-and-next-token-prediction-task">#</a>
+</h3>
+<p>Standard language modeling involves learning from a large text corpus $x_1, \ldots, x_T$ by implementing a next-token prediction task. The goal is to minimize the cross-entropy loss, defined as:</p>
+<p>$$
+L_1 = - \sum_{t} \log P_{\theta}(x_{t+1} \mid x_{t:1}),
+$$</p>
+<p>where $P_{\theta}$ represents our large language model under training. The objective is to maximize the probability of the next token $x_{t+1}$, given the history of previous tokens $x_{t:1} = x_1, \ldots, x_t$.</p>
+<h1 id="core-idea">
+  Core Idea
+  <a class="anchor" href="#core-idea">#</a>
+</h1>
+<h3 id="multi-token-prediction-task">
+  Multi-Token Prediction Task
+  <a class="anchor" href="#multi-token-prediction-task">#</a>
+</h3>
+<p>In this work, authors generalize this approach by implementing a multi-token prediction task. At each position of the training corpus, the model is instructed to predict $n$ future tokens at once. Thus, training objective can be expressed as follow:</p>
+<p>$$
+L_n = - \sum_{t} \log P_{\theta}(x_{t+n:t+1} \mid x_{t:1}) = - \sum_{t}\sum_{i=1}^{n} \log P_{\theta}(x_{t+i} \mid x_{t:1}).
+$$</p>
+<p>This formulation allows the model to learn to predict multiple future tokens simultaneously, enhancing its predictive capabilities and efficiency.</p>
+<h3 id="memory-efficient-implementation">
+  Memory-Efficient Implementation
+  <a class="anchor" href="#memory-efficient-implementation">#</a>
+</h3>
+<p>Naive</p>
 </article>
  
       
@@ -639,9 +685,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/da90428444034b6b22e3a6d017607321c43cb2e1" title='Last modified by effml-postech | May 14, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/543d4103e349c0b89a568ad10facfa781af3f77b" title='Last modified by Jinoh Cho | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 14, 2024</span>
+      <span>May 21, 2024</span>
     </a>
   </div>
 
@@ -682,7 +728,24 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#language-modeling-and-next-token-prediction-task">Language Modeling and Next-Token Prediction Task</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#multi-token-prediction-task">Multi-Token Prediction Task</a></li>
+        <li><a href="#memory-efficient-implementation">Memory-Efficient Implementation</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
  

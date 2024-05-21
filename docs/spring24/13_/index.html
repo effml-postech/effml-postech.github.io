@@ -3,13 +3,13 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes. This inconsistency can lead to suboptimal performance, particularly when scaling up models, resulting in inefficient training processes and less effective models.">
+<meta name="description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Paper : A Large-Scale Exploration of µ-Transfer Author : Lucas Dax Lingle produced by Jeonghyun Choi, Minhye Choo Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/13_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes. This inconsistency can lead to suboptimal performance, particularly when scaling up models, resulting in inefficient training processes and less effective models.">
+  <meta property="og:description" content="Exploring µ-Parameterization in Large-Scale Neural Networks # Paper : A Large-Scale Exploration of µ-Transfer Author : Lucas Dax Lingle produced by Jeonghyun Choi, Minhye Choo Introduction # In the field of artificial intelligence, especially in natural language processing and computer vision, large neural network models have become a cornerstone. However, the initialization and learning rates of these models are often determined through heuristic methods, varying significantly between different studies and model sizes.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>13 | Efficient ML Systems</title>
@@ -18,7 +18,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/13_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
 
   
 
@@ -661,6 +661,10 @@ https://github.com/alex-shpak/hugo-book
   Exploring µ-Parameterization in Large-Scale Neural Networks
   <a class="anchor" href="#exploring-%c2%b5-parameterization-in-large-scale-neural-networks">#</a>
 </h1>
+<p>Paper : A Large-Scale Exploration of µ-Transfer<br/>
+Author : Lucas Dax Lingle<br/>
+produced by Jeonghyun Choi, Minhye Choo<br/>
+<br/></p>
 <h2 id="introduction">
   Introduction
   <a class="anchor" href="#introduction">#</a>
@@ -772,10 +776,19 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <ol>
 <li>
-<p><strong>Training a Small Proxy Model</strong>: Begin by training a small proxy model, which is easier and less expensive to experiment with. Perform hyperparameter tuning on this model to find the optimal learning rate and other hyperparameters. For instance, let&rsquo;s denote the optimal learning rate found for this small model as ( \alpha ).</p>
+<p><strong>Training a Small Proxy Model</strong>: Begin by training a small proxy model, which is easier and less expensive to experiment with. Perform hyperparameter tuning on this model to find the optimal learning rate and other hyperparameters. For instance, let&rsquo;s denote the optimal learning rate found for this small model as <span>
+  \(\( \alpha \)\)
+</span>
+.</p>
 </li>
 <li>
-<p><strong>Scaling the Hyperparameters</strong>: Use the scaling rules provided by µP to adapt the hyperparameters for a larger model. The key scaling rule here is that the learning rate should be adjusted based on the ratio of the widths of the large model to the small model. For example, if the small model has a width ( 128 ) and the large model has a width ( 2048 ), the scaled learning rate for the large model would be ( \frac{\alpha \cdot 2048}{128} ).</p>
+<p><strong>Scaling the Hyperparameters</strong>: Use the scaling rules provided by µP to adapt the hyperparameters for a larger model. The key scaling rule here is that the learning rate should be adjusted based on the ratio of the widths of the large model to the small model. For example, if the small model has a width <span>
+  \(\( 128 \)\)
+</span>
+ and the large model has a width ( 2048 ), the scaled learning rate for the large model would be <span>
+  \(\( \frac{\alpha \cdot 2048}{128} \)\)
+</span>
+.</p>
 </li>
 <li>
 <p><strong>Applying the Scaled Hyperparameters</strong>: Implement these scaled hyperparameters in the larger model. This involves adjusting the initialization variance and learning rates according to the µP rules to ensure that the training dynamics remain stable and consistent.</p>
@@ -1090,7 +1103,7 @@ abs/1911.02150, 2019. URL <a href="https://arxiv.org/abs/1911.02150">https://arx
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/7d42231e77b1b1845705f14cdc6c3268785d179f" title='Last modified by ChoiJeonghyun | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/0d3031a7f03ccefb7a66509a2580138b15f31fd2" title='Last modified by ChoiJeonghyun | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 21, 2024</span>
     </a>

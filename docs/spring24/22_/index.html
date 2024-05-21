@@ -22,7 +22,7 @@ Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
 <link rel="canonical" href="http://localhost:1313/docs/spring24/22_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
 
   
 
@@ -621,7 +621,7 @@ https://github.com/alex-shpak/hugo-book
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture">3. Model architecture</a></li>
+    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a></li>
     <li><a href="#4-memory-operations">4. Memory Operations</a></li>
     <li><a href="#5-results">5. Results</a>
       <ul>
@@ -632,7 +632,7 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#recall-performance">Recall Performance</a></li>
       </ul>
     </li>
-    <li><a href="#6-conclusion">6. Conclusion</a></li>
+    <li><a href="#6-conclusion-and-further-improvements">6. Conclusion and further improvements</a></li>
     <li><a href="#7-references">7. References</a></li>
   </ul>
 </nav>
@@ -702,11 +702,13 @@ https://github.com/alex-shpak/hugo-book
   Variational auto encoder (VAE)
   <a class="anchor" href="#variational-auto-encoder-vae">#</a>
 </h3>
+<p>To implement the idea of memory network, concepts from variational auto encoder are usually used. VAE is a kind of generative model to generate an output similar to real data. To be specific, it aims to approximate the true distribution of input data with three components - encoder, decoder, and latent space.</p>
+<p>In this post, we assume that readers have knowledge about VAE. For details, please refer to [6] and [7].</p>
 <p align="center">
     <img src='VAE.png' width="600">
 </p>
 <p align="center">
-    Fig5. VAE Structure [5]
+    Fig5. VAE Structure [7]
 </p>
 <h3 id="neocortex-hippocampus-interactions">
   Neocortex-Hippocampus interactions
@@ -717,7 +719,7 @@ https://github.com/alex-shpak/hugo-book
     <img src=brain.png width="400"> 
 </p>
 <p align="center">
-    Fig5. Neocortex and the Hippocampus
+    Fig6. Neocortex and the Hippocampus
 </p>
 The Complementary Learning Systems (CLS) theory proposes a model that combines these complementary learning systems of the hippocampus and neocortex. The interaction between the neocortex and hippocampus in the brain is known to promote adaptive behavior through memorization and generalization. Furthermore, it is suggested that memory consolidation from the hippocampus to the neocortex is facilitated by the activation synchronized with multiple exact or false replays of the encoded experience in the hippocampus. This implies that the hippocampus functions as a generative associative network.
 <h2 id="2-contributions">
@@ -738,12 +740,12 @@ Selective Fact Forgetting and Information Leakage Prevention:</p>
 Recursive Search-Based Solution for Long Context Generalization: A simple recursive search-based approach is provided to enable Larimar&rsquo;s memory to generalize to longer input contexts.</p>
 </li>
 </ol>
-<h2 id="3-model-architecture">
-  3. Model architecture
-  <a class="anchor" href="#3-model-architecture">#</a>
+<h2 id="3-model-architecture--memory-operations">
+  3. Model architecture &amp; Memory operations
+  <a class="anchor" href="#3-model-architecture--memory-operations">#</a>
 </h2>
 <p>Inspired by human brain (neocortex-hippocampus interactions), authors suggest &ldquo;a class of LLMs augmented with an external episodic memory controller.&rdquo; They utilize an episodic memory to mimic hippocampal fast-learning system, and use LLM as a neocortical slow learning system.</p>
-<p>Fig6 below shows the overall structure of Larimar. It consists of three main components: encoder, decoder, and adaptive memory. In this structure, memory writes and reads are interpreted as inference in a generative model.</p>
+<p>Fig7 below shows the overall architecture of Larimar. Basic idea is to implement VAE with external memory. It consists of three main components: encoder, decoder, and adaptive memory.</p>
 <ol>
 <li>Encoder: Transforms the input into a latent vector</li>
 <li>Decoder: Generates an answer to the question conditioned on the memory</li>
@@ -753,20 +755,26 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
     <img src='architecture.png' width="800">
 </p>
 <p align="center">
-    Fig6. Larimar architecture
+    Fig7. Larimar architecture
 </p>
-<p>First, let&rsquo;s</p>
+<p>Let&rsquo;s see how it works with details.</p>
+<p>First of all, the memory <strong>M</strong> in Fig7 has to be trained so as to approximate the distribution of <strong>X</strong> (<strong>X</strong> is an exchangeable-order invariant episode: <strong>X</strong> {=} {x_{1}, &hellip;, x_{N}}, a subset of the input data consisting of <strong>N</strong> samples.</p>
+<p>Larimar trains the memory <strong>M</strong> in Fig7 so as to maximize the conditional log-likelihood of ln <em>p</em>(<strong>X</strong>|<strong>M</strong>), where <strong>X</strong> is an exchangeable (order invariant) episode:  <strong>X</strong> = {$ x_{1}, &hellip;, x_{N} $} , a subset of the input data consisting of N samples.</p>
+<p>Our goal is to understand how to determine the writing weight and reading weight.</p>
+<p>First of all, let&rsquo;s consider the write operation (green arrows in Fig7). Data episode of length N is transformed into a latent vector through an encoder. Then, the posterior memory M given the data Z and the writing weight W0 is calculated [8].</p>
+<p>First, overall flow shows that model architecture is based on that of VAE.</p>
 <p>sparse distributed memory is used for stroing and retrieving large amounts of information without focusing on the accuracy but on similarity of information. - wiki</p>
+<p>$$A_{11} \equiv B(modC)$$</p>
 <h2 id="4-memory-operations">
   4. Memory Operations
   <a class="anchor" href="#4-memory-operations">#</a>
 </h2>
-<p>In this paper, authors followed the basic structures from [6] to combine pre-trained LLMs and memory component for knowledge edit. On top of that, they suggest &ldquo;a class of episodic and adaptable memory-conditioned LLM architecture.&rdquo;</p>
+<p>In this paper, authors followed the basic structures from [8] to combine pre-trained LLMs and memory component for knowledge edit. On top of that, they suggest &ldquo;a class of episodic and adaptable memory-conditioned LLM architecture.&rdquo;</p>
 <p align="center">
     <img src='basic memory operations.png' width="800">
 </p>
 <p align="center">
-    Fig. Basic memory operations [6]
+    Fig8. Basic memory operations [8]
 </p>
 <h2 id="5-results">
   5. Results
@@ -780,7 +788,7 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
     <img src='wall_clock_time _result.PNG' width="800">
 </p>
 <p align="center">
-    Fig7. Comparison between different editing methods and the wall clock time for a single edit
+    Fig9. Comparison between different editing methods and the wall clock time for a single edit
 </p>
 The experiment was conducted on a single A100 GPU. Comparing the wall clock time for each editing method across 10 single edits, as shown in Fig8, Larimar was found to be approximately 4-10 times faster than the existing ROME and GRACE methods. Additionally, Larimar demonstrates the ability to address sequential edits, batch edits, and forgetting/deletion, which were not previously addressed in existing work.
 <h3 id="single-fact-editing">
@@ -792,7 +800,7 @@ The experiment was conducted on a single A100 GPU. Comparing the wall clock time
     <img src='Single_fact_editing_result.PNG' width="500">
 </p>
 <p align="center">
-    Fig8.Single fact edit performanceon CounterFact dataset comparing with baseline. Top two best systems are highlighted.
+    Fig10.Single fact edit performanceon CounterFact dataset comparing with baseline. Top two best systems are highlighted.
 </p>
 The results are shown in Fig 9. Edit Success measures the percentage of cases where the edited result has a higher probability than the original result, while Paraphrase evaluates whether the model achieves the same performance using paraphrase prompts. Neighborhood assesses the model's ability to retain knowledge about the original object. Larimar demonstrates comparable performance in editing new facts and handling prompts.
 <h3 id="sequential-fact-editing">
@@ -804,7 +812,7 @@ The results are shown in Fig 9. Edit Success measures the percentage of cases wh
     <img src='sequential_fact_editing_result.PNG' width="450">
 </p>
 <p align="center">
-    Fig9. Sequential editing on ZsRE dataset
+    Fig11. Sequential editing on ZsRE dataset
 </p>
 According to the figure 9, Larimar’s comparable ERR performance to GRACE, while preserving its original test set performance.Larimar-1.3B achieves editing speeds approximately 10 or more times faster than GRACE on GPT-2 XL.
 <h3 id="selective-forgetting">
@@ -816,7 +824,7 @@ According to the figure 9, Larimar’s comparable ERR performance to GRACE, whil
     <img src='selective_forgetting.PNG' width="300">
 </p>
 <p align="center">
-    Fig10. Batch editing accuracy on counterfact dataset. Green: MEMIT, Orange: ROME, Magenta: MEND, Black: Larimar.
+    Fig12. Batch editing accuracy on counterfact dataset. Green: MEMIT, Orange: ROME, Magenta: MEND, Black: Larimar.
 </p>
 Fig 10 shows many edits can be written at once to memory and accurately retrieve from it. Rewrite accuracy is near 100% for up to 512 edits (the memory size K) and then drops to 82% for 1024 edits. This result shows Larimar's ability to compress more than K facts into its size-K memory. This performance level is higher when compared to baselines like MEND and ROME, but subpar compared to MEMIT, which can accurately handle a very large batch of edits at a cost of reduced editing speed and is also not meant to handle sequential editing.
 </p>
@@ -826,7 +834,7 @@ To test the ability of Larimar for selectively forgetting specified facts during
     <img src='memoryerase_result.PNG' width="500">
 </p>
 <p align="center">
-    Fig11. Fraction of facts with accurate recall, for the Counterfact and ZsRE datasets, after writing N factrs to memory and removing one.
+    Fig13. Fraction of facts with accurate recall, for the Counterfact and ZsRE datasets, after writing N factrs to memory and removing one.
 </p>
 As a result, Larimar achived higher performance in forgotten and retained information is all testbench than Basemodel. This shows that Larimar works better on selective forgetting.
 <h3 id="recall-performance">
@@ -841,15 +849,17 @@ For example, in a search engine scenario, the recall rate indicates how many of 
     <img src='recall_performance_result.PNG' width="750">
 </p>
 <p align="center">
-    Fig12. Novel fact addition recall rate on FastFacts.
+    Fig14. Novel fact addition recall rate on FastFacts.
 </p>
 Fig 12 shows Larimar’s recall performance does not degrade much with increasing input context length, even
 compared to some of most competitive baseline LLMs trained with longer training context. We also compare with Supersizing Transformer, which is a memory-augmented model, however it did not show competitive recall performance because it was not trained to perform memory-conditioned generation. Due to memory
 processing in the latent space, Larimar is also efficient is terms of number of KV cache token computation compared to baseline methods. 
-<h2 id="6-conclusion">
-  6. Conclusion
-  <a class="anchor" href="#6-conclusion">#</a>
+<h2 id="6-conclusion-and-further-improvements">
+  6. Conclusion and further improvements
+  <a class="anchor" href="#6-conclusion-and-further-improvements">#</a>
 </h2>
+<p>This paper propose enhancing Large Language Models (LLMs) with a dynamically updatable and distributed episodic memory. By leveraging a one-shot memory update mechanism and combining it with memory-conditioned decoding, this framework demonstrates precise, robust, and significantly faster editing performance compared to baselines in both single-fact and challenging sequential editing experiments. Using the same memory update mechanism enable fast and selective fact deletion operations, as well as effective information deletion mechanisms. Additionally, provide a simple approach for handling long input contexts, demonstrating better fact recall from longer input contexts in Larimar&rsquo;s memory space compared to state-of-the-art LLMs trained with much larger training context windows. When compared to cutting-edge LLMs trained with much larger training context windows, Larimar showcases its advantages.</p>
+<p>There</p>
 <h2 id="7-references">
   7. References
   <a class="anchor" href="#7-references">#</a>
@@ -864,10 +874,12 @@ processing in the latent space, Larimar is also efficient is terms of number of 
 -&gt; Selective Forgetting: Advancing Machine Unlearning Techniques and Evaluation in Language Models</p>
 <p>[5] <a href="https://arxiv.org/abs/1410.3916">https://arxiv.org/abs/1410.3916</a>
 -&gt; Memory Networks</p>
-<p>[6] <a href="https://openreview.net/forum?id=Harn4_EZBw">https://openreview.net/forum?id=Harn4_EZBw</a>
+<p>[6] <a href="https://arxiv.org/abs/1312.6114">https://arxiv.org/abs/1312.6114</a>
+-&gt; Auto-Encoding Variational Bayes</p>
+<p>[7] <a href="https://process-mining.tistory.com/161">https://process-mining.tistory.com/161</a>
+-&gt; VAE, blog post</p>
+<p>[8] <a href="https://openreview.net/forum?id=Harn4_EZBw">https://openreview.net/forum?id=Harn4_EZBw</a>
 -&gt; Generative Pseudo-Inverse Memory</p>
-<p><a href="https://process-mining.tistory.com/161">https://process-mining.tistory.com/161</a>
--&gt; VAE</p>
 <p><a href="https://www.rallyware.com/blog/the_neuroscience_behind_successful_talent_development">brain figure</a></p>
 </article>
  
@@ -878,7 +890,7 @@ processing in the latent space, Larimar is also efficient is terms of number of 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/d6ccc0cff1e43980973976c7c8d165bab779b60b" title='Last modified by skjang238 | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/c6239035880d7cf190ec8ad519b0ca6cebfba6d5" title='Last modified by skjang238 | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 21, 2024</span>
     </a>
@@ -932,7 +944,7 @@ processing in the latent space, Larimar is also efficient is terms of number of 
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture">3. Model architecture</a></li>
+    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a></li>
     <li><a href="#4-memory-operations">4. Memory Operations</a></li>
     <li><a href="#5-results">5. Results</a>
       <ul>
@@ -943,7 +955,7 @@ processing in the latent space, Larimar is also efficient is terms of number of 
         <li><a href="#recall-performance">Recall Performance</a></li>
       </ul>
     </li>
-    <li><a href="#6-conclusion">6. Conclusion</a></li>
+    <li><a href="#6-conclusion-and-further-improvements">6. Conclusion and further improvements</a></li>
     <li><a href="#7-references">7. References</a></li>
   </ul>
 </nav>

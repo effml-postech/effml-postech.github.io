@@ -3,13 +3,17 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" # ">
+<meta name="description" content="A Unified Framework for Model Editing # Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli
+Posted by Donggeun An, Jonghyun Chae
+Introduction # In the rapidly evolving field of artificial intelligence and machine learning, keeping large language models (LLMs) up-to-date with the latest information is crucial. This blog post shows two model editing techniques (ROME and MEMIT) and introduces EMMET, a new framework that aims to integrate these methods under a single objective.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/21_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" # ">
+  <meta property="og:description" content="A Unified Framework for Model Editing # Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli
+Posted by Donggeun An, Jonghyun Chae
+Introduction # In the rapidly evolving field of artificial intelligence and machine learning, keeping large language models (LLMs) up-to-date with the latest information is crucial. This blog post shows two model editing techniques (ROME and MEMIT) and introduces EMMET, a new framework that aims to integrate these methods under a single objective.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>21 | Efficient ML Systems</title>
@@ -18,7 +22,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/21_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.4c078f45cf96b419ca603bcdeb1172e2c7230518e2823dceea6d07c59466138e.js" integrity="sha256-TAePRc&#43;WtBnKYDvN6xFy4scjBRjigj3O6m0HxZRmE44=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
 
   
 
@@ -606,7 +610,27 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#rome-and-memit-overview">ROME and MEMIT: Overview</a>
+      <ul>
+        <li><a href="#rome-rank-one-model-editing">ROME (Rank-One Model Editing)</a></li>
+        <li><a href="#memit-mass-editing-memory-in-transformer">MEMIT (Mass Editing Memory in Transformer)</a></li>
+      </ul>
+    </li>
+    <li><a href="#model-editing-evaluation-metrics">Model Editing Evaluation Metrics</a></li>
+    <li><a href="#emmet-unifying-rome-and-memit">EMMET: Unifying ROME and MEMIT</a>
+      <ul>
+        <li><a href="#introducing-emmet">Introducing EMMET</a></li>
+        <li><a href="#emmets-closed-form-solution">EMMET&rsquo;s Closed-Form Solution</a></li>
+        <li><a href="#experiments-and-results">Experiments and Results</a></li>
+      </ul>
+    </li>
+    <li><a href="#limitations-and-future-directions">Limitations and Future Directions</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
 
 
 
@@ -617,10 +641,78 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
+  <article class="markdown book-article"><h1 id="a-unified-framework-for-model-editing">
+  <strong>A Unified Framework for Model Editing</strong>
+  <a class="anchor" href="#a-unified-framework-for-model-editing">#</a>
 </h1>
+<p><em>Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli</em></p>
+<p><em>Posted by Donggeun An, Jonghyun Chae</em></p>
+<h2 id="introduction">
+  Introduction
+  <a class="anchor" href="#introduction">#</a>
+</h2>
+<p>In the rapidly evolving field of artificial intelligence and machine learning, keeping large language models (LLMs) up-to-date with the latest information is crucial. This blog post shows two model editing techniques (ROME and MEMIT) and introduces EMMET, a new framework that aims to integrate these methods under a single objective.</p>
+<h2 id="rome-and-memit-overview">
+  ROME and MEMIT: Overview
+  <a class="anchor" href="#rome-and-memit-overview">#</a>
+</h2>
+<p>As new facts constantly emerge, it&rsquo;s essential to update models with the latest knowledge. Model editing allows us to modify facts stored inside a model or update incorrect information. This paper focuses on two popular parameter-modifying model editing methods: ROME (Rank-One Model Editing) and MEMIT (Mass Editing Memory in Transformer). Both methods can infuse knowledge within models without needing additional hypernetworks and can be applied to any transformer-based large language model (LLM).</p>
+<h3 id="rome-rank-one-model-editing">
+  ROME (Rank-One Model Editing)
+  <a class="anchor" href="#rome-rank-one-model-editing">#</a>
+</h3>
+<p>ROME modifies a single fact at a time by performing edits with an equality constraint. It ensures that the new fact precisely replaces the old fact while preserving other parts of the model&rsquo;s knowledge.</p>
+<h3 id="memit-mass-editing-memory-in-transformer">
+  MEMIT (Mass Editing Memory in Transformer)
+  <a class="anchor" href="#memit-mass-editing-memory-in-transformer">#</a>
+</h3>
+<p>MEMIT, on the other hand, uses a least-square constraint, allowing for more flexible, batched edits. This method distributes edits across multiple layers, which enhances its ability to handle large batch sizes effectively.</p>
+<p>The Preservation-Memorization Objective
+Both ROME and MEMIT optimize the same goal: the preservation-memorization objective. This objective balances two aspects:</p>
+<p>Preservation: Ensuring that the model retains its existing knowledge.
+Memorization: Accurately integrating new information into the model.
+In simpler terms, imagine the model&rsquo;s knowledge as a bookshelf. When adding a new book, you want to place it correctly without disturbing the existing books. ROME adds one book at a time with precision, while MEMIT places several books simultaneously, ensuring they all fit well.</p>
+<h2 id="model-editing-evaluation-metrics">
+  Model Editing Evaluation Metrics
+  <a class="anchor" href="#model-editing-evaluation-metrics">#</a>
+</h2>
+<p>The success of model editing is measured using standard metrics. Here are the key evaluation metrics:</p>
+<p>Efficacy Score (ES): Indicates if an edit has been successfully made to a model. It is measured as the percentage of edits where the probability of the new fact is greater than the probability of the old fact for a given query prompt.</p>
+<p>Paraphrase Score (PS): Represents the generalization ability of the model under an edit. It measures the percentage of edits where the probability of the new fact is greater than the probability of the old fact for paraphrases of the query prompt.</p>
+<p>Neighborhood Score (NS): Represents the locality of model editing. It measures whether editing a fact affects other facts stored inside a model. NS indicates the percentage of facts in the neighborhood of the edited fact that remain unaltered post-edit.</p>
+<p>Generation Entropy (GE): Represents the fluency of a model post-edit. It is calculated by measuring the weighted average of bi-gram and tri-gram entropies of text generated by an edited model. This value drops if the generated text is repetitive, a common failure case of model editing.</p>
+<p>Score (S): A composite metric defined to represent a combination of edit success, generalization, and locality. It is the harmonic mean of ES, PS, and NS.</p>
+<h2 id="emmet-unifying-rome-and-memit">
+  EMMET: Unifying ROME and MEMIT
+  <a class="anchor" href="#emmet-unifying-rome-and-memit">#</a>
+</h2>
+<h3 id="introducing-emmet">
+  Introducing EMMET
+  <a class="anchor" href="#introducing-emmet">#</a>
+</h3>
+<p>EMMET (Equality-constrained Mass Model Editing in Transformer) unifies ROME and MEMIT under the preservation-memorization objective. EMMET uses an equality constraint for batched edits, providing a balanced approach that leverages the strengths of both ROME and MEMIT.</p>
+<h3 id="emmets-closed-form-solution">
+  EMMET&rsquo;s Closed-Form Solution
+  <a class="anchor" href="#emmets-closed-form-solution">#</a>
+</h3>
+<h3 id="experiments-and-results">
+  Experiments and Results
+  <a class="anchor" href="#experiments-and-results">#</a>
+</h3>
+<p>Single Edits and Batch Edits
+Experiments comparing ROME and MEMIT, with and without edit distribution, showed that both methods perform equally well for single edits. However, MEMIT&rsquo;s ability to distribute edits across layers gives it an edge for large batch sizes.</p>
+<p>Performance Comparison
+When editing single layers, both EMMET and MEMIT exhibit similar performance across different models and metrics. Applying MEMIT&rsquo;s edit-distribution algorithm to EMMET shows that EMMET can slightly outperform MEMIT in some cases, particularly for large batch sizes.</p>
+<h2 id="limitations-and-future-directions">
+  Limitations and Future Directions
+  <a class="anchor" href="#limitations-and-future-directions">#</a>
+</h2>
+<p>While EMMET streamlines the model editing process, it does not address deeper structural issues within models. The effectiveness of EMMET varies depending on model complexity and the nature of the edited knowledge. Furthermore, although EMMET imposes a theoretically stronger memorization constraint, it does not always outperform MEMIT, suggesting that we might be reaching the limits of model editing capabilities with current techniques.</p>
+<h2 id="conclusion">
+  Conclusion
+  <a class="anchor" href="#conclusion">#</a>
+</h2>
+<p>EMMET successfully unifies ROME and MEMIT under the preservation-memorization framework, offering a robust solution for model editing. By balancing efficiency and accuracy, EMMET represents a significant advancement in updating large language models. However, recognizing the limitations and ethical implications is essential to ensure responsible use of these powerful tools. Future research should focus on improving edit distribution algorithms and understanding their impact on model performance.</p>
 </article>
  
       
@@ -630,9 +722,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/0947bc5271fafa666a5b1d8cea6a555fa66e3cb5" title='Last modified by effml-postech | May 14, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/3026be9c4aa68c08016f12f3023b3fbc6b533dc6" title='Last modified by DonggeunAn | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 14, 2024</span>
+      <span>May 21, 2024</span>
     </a>
   </div>
 
@@ -673,7 +765,27 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#rome-and-memit-overview">ROME and MEMIT: Overview</a>
+      <ul>
+        <li><a href="#rome-rank-one-model-editing">ROME (Rank-One Model Editing)</a></li>
+        <li><a href="#memit-mass-editing-memory-in-transformer">MEMIT (Mass Editing Memory in Transformer)</a></li>
+      </ul>
+    </li>
+    <li><a href="#model-editing-evaluation-metrics">Model Editing Evaluation Metrics</a></li>
+    <li><a href="#emmet-unifying-rome-and-memit">EMMET: Unifying ROME and MEMIT</a>
+      <ul>
+        <li><a href="#introducing-emmet">Introducing EMMET</a></li>
+        <li><a href="#emmets-closed-form-solution">EMMET&rsquo;s Closed-Form Solution</a></li>
+        <li><a href="#experiments-and-results">Experiments and Results</a></li>
+      </ul>
+    </li>
+    <li><a href="#limitations-and-future-directions">Limitations and Future Directions</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
 
 
  
