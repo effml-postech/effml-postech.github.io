@@ -658,7 +658,8 @@ https://github.com/alex-shpak/hugo-book
     Figure 1. A diagrammatic representation of the preservation-memorization objective.
 </p>
 Step 1: Find Keys to Preserve
-- Identify key vectors 
+<ul>
+<li>Identify key vectors 
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
@@ -670,17 +671,21 @@ Step 1: Find Keys to Preserve
  to produce output vectors <span>
   \(v_0\)
 </span>
-.
-Step 2: Find a Fact to Memorize
-- Locate new information to be added, represented by key vector <span>
+.</li>
+</ul>
+<p>Step 2: Find a Fact to Memorize</p>
+<ul>
+<li>Locate new information to be added, represented by key vector <span>
   \(k_e\)
 </span>
  and output vector <span>
   \(v_e\)
 </span>
-, ensuring the model generates the correct new fact.
-Step 3: Update Weight Matrix
-- Modify <span>
+, ensuring the model generates the correct new fact.</li>
+</ul>
+<p>Step 3: Update Weight Matrix</p>
+<ul>
+<li>Modify <span>
   \(W_0\)
 </span>
  to <span>
@@ -695,7 +700,8 @@ Step 3: Update Weight Matrix
  produces <span>
   \(v_e\)
 </span>
-, thus integrating the new information accurately.
+, thus integrating the new information accurately.</li>
+</ul>
 <h2 id="model-editing-evaluation-metrics">
   Model Editing Evaluation Metrics
   <a class="anchor" href="#model-editing-evaluation-metrics">#</a>
@@ -722,39 +728,40 @@ Step 3: Update Weight Matrix
 ).
 </p>
 To further understand how model editing techniques like ROME, MEMIT, and EMMET work, it's essential to look at how they interact with the layers of a transformer model.
-1. Input Representation (<span>
+<ol>
+<li>Input Representation (<span>
   \(h_{l-1}\)
 </span>
 ): The input to the transformer layer, <span>
   \(h_{l-1}\)
 </span>
-, is either the output from the previous layer or the initial input embedding.
-2. Attention Mechanism (Attn): The input <span>
+, is either the output from the previous layer or the initial input embedding.</li>
+<li>Attention Mechanism (Attn): The input <span>
   \(h_{l-1}\)
 </span>
- passes through the attention mechanism, which calculates attention scores and generates a context vector by attending to different parts of the input sequence.
-3. Feed-Forward Layer: The transformed input then goes through the feed-forward layer, consisting of a fully connected layer (<span>
+ passes through the attention mechanism, which calculates attention scores and generates a context vector by attending to different parts of the input sequence.</li>
+<li>Feed-Forward Layer: The transformed input then goes through the feed-forward layer, consisting of a fully connected layer (<span>
   \(W_{fc}\)
 </span>
 ) producing an intermediate representation, followed by a non-linear activation (<span>
   \(\sigma\)
 </span>
-) like ReLU or GELU.
-4. Key Vector Generation (<span>
+) like ReLU or GELU.</li>
+<li>Key Vector Generation (<span>
   \(k\)
 </span>
 ): After the non-linearity, the intermediate representation is used to generate key vectors <span>
   \(k\)
 </span>
-, crucial for storing and retrieving the model's knowledge.
-5. Projection Weight Matrix (<span>
+, crucial for storing and retrieving the model&rsquo;s knowledge.</li>
+<li>Projection Weight Matrix (<span>
   \(W_{proj}\)
 </span>
 ): The projection weight matrix <span>
   \(W_{proj}\)
 </span>
- projects the key vectors into the final output space and is the focus of edits in ROME, MEMIT, and EMMET.
-6. Output Vector Generation (<span>
+ projects the key vectors into the final output space and is the focus of edits in ROME, MEMIT, and EMMET.</li>
+<li>Output Vector Generation (<span>
   \(v\)
 </span>
 ): The projection weight matrix <span>
@@ -766,14 +773,15 @@ To further understand how model editing techniques like ROME, MEMIT, and EMMET w
  into output vectors <span>
   \(v\)
 </span>
-, integrating the edits made to the model.
-7. Layer Output (<span>
+, integrating the edits made to the model.</li>
+<li>Layer Output (<span>
   \(h_{l}\)
 </span>
 ): The final output of the transformer layer, <span>
   \(h_{l}\)
 </span>
-, serves as the input for the next layer or as the model's final output if it is the last layer.
+, serves as the input for the next layer or as the model&rsquo;s final output if it is the last layer.</li>
+</ol>
 <h3 id="rome-rank-one-model-editing">
   ROME (Rank-One Model Editing)
   <a class="anchor" href="#rome-rank-one-model-editing">#</a>
