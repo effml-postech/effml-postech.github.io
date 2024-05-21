@@ -3,19 +3,17 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="inline example: $\sum_{i=0}^N 2i = y$
-Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
+<meta name="description" content="Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
 Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
-1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time.">
+1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time. In this report, we especially focus on the &ldquo;knowledge edit&rdquo; problem.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/22_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="inline example: $\sum_{i=0}^N 2i = y$
-Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
+  <meta property="og:description" content="Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
 Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
-1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time.">
+1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time. In this report, we especially focus on the “knowledge edit” problem.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>22 | Efficient ML Systems</title>
@@ -24,7 +22,7 @@ Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
 <link rel="canonical" href="http://localhost:1313/docs/spring24/22_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.56d9534326453b231190a634b66617c8ed5ae5c2b45e5356ff1c56d2098f8f28.js" integrity="sha256-VtlTQyZFOyMRkKY0tmYXyO1a5cK0XlNW/xxW0gmPjyg=" crossorigin="anonymous"></script>
 
   
 
@@ -648,8 +646,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><p>inline example: $\sum_{i=0}^N 2i = y$</p>
-<h1 id="larimar-large-language-models-with-episodic-memory-control">
+  <article class="markdown book-article"><h1 id="larimar-large-language-models-with-episodic-memory-control">
   Larimar: Large Language Models with Episodic Memory Control
   <a class="anchor" href="#larimar-large-language-models-with-episodic-memory-control">#</a>
 </h1>
@@ -761,8 +758,9 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
     Fig7. Larimar architecture
 </p>
 <p>Let&rsquo;s see how it works with details.</p>
-<p>First of all, the memory <strong>M</strong> in Fig7 has to be trained so as to approximate the distribution of <strong>X</strong> (<strong>X</strong> is an exchangeable-order invariant episode: <strong>X</strong>={x_1, &hellip;, x_{N}}, a subset of the input data consisting of <strong>N</strong> samples. To do so, the model maximize the conditional log-likelihood of ln<em>p</em> (<strong>X</strong>|<strong>M</strong>).</p>
-<p>Our goal is to understand how to determine the writing weight and reading weight.</p>
+<p>First of all, the memory <strong>M</strong> in Fig7 has to be trained so as to approximate the distribution of <strong>X</strong> (<strong>X</strong> is an exchangeable-order invariant episode: <strong>X</strong>={x_1, &hellip;, x_N}, a subset of the input data consisting of <strong>N</strong> samples). To do so, the model maximize the conditional log-likelihood of ln<em>p</em> (<strong>X</strong>|<strong>M</strong>). In this way, the model learns to compress <strong>X</strong> in a memory <strong>M</strong>, which then becomes a distributed associative memory.</p>
+<p>Next, writing weight and reading weight
+consider how to determine the writing weight and reading weight.</p>
 <p>First of all, let&rsquo;s consider the write operation (green arrows in Fig7). Data episode of length N is transformed into a latent vector through an encoder. Then, the posterior memory M given the data Z and the writing weight W0 is calculated [8].</p>
 <p>First, overall flow shows that model architecture is based on that of VAE.</p>
 <p>sparse distributed memory is used for stroing and retrieving large amounts of information without focusing on the accuracy but on similarity of information. - wiki</p>
@@ -893,7 +891,7 @@ processing in the latent space, Larimar is also efficient is terms of number of 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/c6239035880d7cf190ec8ad519b0ca6cebfba6d5" title='Last modified by skjang238 | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/21bcfa13d3737bc93d69a856f3ed0f3c03d3f246" title='Last modified by skjang238 | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 21, 2024</span>
     </a>

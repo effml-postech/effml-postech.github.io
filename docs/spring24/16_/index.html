@@ -20,7 +20,7 @@ This image was produced using DALL·E 3. Introduction # “Choice and concentrat
 <link rel="canonical" href="http://localhost:1313/docs/spring24/16_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.56d9534326453b231190a634b66617c8ed5ae5c2b45e5356ff1c56d2098f8f28.js" integrity="sha256-VtlTQyZFOyMRkKY0tmYXyO1a5cK0XlNW/xxW0gmPjyg=" crossorigin="anonymous"></script>
 
   
 
@@ -610,15 +610,15 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#understanding-the-challenge-uniform-computation-in-transformers">Understanding the challenge: Uniform computation in Transformers</a></li>
-    <li><a href="#conditional-computation-for-transformers">Conditional Computation for transformers</a></li>
-    <li><a href="#overview-to-mixture-of-depths-mod">Overview to Mixture-of-Depths (MoD)</a></li>
-    <li><a href="#capacity-based-routing-schemes">Capacity based routing schemes</a></li>
-    <li><a href="#implementation-detail">Implementation detail</a></li>
-    <li><a href="#open-source-mod">Open source MoD</a></li>
-    <li><a href="#conclusion-and-discussion">Conclusion and discussion</a></li>
-    <li><a href="#some-resources">Some resources</a></li>
+    <li><a href="#introduction"><strong>Introduction</strong></a></li>
+    <li><a href="#understanding-the-problem-uniform-computation-in-transformers"><strong>Understanding the problem: Uniform computation in Transformers</strong></a></li>
+    <li><a href="#conditional-computation-for-transformers"><strong>Conditional Computation for transformers</strong></a></li>
+    <li><a href="#overview-to-mixture-of-depths-mod"><strong>Overview to Mixture-of-Depths (MoD)</strong></a></li>
+    <li><a href="#capacity-based-routing-schemes"><strong>Capacity based routing schemes</strong></a></li>
+    <li><a href="#implementation-detail"><strong>Implementation detail</strong></a></li>
+    <li><a href="#open-source-mod"><strong>Open source MoD</strong></a></li>
+    <li><a href="#conclusion-and-discussion"><strong>Conclusion and discussion</strong></a></li>
+    <li><a href="#some-resources"><strong>Some resources</strong></a></li>
   </ul>
 </nav>
 
@@ -641,19 +641,20 @@ https://github.com/alex-shpak/hugo-book
 </p>
 This image was produced using DALL·E 3.
 <h2 id="introduction">
-  Introduction
+  <strong>Introduction</strong>
   <a class="anchor" href="#introduction">#</a>
 </h2>
 <p>“Choice and concentration” is an effective strategies for achieving success in problems. Sometimes, it is not necessary to consume same amount of effort and time into all problems. Expending energy on trivial issues may fail to concentrate on what truly matters. Similarly, in language models, there is a technique that does not focus equally on all tokens but allocates less budget to non-essential tokens. This technique is called conditional computation.</p>
 <p>In this post, We will explain conditional computation strategies for Transformers, focusing on a technology announced this year called <strong>Mixture-of-Texture.</strong></p>
 <p>paper:  <a href="https://arxiv.org/abs/2404.02258"><U>Mixture-of-Depths: Dynamically allocating compute in transformer-based language models</U></a></p>
 <p>Let&rsquo;s dive in!</p>
-<h2 id="understanding-the-challenge-uniform-computation-in-transformers">
-  Understanding the challenge: Uniform computation in Transformers
-  <a class="anchor" href="#understanding-the-challenge-uniform-computation-in-transformers">#</a>
+<h2 id="understanding-the-problem-uniform-computation-in-transformers">
+  <strong>Understanding the problem: Uniform computation in Transformers</strong>
+  <a class="anchor" href="#understanding-the-problem-uniform-computation-in-transformers">#</a>
 </h2>
+<p>These days, most language models are based on Transformers, and we stack these blocks to make big models. When given an input sequence, tokens pass through these blocks to predict the next token. The problem is that the models spread computations uniformly across input sequences. Transformers use the same amount of computation for essential tokens as for non-essential ones. For instance, predicting a token within a sentence is cheaper than predicting the first token of the next sentence. Researchers want to address this issue by making Transformers focus their computations on the tokens that is important.</p>
 <h2 id="conditional-computation-for-transformers">
-  Conditional Computation for transformers
+  <strong>Conditional Computation for transformers</strong>
   <a class="anchor" href="#conditional-computation-for-transformers">#</a>
 </h2>
 <ul>
@@ -670,7 +671,7 @@ This image was produced using DALL·E 3.
 </li>
 </ul>
 <h2 id="overview-to-mixture-of-depths-mod">
-  Overview to Mixture-of-Depths (MoD)
+  <strong>Overview to Mixture-of-Depths (MoD)</strong>
   <a class="anchor" href="#overview-to-mixture-of-depths-mod">#</a>
 </h2>
 <p align="center">
@@ -680,31 +681,44 @@ This image was produced using DALL·E 3.
 Like MoD, token-level routing decisions are made across the network depth.
 Difference between MoD is, MoD chooses path to transformer or to residual connection, MoE chooses path to transformer(Expert) or to transformer(Expert) or both.</p>
 <h2 id="capacity-based-routing-schemes">
-  Capacity based routing schemes
+  <strong>Capacity based routing schemes</strong>
   <a class="anchor" href="#capacity-based-routing-schemes">#</a>
 </h2>
 <ul>
-<li>Token-choice routing</li>
-<li>Expert-choice routing</li>
-<li>Expert-choice MoD</li>
+<li>
+<p>Token-choice routing</p>
+</li>
+<li>
+<p>Expert-choice routing</p>
+</li>
+<li>
+<p>Expert-choice MoD</p>
+</li>
 </ul>
 <h2 id="implementation-detail">
-  Implementation detail
+  <strong>Implementation detail</strong>
   <a class="anchor" href="#implementation-detail">#</a>
 </h2>
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \[x^{l&#43;1}_i=\begin{cases}r^{l}_i f_i(\tilde{X}^l)&#43;x^{l}_i, &amp; r^{l}_i &gt;  P_\beta(R^l)\\x^{l}_i, &amp; r^{l}_i &lt;  P_\beta(R^l)\end{cases}\]
+</span>
+
 <p>논문 요약</p>
 <h2 id="open-source-mod">
-  Open source MoD
+  <strong>Open source MoD</strong>
   <a class="anchor" href="#open-source-mod">#</a>
 </h2>
 <p><a href="https://github.com/astramind-ai/Mixture-of-depths">https://github.com/astramind-ai/Mixture-of-depths</a></p>
 <h2 id="conclusion-and-discussion">
-  Conclusion and discussion
+  <strong>Conclusion and discussion</strong>
   <a class="anchor" href="#conclusion-and-discussion">#</a>
 </h2>
 <p>논문 요약 + 내 생각</p>
 <h2 id="some-resources">
-  Some resources
+  <strong>Some resources</strong>
   <a class="anchor" href="#some-resources">#</a>
 </h2>
 <p>참고문헌 정리</p>
@@ -717,7 +731,7 @@ Difference between MoD is, MoD chooses path to transformer or to residual connec
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/743e7e54811e787c81bda17df23a0d49789f225c" title='Last modified by Inkwan Hwang | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/ea16098d013089b2fb396c6a572a609d37982895" title='Last modified by Inkwan Hwang | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 21, 2024</span>
     </a>
@@ -762,15 +776,15 @@ Difference between MoD is, MoD chooses path to transformer or to residual connec
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#understanding-the-challenge-uniform-computation-in-transformers">Understanding the challenge: Uniform computation in Transformers</a></li>
-    <li><a href="#conditional-computation-for-transformers">Conditional Computation for transformers</a></li>
-    <li><a href="#overview-to-mixture-of-depths-mod">Overview to Mixture-of-Depths (MoD)</a></li>
-    <li><a href="#capacity-based-routing-schemes">Capacity based routing schemes</a></li>
-    <li><a href="#implementation-detail">Implementation detail</a></li>
-    <li><a href="#open-source-mod">Open source MoD</a></li>
-    <li><a href="#conclusion-and-discussion">Conclusion and discussion</a></li>
-    <li><a href="#some-resources">Some resources</a></li>
+    <li><a href="#introduction"><strong>Introduction</strong></a></li>
+    <li><a href="#understanding-the-problem-uniform-computation-in-transformers"><strong>Understanding the problem: Uniform computation in Transformers</strong></a></li>
+    <li><a href="#conditional-computation-for-transformers"><strong>Conditional Computation for transformers</strong></a></li>
+    <li><a href="#overview-to-mixture-of-depths-mod"><strong>Overview to Mixture-of-Depths (MoD)</strong></a></li>
+    <li><a href="#capacity-based-routing-schemes"><strong>Capacity based routing schemes</strong></a></li>
+    <li><a href="#implementation-detail"><strong>Implementation detail</strong></a></li>
+    <li><a href="#open-source-mod"><strong>Open source MoD</strong></a></li>
+    <li><a href="#conclusion-and-discussion"><strong>Conclusion and discussion</strong></a></li>
+    <li><a href="#some-resources"><strong>Some resources</strong></a></li>
   </ul>
 </nav>
 

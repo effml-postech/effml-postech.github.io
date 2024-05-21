@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
-Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # Method: ViTAR # 1. Adaptive Token Merger (ATM Module) # 2. Fuzzy Positional Encoding (FPE) # Vision Transformer Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability.">
+Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # ViT Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability.
+The most common method used to address this problem is to apply interpolation to positional encoding before feeding it into the ViT.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/18_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
-Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # Method: ViTAR # 1. Adaptive Token Merger (ATM Module) # 2. Fuzzy Positional Encoding (FPE) # Vision Transformer Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability.">
+Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # ViT Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability.
+The most common method used to address this problem is to apply interpolation to positional encoding before feeding it into the ViT.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>18 | Efficient ML Systems</title>
@@ -20,7 +22,7 @@ Vision Transformers (ViTs) # Challenge: Multi-Resolution ViT Modeling # Method: 
 <link rel="canonical" href="http://localhost:1313/docs/spring24/18_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.5ab9840abfd0f3a681a03ddd89982108ebe4d828602b38a9274fc1ded0dfe44f.js" integrity="sha256-WrmECr/Q86aBoD3diZghCOvk2ChgKzipJ0/B3tDf5E8=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.56d9534326453b231190a634b66617c8ed5ae5c2b45e5356ff1c56d2098f8f28.js" integrity="sha256-VtlTQyZFOyMRkKY0tmYXyO1a5cK0XlNW/xxW0gmPjyg=" crossorigin="anonymous"></script>
 
   
 
@@ -612,7 +614,7 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#vision-transformers-vits">Vision Transformers (ViTs)</a></li>
     <li><a href="#challenge-multi-resolution-vit-modeling">Challenge: Multi-Resolution ViT Modeling</a></li>
-    <li><a href="#method-vitar">Method: ViTAR</a>
+    <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
         <li><a href="#1-adaptive-token-merger-atm-module">1. Adaptive Token Merger (ATM Module)</a></li>
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
@@ -647,10 +649,26 @@ https://github.com/alex-shpak/hugo-book
   Challenge: Multi-Resolution ViT Modeling
   <a class="anchor" href="#challenge-multi-resolution-vit-modeling">#</a>
 </h2>
-<h2 id="method-vitar">
-  Method: ViTAR
-  <a class="anchor" href="#method-vitar">#</a>
+<p>ViT Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability.</p>
+<p>The most common method used to address this problem is to apply interpolation to positional encoding before feeding it into the ViT. This approach allows for some compensation of positional information even when the input resolution changes. However, this method has shown significant performance degradation in image classification tasks.</p>
+<p>Recently, ResFormer proposed adding depth-wise convolution to the existing positional encoding method when performing global-local positional embedding, enabling it to work well even with unseen resolutions. (Chu et al., 2023; Tian et al., 2023).</p>
+<p align="center">
+  <img src="./ResFormer_pe.png" alt="." width="400" height="200" > 
+</p>
+<p>However, ResFormer has three drawbacks.</p>
+<ul>
+<li>Shows high performance only in a relatively small range of resolutions (Degradation significantly when resolution is greater than 892)</li>
+<li>It cannot be used with self-supervised learning methods like masked auto-encoding (MAE).</li>
+<li>Computation cost increases as input resolution increases, which has a negative impact on the training and inference process.</li>
+</ul>
+<h2 id="vitar-vision-transformer-with-any-resolution-1">
+  ViTAR: Vision Transformer with Any Resolution
+  <a class="anchor" href="#vitar-vision-transformer-with-any-resolution-1">#</a>
 </h2>
+<p>In this section, we introduces two key innovations to address this issue. Firstly, we propose a novel module for dynamic resolution adjustment, designed with a single Transformer block, specifically to achieve highly efficient incremental token integration. Secondly, we introduce fuzzy positional encoding in the Vision Transformer to provide consistent positional awareness across multiple resolutions, thereby preventing overfitting to any single training resolution.</p>
+<p align="center">
+  <img src="./ResFormer_pe.png" alt="." width="500" height="300" > 
+</p>
 <h3 id="1-adaptive-token-merger-atm-module">
   1. Adaptive Token Merger (ATM Module)
   <a class="anchor" href="#1-adaptive-token-merger-atm-module">#</a>
@@ -662,12 +680,13 @@ https://github.com/alex-shpak/hugo-book
   2. Fuzzy Positional Encoding (FPE)
   <a class="anchor" href="#2-fuzzy-positional-encoding-fpe">#</a>
 </h3>
-<p>Vision Transformer Models generally use learnable positional encoding or sin-cos positional encoding. However, these methods are highly sensitive to changes in input resolution, and they fail to provide effective resolution adaptability. To improve this, ResFormer proposed adding depth-wise convolution to the existing positional encoding method when performing global-local positional embedding, enabling it to work well even with unseen resolutions. (Chu et al., 2023; Tian et al., 2023).</p>
-<p>However, convolution-based positional embedding requires adjacent patches to fully extract and utilize spatial features. Therefore, it is not suitable for self-supervised learning methods like masked auto-encoding (MAE), which require masking parts of image patches. This limitation poses challenges for large-scale training.</p>
 <p>Fuzzy Positional Encoding(FPE) differs from the previously mentioned methods. It enhances the model&rsquo;s resolution robustness without introducing specific spatial structures like convolutions. Therefore, it can be applied to self-supervised learning frameworks. This property enables ViTAR to be applied to large-scale, unlabeled training sets for training, aiming to obtain a more powerful vision foundation model.</p>
 <p align="center">
   <img src="./FPE.png" alt="." width="500" height="300" > 
 </p>
+<p>Initially, the learnable positional embedding is randomly initialized and used as the model&rsquo;s positional embedding. At this time, FPE provides only fuzzy positional information and experiences changes within a certain range. Specifically, assuming that the exact coordinates of the target token are (i, j), the fuzzy positional information is (i + s1, j + s2). s1 and s2 satisfy -0.5 ≤ s1, s2 ≤ 0.5 and follows uniform distribution.</p>
+<p>During training, randomly generated coordinate offsets are added to the reference coordinates during the training process, and grid samples for learnable location embeddings are performed based on the newly generated coordinates to generate fuzzy location encoding.</p>
+<p>In case of inference, precise positional encoding is used instead of FPE. When there is a change in input resolution, interpolation is performed on learnable positional embedding. This has strong positional resilience because it was somehow seen and used in the FPE used in the training phase.</p>
 <h2 id="experiments">
   Experiments
   <a class="anchor" href="#experiments">#</a>
@@ -684,7 +703,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/8cb48900098232aaebb732700388729a0aa0688d" title='Last modified by Lee Jungwon | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/75172cdde2c1bb0b874dd6b38a92342e92893d23" title='Last modified by postech-sms | May 21, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 21, 2024</span>
     </a>
@@ -731,7 +750,7 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#vision-transformers-vits">Vision Transformers (ViTs)</a></li>
     <li><a href="#challenge-multi-resolution-vit-modeling">Challenge: Multi-Resolution ViT Modeling</a></li>
-    <li><a href="#method-vitar">Method: ViTAR</a>
+    <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
         <li><a href="#1-adaptive-token-merger-atm-module">1. Adaptive Token Merger (ATM Module)</a></li>
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
