@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Merging Text Transformer Models from Different Initializations # Posted by: Kyungtae Kim, Minwoo Kim
 Authors: Neha Verma (Johns Hopkins University), Maha Elbayad (Meta)
+[paper link].
 Although recent works on model merging have exhibited low- or zero-barrier mode connectivity between models with different initialization, model merging on transformer architecture has not yet been studied extensively. The application of previous merging techniques on the transformer structure is limited due to its unique structural characteristics, such as residual connection, multi-head attention (MHA), and sequential input.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
@@ -13,6 +14,7 @@ Although recent works on model merging have exhibited low- or zero-barrier mode 
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="Merging Text Transformer Models from Different Initializations # Posted by: Kyungtae Kim, Minwoo Kim
 Authors: Neha Verma (Johns Hopkins University), Maha Elbayad (Meta)
+[paper link].
 Although recent works on model merging have exhibited low- or zero-barrier mode connectivity between models with different initialization, model merging on transformer architecture has not yet been studied extensively. The application of previous merging techniques on the transformer structure is limited due to its unique structural characteristics, such as residual connection, multi-head attention (MHA), and sequential input.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
@@ -22,7 +24,7 @@ Although recent works on model merging have exhibited low- or zero-barrier mode 
 <link rel="canonical" href="http://localhost:1313/docs/spring24/25_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.a4f1e870b1a123bbd9075a3a0ac7cb7ffc0af740da258961ca4eb786cfa38fcb.js" integrity="sha256-pPHocLGhI7vZB1o6CsfLf/wK90DaJYlhyk63hs&#43;jj8s=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.37cc41db99c2813c1ebf54f7f11ab4ae3930489fc33550e4de78bf62f09af415.js" integrity="sha256-N8xB25nCgTwev1T38Rq0rjkwSJ/DNVDk3ni/YvCa9BU=" crossorigin="anonymous"></script>
 
   
 
@@ -655,6 +657,7 @@ https://github.com/alex-shpak/hugo-book
 </h1>
 <p><em>Posted by: Kyungtae Kim, Minwoo Kim</em></p>
 <p><em>Authors: Neha Verma (Johns Hopkins University), Maha Elbayad (Meta)</em></p>
+<p><a href="https://arxiv.org/abs/2403.00986">[paper link]</a>.</p>
 <p>Although recent works on model merging have exhibited low- or zero-barrier mode connectivity between models with different initialization, model merging on transformer architecture has not yet been studied extensively. The application of previous merging techniques on the transformer structure is limited due to its unique structural characteristics, such as residual connection, multi-head attention (MHA), and sequential input. The paper merges separate transformer minima, proposing a new model merging technique to investigate the relationship between the pre-trained models&rsquo; minima in the loss landscape. Using permutation-based model merging, authors found lower loss barriers between minima compared to other model merging techniques such as model averaging. The results showed that the model has less sharp and isolated minima than previously expected.</p>
 <p>The contributions of the researchers are listed as follows:</p>
 <ol>
@@ -673,6 +676,9 @@ https://github.com/alex-shpak/hugo-book
 <p align="center">
     <img src=figures/transformer.png width="900">
 </p>
+<p style="text-align:center; font-style: italic;">
+Figure 1. Basic structure of a transformer.
+</p>
 <p>Transformer is a type of sequence-to-sequence (seq2seq) models that takes a sequence of tokens as an input, and computes according to the input token. Unlike previous seq2seq models where a certain input token had a hard time affecting every output tokens, transformer uses <em><strong>self-attention</strong></em>, which allows all tokens to affect every output tokens. This allows for better performance in data where the distance between tokens has low relationship to the importance of the tokens&rsquo; importance. For more details on transformers and attention, see the paper <a href="https://arxiv.org/abs/1706.03762">&lsquo;Attention is All You Need&rsquo;</a>.</p>
 <h3 id="loss-landscape">
   Loss Landscape
@@ -681,6 +687,9 @@ https://github.com/alex-shpak/hugo-book
 <p><a href="https://arxiv.org/abs/1712.09913">Loss landscape</a> is a representation of the loss values around the weight space of the network. Loss landscape helps researchers see how well a neural network has been trained and gives researchers new insights on their models.</p>
 <p align="center">
     <img src=figures/loss_landscape.png width="900">
+</p>
+<p style="text-align:center; font-style: italic;">
+Figure 2. An example of a loss landscape of a deep learning model.
 </p>
 <p>DNNs are trained by optimizing a loss function with an stochastic gradient descent (SGD) variant. The loss landscapes of these networks have been shown to contain infinitely many global minimizers that are reachable with the help of SGD. One reason for the abundance of minima is <strong>overparameterization</strong>, which leads different functions to behave similarly on the training data. <strong>Permutation and scaling invariances</strong> also lead to functionally identical minima that differ in the weight space. Prior works stated that the optima of loss functions are connected by simple curves over which training and test accuracy are nearly constant (no loss barrier). This is called <em>mode connectivity</em>. Other researchers conjectured that if the permutation invariances of neural networks are taken into account, these optima are linearly mode connected, i.e. the linear path connecting these two models has no loss barrier.
 In the paper, the authors pay attention on how permutation between models could lead to similar or identical loss landscapes.</p>
@@ -697,7 +706,8 @@ In the paper, the authors pay attention on how permutation between models could 
   Feed-Forward Layers
   <a class="anchor" href="#feed-forward-layers">#</a>
 </h3>
-<p>In this section, we explain how the authors of the paper used permutation to find the similarities between two distinct models and merge them. Given two models 
+<p>In this section, we explain how the authors of the paper used permutation to find the similarities between two distinct models and merge them. In short, permutation order that maximizes the cross-correlation of the models is calculated and the permutation is used to change the weight ordering.</p>
+<p>In more details, given two models 
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
@@ -771,8 +781,8 @@ In the paper, the authors pay attention on how permutation between models could 
  for some <span>
   \(\lambda\in[0,1]\)
 </span>
-.
-cf. If permutation matrix <span>
+.</p>
+<p>cf. If permutation matrix <span>
   \(\text{P}\)
 </span>
  is multiplied in layer <span>
@@ -790,7 +800,14 @@ cf. If permutation matrix <span>
   Multi-head Attentions
   <a class="anchor" href="#multi-head-attentions">#</a>
 </h3>
-<p>Multi-head attention parameters include parameters from key, query, value, and linear layer each denoted as <span>
+<p align="center">
+    <img src="figures/MHA_head.png" width="300"> 
+</p>
+<p style="text-align:center; font-style: italic;">
+Figure 3. Different head alignments occuring from different initialization. Though the 5 heads of the multi-head attention all connect to the same 5 features, the order of the heads may differ.
+</p>
+<p>As aformentioned, multi-head attention mechanism can be challenging to deal with due to its unique properties. The authors propose using permutation on each attention head separately and not permuting features between attention heads.</p>
+<p>More specifically, multi-head attention parameters include parameters from key, query, value, and linear layer each denoted as <span>
   \(\text{W}_K\)
 </span>
 , <span>
@@ -817,7 +834,7 @@ cf. If permutation matrix <span>
  for head <span>
   \(i\)
 </span>
-. In the paper&rsquo;s case, since the models are trained from different initializations, the correspondence of their attention heads may differ in addition to the correspondence of features within each head. The features are extracted just after the attention computation and before the linear layer. The features are used to compute <span>
+. As can be seen from figure 123, since the models are trained from different initializations, the correspondence of their attention heads may differ in addition to the correspondence of features within each head. The features are extracted just after the attention computation and before the linear layer. The features are used to compute <span>
   \(C\)
 </span>
 , and then the correlation matrix is partitioned by heads into <span>
@@ -859,21 +876,21 @@ cf. If permutation matrix <span>
   Residual Connections
   <a class="anchor" href="#residual-connections">#</a>
 </h4>
-<p>Each transformer layer comes with two residual connections, as can be seen from FIgure 1. The residual connections can be formulated as follows:</p>
+<p>Each transformer layer comes with two residual connections, as can be seen from Figure 1. The residual connections can be formulated as follows:</p>
 <span>
-  \[\begin{align}
+  \[\begin{aligned}
 x_a^r&amp;=\text{LN}(\text{W}_O \text{MHA}(x) &#43; x),\\
 x_f^r&amp;=\text{LN}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) &#43; x_a^r).
-\end{align}\]
+\end{aligned}\]
 </span>
 
 <p>The input and output of both sublayers are added to create a new output. This implies that if a permutation operation is applied to the output state, the permutation should be the same for both addends. Also, since the inputs passes through the LayerNorm module, the permutation to the output should also permute the features of the LayerNorm module also. Ignoring the parameters of the LayerNorm,</p>
 <span>
-  \[\begin{align}
+  \[\begin{aligned}
 \text{P}x_f^r&amp;=\text{P}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) &#43; x_a^r)\\
 &amp;=\text{P}\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) &#43; \text{P}x_a^r\\
 &amp;=\text{P}\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) &#43; \text{P}(\text{W}_O \text{MHA}(x) &#43; x)
-\end{align}\]
+\end{aligned}\]
 </span>
 
 <p>Since the input to each layer must be permuted (<span>
@@ -893,7 +910,7 @@ x_f^r&amp;=\text{LN}(\text{W}_2 \text{ReLU}(\text{W}_1 x_a^r) &#43; x_a^r).
 <p>In this work, the authors investigated 5 different BERT models from the MultiBERTs reproductions seeds 1 through 5 (See <a href="https://aclanthology.org/N19-1423/">&lsquo;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&rsquo;</a> &amp; <a href="https://arxiv.org/abs/2106.16163">&lsquo;The MultiBERTs: BERT Reproductions for Robustness Analysis&rsquo;</a>).
 Each model has the following properties:</p>
 <ol>
-<li>Bert-base-uncased checkpoint.</li>
+<li>Each model comes from a <code>bert-base-uncased</code> checkpoint.</li>
 <li>Different random initialization and random ordering.</li>
 <li>Same original BERT vocabulary and tokenizer.</li>
 </ol>
@@ -934,29 +951,29 @@ As a baseline for comparison, vanilla averaging is defined as:</p>
 <p>First, they found that the merging all feed-forward sublayers and/or merging all multi-headed attention sublayers reduces the pseudo-perplexity compared to the baseline. Remakably, combination of them leads to the reducuction of the perplexity by about 7 times at <span>
   \(\lambda = 0.5\)
 </span>
- (See Figure 3). The reduced barrier suggests that a lower loss path has formed among these models, indicating a connection between the minima with a barrier similar to what they report.</p>
+ (See Figure 4). The reduced barrier suggests that a lower loss path has formed among these models, indicating a connection between the minima with a barrier similar to what they report.</p>
 <p align="center">
-    <img src="figures/Figure3.png" width="300"> 
+    <img src="figures/component_curves_mlm0.1.png" width="300"> 
 </p>
 <p style="text-align:center; font-style: italic;">
-Figure 3. Results of pseudo-perplexity scores of 10 MultiBERTs with vanilla averaging, merging all feed-forward sublayers, and merging all multi-headed attention sublayers and all multi-headed attention sublayers.
+Figure 4. Results of pseudo-perplexity scores of 10 MultiBERTs with vanilla averaging, merging all feed-forward sublayers, and merging all multi-headed attention sublayers and all multi-headed attention sublayers.
 </p>
 <p>Next, they investigated how well these Transformers learn similar representations of the model. The average feature correlations of both the Feed-Forward layer and the attention pre-merged/merged with our method are calculated. The aligned models show higher average feature correlations than the orignal models. However, these values are no more than 0.3 because some pre-trained transformers can be sparsely activated and be pruned heavily leading to lower average feature correlations (Li et al.,2023; Dalvi et al., 2020).</p>
 <p align="center">
-    <img src="figures/Figure4.png" width="300"> 
+    <img src="figures/convergent_learning_mlm.png" width="300"> 
 </p>
 <p style="text-align:center; font-style: italic;">
-Figure 4. Results of average feature correlations between 10 masked language model pairs.
+Figure 5. Results of average feature correlations between 10 masked language model pairs.
 </p>
 <h3 id="multi-headed-attention">
   Multi-headed attention
   <a class="anchor" href="#multi-headed-attention">#</a>
 </h3>
-<p>Then, they investigated loss barrier of Head-Permutation multi-headed attention approach. It is worth noting that this approach maintains head structure while allowing different head correspondences (<em>Head-Perm</em>). The proposed method exhibits lower loss barrier than method using simple attention averaging (<em>Vanilla Attention Avg.</em>), method that ignores the multiheaded structure of the weight parameters (<em>Ignore-Heads</em>), and method that does not allow for different head correspondences across different models (<em>Monotonic</em>) while exhibiting clear attention head boundaries of the correlation matrix (See Figure 5 and Table 1).</p>
+<p>Next, they investigated loss barrier of Head-Permutation multi-headed attention approach. It is worth noting that this approach maintains head structure while allowing different head correspondences (<em>Head-Perm</em>). The proposed method exhibits lower loss barrier than method using simple attention averaging (<em>Vanilla Attention Avg.</em>), method that ignores the multiheaded structure of the weight parameters (<em>Ignore-Heads</em>), and method that does not allow for different head correspondences across different models (<em>Monotonic</em>) while exhibiting clear attention head boundaries of the correlation matrix (See Figure 5 and Table 1).</p>
 <style>
     .centered {text-align: center;}
 </style>
-<table style="border: 2px;" align="center">
+<table style="border: 2px; margin: auto;">
   <tr>
     <td > Method </td>
     <td class="centered"> Loss Barrier&darr; </td>
@@ -982,16 +999,16 @@ Figure 4. Results of average feature correlations between 10 masked language mod
 Table 1. Loss Barriers of 10 MultiBERTs merged with feed-forward and attention components merged.
 </p>
 <p align="center">
-    <img src="figures/Figure5.png" width="300"> 
+    <img src="figures/correlation_heatmap.png" width="300"> 
 </p>
 <p style="text-align:center; font-style: italic;">
-Figure 5. Results of a correlation matrix between the first multi-headed attention layer from two different MultiBERTs models.
+Figure 6. Results of a correlation matrix between the first multi-headed attention layer from two different MultiBERTs models.
 </p>
 <h3 id="residual-stream">
   Residual Stream
   <a class="anchor" href="#residual-stream">#</a>
 </h3>
-<p>Moreover, they investigate the effect of the permutation alignment involving residual connection parameters. As described in Residual Connections, repeated Add/Norm components sharing the permutation operations reduce the permutation symmetries and available residual stream parameters. The identity permutation which uses the identity matrix <span>
+<p>Next, the effect of the permutation alignment involving residual connection parameters is discussed. Repeated Add/Norm components sharing the permutation operations reduce the permutation symmetries and available residual stream parameters. The identity permutation which uses the identity matrix <span>
   \({I_d}\)
 </span>
  exhibits the lowest loss barrier because only one pair of <span>
@@ -1034,18 +1051,18 @@ Table 2. Loss Barriers of merged MultiBERTs with only residual components merged
   Amount of Data
   <a class="anchor" href="#amount-of-data">#</a>
 </h3>
-<p>Moreover, they investigate the effect of the amount of sentences on the loss barrier. Despite combination of feed-forward and attention layers, there is no strong directional relationship between the amount of data and the loss barrier. It seems that some variations are attributed by the quality of the data (See Figure 6).</p>
+<p>Moreover, they investigate the effect of the amount of sentences on the loss barrier. Despite the combination of feed-forward and attention layers, there is no strong directional relationship between the amount of data and the loss barrier. It seems that some variations are attributed by the quality of the data (See Figure 7).</p>
 <p align="center">
-    <img src="figures/Figure6.png" width="300"> 
+    <img src="figures/data_ablation.png" width="300"> 
 </p>
 <p style="text-align:center; font-style: italic;">
-Figure 6. Results of loss barrier respect to the amount of sentences.
+Figure 7. Results of loss barrier respect to the amount of sentences.
 </p>
 <h3 id="glue-results">
   GLUE results
   <a class="anchor" href="#glue-results">#</a>
 </h3>
-<p>Finally, they compared the loss barriers of their method to those of vanilla averaging approach for eight different GLUE tasks including residual permutations (See Figure 7 and Table 3). Vanilla averaging (STS-B) exhibits the highest loss, but some tasks show that the vanilla averaging outperforms their approach. They observe inconsistent loss reduction, with lower loss barriers than those of the masked language modeling setting. They also observe that lower loss pattern than either parent model at about <span>
+<p>Finally, they compared the loss barriers of their method to those of vanilla averaging approach for eight different GLUE tasks including residual permutations (See Figure 8 and Table 3). Vanilla averaging (STS-B) exhibits the highest loss, but some tasks show that the vanilla averaging outperforms their approach. They observe inconsistent loss reduction, with lower loss barriers than those of the masked language modeling setting. They also observe that lower loss pattern than either parent model at about <span>
   \(\lambda = 0.15\)
 </span>
  and <span>
@@ -1053,10 +1070,10 @@ Figure 6. Results of loss barrier respect to the amount of sentences.
 </span>
 . Interestingly,  M-shaped curve can be found in some vanilla merges between these fine-tuned models. In this perspective, their method could be extended to explore lower loss paths between finely-tuned minima. However, the selection of optimal data for the lowest loss, understanding of fine-tuned models and pre-connectivity in the loss landscape are remained for future work.</p>
 <p align="center">
-    <img src="figures/Figure7.png" width="300"> 
+    <img src="figures/glue_curves.png" width="300"> 
 </p>
 <p style="text-align:center; font-style: italic;">
-Figure 7. Loss barrier curves for 8 GLUE tasks for vanilla interpolation and our strategy.
+Figure 8. Loss barrier curves for 8 GLUE tasks for vanilla interpolation and our strategy.
 </p>
 <table style="border: 2px;" align="center">  <tr>
     <td>    </td>
@@ -1125,12 +1142,21 @@ Table 3. Comparison of loss bariers between fine-tuned BERT model across 8 GLUE 
   <a class="anchor" href="#conclusion">#</a>
 </h2>
 <p>In this work, the authors develop a new strategy for model mergring based on permutation mapping and demonstrates reduced loss barriers between masked languaged models with different initialziation compared to vanilla merging. Next, they extend their approach to fine-tuned models. The authors suggest that understanding the connectedness between models lead to achieving sharpness of minima and smoothness Transformer loss space. Moreover, it can open up new possibilities for improving design optimization methods, ensembles of models, and additional merging techniques. Specifically, this paper shows that permutation invariances of Transformer model is considered to characterize the geometric features of minima. Finally, they shad the light on the relationships between fine-tuned models, Transformer width and loss barriers, and the data for characterize the relationship between Transformer minima.</p>
+<p>Further research is possible, examining the proposed techniques on a more complicated or larger dataset. Also, more sophisticated inspection on the aformentioned M-shaped loss curve is needed.</p>
 <h2 id="references">
   References
   <a class="anchor" href="#references">#</a>
 </h2>
-<p><a href="https://arxiv.org/abs/2403.00986">https://arxiv.org/abs/2403.00986</a></p>
-<p><a href="https://arxiv.org/abs/1712.09913">Loss landscape figure</a></p>
+<p>Paper: <a href="https://arxiv.org/abs/2403.00986">https://arxiv.org/abs/2403.00986</a></p>
+<p>Attention mechanism: <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></p>
+<p>Loss landscape explanation:  <a href="https://arxiv.org/abs/1712.09913">https://arxiv.org/abs/1712.09913</a></p>
+<p>BERT: <a href="https://aclanthology.org/N19-1423/">https://aclanthology.org/N19-1423/</a></p>
+<p>MultiBERTs: <a href="https://arxiv.org/abs/2106.16163">https://arxiv.org/abs/2106.16163</a></p>
+<p>Wikitext-103 benchmark: <a href="https://arxiv.org/abs/1609.07843">https://arxiv.org/abs/1609.07843</a></p>
+<p>Books corpus: <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/html/Zhu_Aligning_Books_and_ICCV_2015_paper.html">https://www.cv-foundation.org/openaccess/content_iccv_2015/html/Zhu_Aligning_Books_and_ICCV_2015_paper.html</a></p>
+<p>GLUE: <a href="https://arxiv.org/abs/1804.07461">https://arxiv.org/abs/1804.07461</a></p>
+<p>WNLI: <a href="https://arxiv.org/abs/1810.04805">https://arxiv.org/abs/1810.04805</a></p>
+<p>Loss barrier: <a href="https://arxiv.org/abs/1803.0363">https://arxiv.org/abs/1803.0363</a></p>
 </article>
  
       
