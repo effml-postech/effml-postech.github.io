@@ -3,14 +3,16 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="A Unified Framework for Model Editing # Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli Posted by Donggeun An, Jonghyun Chae
+<meta name="description" content="A Unified Framework for Model Editing # Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli
+Posted by Donggeun An, Jonghyun Chae
 Introduction # In the rapidly evolving field of artificial intelligence and machine learning, keeping large language models (LLMs) up-to-date with the latest information is crucial. This paper presents a comprehensive framework, Equality-constrained Mass Model Editing for Transformers (EMMET), that integrates two major model editing techniques: Rank-One Model Editing (ROME) and Mass Editing Memory in Transformer (MEMIT).">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/21_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="A Unified Framework for Model Editing # Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli Posted by Donggeun An, Jonghyun Chae
+  <meta property="og:description" content="A Unified Framework for Model Editing # Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli
+Posted by Donggeun An, Jonghyun Chae
 Introduction # In the rapidly evolving field of artificial intelligence and machine learning, keeping large language models (LLMs) up-to-date with the latest information is crucial. This paper presents a comprehensive framework, Equality-constrained Mass Model Editing for Transformers (EMMET), that integrates two major model editing techniques: Rank-One Model Editing (ROME) and Mass Editing Memory in Transformer (MEMIT).">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
@@ -642,56 +644,56 @@ https://github.com/alex-shpak/hugo-book
   <strong>A Unified Framework for Model Editing</strong>
   <a class="anchor" href="#a-unified-framework-for-model-editing">#</a>
 </h1>
-<p><em>Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli</em>
-<em>Posted by Donggeun An, Jonghyun Chae</em></p>
+<p><em>Authors: Akshat Gupta, Dev Sajnani, Gopala Anumanchipalli</em></p>
+<p><em>Posted by Donggeun An, Jonghyun Chae</em></p>
 <h2 id="introduction">
   Introduction
   <a class="anchor" href="#introduction">#</a>
 </h2>
 <p>In the rapidly evolving field of artificial intelligence and machine learning, keeping large language models (LLMs) up-to-date with the latest information is crucial. This paper presents a comprehensive framework, Equality-constrained Mass Model Editing for Transformers (EMMET), that integrates two major model editing techniques: Rank-One Model Editing (ROME) and Mass Editing Memory in Transformer (MEMIT). The proposed framework focuses on the retention-memory objective, which aims to inject new knowledge into the model while maintaining the fidelity of existing information.</p>
 <p align="center">
-    <img src='./figure1.png' width="700">
+    <img src='./figure1.png' width="600">
 </p>
 <p align="center">
-    Figure 1: A diagrammatic representation of the preservation-memorization objective.
+    Figure 1. A diagrammatic representation of the preservation-memorization objective.
 </p>
 Step 1: Find Keys to Preserve
 - Identify key vectors 
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \(\k_0\)
+  \(k_0\)
 </span>
  representing existing knowledge, ensuring they remain intact by processing with the weight matrix <span>
-  \(\W_0\)
+  \(W_0\)
 </span>
  to produce output vectors <span>
-  \(\v_0\)
+  \(v_0\)
 </span>
 .
 Step 2: Find a Fact to Memorize
 - Locate new information to be added, represented by key vector <span>
-  \(\k_e\)
+  \(k_e\)
 </span>
  and output vector <span>
-  \(\v_e\)
+  \(v_e\)
 </span>
 , ensuring the model generates the correct new fact.
 Step 3: Update Weight Matrix
 - Modify <span>
-  \(\W_0\)
+  \(W_0\)
 </span>
  to <span>
   \(\hat{W}\)
 </span>
 , preserving existing key vectors <span>
-  \(\k_0\)
+  \(k_0\)
 </span>
  while ensuring <span>
-  \(\k_e\)
+  \(k_e\)
 </span>
  produces <span>
-  \(\v_e\)
+  \(v_e\)
 </span>
 , thus integrating the new information accurately.
 <h2 id="model-editing-evaluation-metrics">
@@ -715,61 +717,61 @@ Step 3: Update Weight Matrix
 </p>
 <p align="center">
     Figure 2: Figure shows a diagrammatic representation of a transformer layer. The layer being edited by ROME, MEMIT and EMMET is the projection weight matrix inside the MLP layer (<span>
-  \(\W_{proj}\)
+  \(W_{proj}\)
 </span>
 ).
 </p>
 To further understand how model editing techniques like ROME, MEMIT, and EMMET work, it's essential to look at how they interact with the layers of a transformer model.
 1. Input Representation (<span>
-  \(\h_{l-1}\)
+  \(h_{l-1}\)
 </span>
 ): The input to the transformer layer, <span>
-  \(\h_{l-1}\)
+  \(h_{l-1}\)
 </span>
 , is either the output from the previous layer or the initial input embedding.
 2. Attention Mechanism (Attn): The input <span>
-  \(\h_{l-1}\)
+  \(h_{l-1}\)
 </span>
  passes through the attention mechanism, which calculates attention scores and generates a context vector by attending to different parts of the input sequence.
 3. Feed-Forward Layer: The transformed input then goes through the feed-forward layer, consisting of a fully connected layer (<span>
-  \(\W_{fc}\)
+  \(W_{fc}\)
 </span>
 ) producing an intermediate representation, followed by a non-linear activation (<span>
   \(\sigma\)
 </span>
 ) like ReLU or GELU.
 4. Key Vector Generation (<span>
-  \(\k\)
+  \(k\)
 </span>
 ): After the non-linearity, the intermediate representation is used to generate key vectors <span>
-  \(\k\)
+  \(k\)
 </span>
 , crucial for storing and retrieving the model's knowledge.
 5. Projection Weight Matrix (<span>
-  \(\W_{proj}\)
+  \(W_{proj}\)
 </span>
 ): The projection weight matrix <span>
-  \(\W_{proj}\)
+  \(W_{proj}\)
 </span>
  projects the key vectors into the final output space and is the focus of edits in ROME, MEMIT, and EMMET.
 6. Output Vector Generation (<span>
-  \(\v\)
+  \(v\)
 </span>
 ): The projection weight matrix <span>
-  \(\W_{proj}\)
+  \(W_{proj}\)
 </span>
  transforms the key vectors <span>
-  \(\k\)
+  \(k\)
 </span>
  into output vectors <span>
-  \(\v\)
+  \(v\)
 </span>
 , integrating the edits made to the model.
 7. Layer Output (<span>
-  \(\h_{l}\)
+  \(h_{l}\)
 </span>
 ): The final output of the transformer layer, <span>
-  \(\h_{l}\)
+  \(h_{l}\)
 </span>
 , serves as the input for the next layer or as the model's final output if it is the last layer.
 <h3 id="rome-rank-one-model-editing">
@@ -786,7 +788,7 @@ To further understand how model editing techniques like ROME, MEMIT, and EMMET w
     <img src='./table1.png' width="600">
 </p>
 <p align="center">
-    Table 1: Comparison between ROME and MEMIT when editing only a single layer for CounterFact dataset.
+    Table 1. Comparison between ROME and MEMIT when editing only a single layer for CounterFact dataset.
 </p>
 The comparison between ROME and MEMIT reveals that both techniques are highly effective at model editing, with each having its strengths. ROME generally excels in generalization and efficacy, while MEMIT performs slightly better in maintaining locality and fluency, especially for larger models like Llama-2.
 <h2 id="emmet-unifying-rome-and-memit">
@@ -808,13 +810,13 @@ The comparison between ROME and MEMIT reveals that both techniques are highly ef
 </span>
 
 Here V_E represents the vector of desired outputs, <span>
-  \(\W_0\)
+  \(W_0\)
 </span>
  is the original weight matrix, <span>
-  \(\K_E\)
+  \(K_E\)
 </span>
  is the key vector representing the input associated with each fact, and <span>
-  \(\C_0\)
+  \(C_0\)
 </span>
  is the covariance matrix derived from the existing model parameters.
 EMMET operates under the preservation-memorization objective, which aims to preserve the integrity of the model’s existing knowledge while accurately incorporating new information. The algorithm is carefully designed to balance these objectives, ensuring that the updates enhance the model&rsquo;s utility without introducing errors or biases.
@@ -824,16 +826,16 @@ EMMET is designed to incorporate batch edits under equality constraints. This ap
   <a class="anchor" href="#experiments-and-results">#</a>
 </h3>
 <p align="center">
-    <img src='./figure4.png' width="600">
+    <img src='./figure3.png' width="1000">
 </p>
 <p align="center">
-    Figure 4: Single layer editing performance of EMMET as a function of batch size when compared to MEMIT on the CounterFact dataset.
+    Figure 3. Single layer editing performance of EMMET as a function of batch size when compared to MEMIT on the CounterFact dataset.
 </p>
 <p align="center">
-    <img src='./figure5.png' width="600">
+    <img src='./figure4.png' width="1000">
 </p>
 <p align="center">
-    Figure 5: Performance comparison of EMMET and MEMIT when distributing the edit over multiple layers using the MEMIT edit-distribution algorithm on the CounterFact dataset.
+    Figure 4. Performance comparison of EMMET and MEMIT when distributing the edit over multiple layers using the MEMIT edit-distribution algorithm on the CounterFact dataset.
 </p>
 The effectiveness of EMMET has been validated through extensive testing on standard model compilation datasets, including evaluations on various models such as GPT2-XL, GPT-J, and Llama-2-7b. These experiments demonstrated that EMMET matches and sometimes exceeds the performance of MEMIT in terms of editing success rate, maintaining data integrity, and generalization ability across multiple datasets and model architectures.
 <h2 id="conclusion">

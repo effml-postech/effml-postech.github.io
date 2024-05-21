@@ -3,19 +3,17 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="test: \lbrace$x_{11}, x_{22}$\rbrace
-Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
+<meta name="description" content="Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
 Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
-1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time.">
+1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time. In this report, we especially focus on the &ldquo;knowledge edit&rdquo; problem.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/22_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="test: \lbrace$x_{11}, x_{22}$\rbrace
-Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
+  <meta property="og:description" content="Larimar: Large Language Models with Episodic Memory Control # Posted by: Sunggyu Jang, Hyeonwoo Park
 Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
-1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time.">
+1. Background # Large Language Model (LLM) is one of the most popular topics in these days, due to their outstanding performance on various Natural Language Processing (NLP) tasks. However, LLM has faced a lot of challenges at the same time. In this report, we especially focus on the “knowledge edit” problem.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>22 | Efficient ML Systems</title>
@@ -623,7 +621,7 @@ https://github.com/alex-shpak/hugo-book
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a>
+    <li><a href="#3-model-architecture">3. Model architecture</a>
       <ul>
         <li></li>
       </ul>
@@ -652,8 +650,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><p>test: \lbrace$x_{11}, x_{22}$\rbrace</p>
-<h1 id="larimar-large-language-models-with-episodic-memory-control">
+  <article class="markdown book-article"><h1 id="larimar-large-language-models-with-episodic-memory-control">
   Larimar: Large Language Models with Episodic Memory Control
   <a class="anchor" href="#larimar-large-language-models-with-episodic-memory-control">#</a>
 </h1>
@@ -747,12 +744,12 @@ Selective Fact Forgetting and Information Leakage Prevention:</p>
 Recursive Search-Based Solution for Long Context Generalization: A simple recursive search-based approach is provided to enable Larimar&rsquo;s memory to generalize to longer input contexts.</p>
 </li>
 </ol>
-<h2 id="3-model-architecture--memory-operations">
-  3. Model architecture &amp; Memory operations
-  <a class="anchor" href="#3-model-architecture--memory-operations">#</a>
+<h2 id="3-model-architecture">
+  3. Model architecture
+  <a class="anchor" href="#3-model-architecture">#</a>
 </h2>
 <p>Inspired by human brain (neocortex-hippocampus interactions), authors suggest &ldquo;a class of LLMs augmented with an external episodic memory controller.&rdquo; They utilize an episodic memory to mimic hippocampal fast-learning system, and use LLM as a neocortical slow learning system.</p>
-<p>Fig7 below shows the overall architecture of Larimar. Basic idea is to implement VAE with external memory. It consists of three main components: encoder, decoder, and adaptive memory.</p>
+<p>Fig7 below shows the overall architecture of Larimar. Basic idea is to implement VAE with external memory. It consists of three main components: encoder, decoder, and adaptive memory. Comparing the architecture with Fig5 would be helpful. In Larimar, memory corresponds to a latent vector.</p>
 <ol>
 <li>Encoder: Transforms the input into a latent vector</li>
 <li>Decoder: Generates an answer to the question conditioned on the memory</li>
@@ -773,18 +770,28 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
   (1) Writing
   <a class="anchor" href="#1-writing">#</a>
 </h5>
-<p>The memory <strong>M</strong> in Fig7 has to be trained so as to approximate the distribution of <strong>X</strong> (<strong>X</strong> is an exchangeable-order invariant episode: <strong>X</strong> = { $x_{1}$, &hellip;, $x_{N}$ }, a subset of the input data consisting of <strong>N</strong> samples). To do so, the model is trained to maximize the conditional log-likelihood of ln<em>p</em> (<strong>X</strong>|<strong>M</strong>). In this way, the model learns to compress <strong>X</strong> in a memory <strong>M</strong>, which then becomes a distributed associative memory.</p>
+<p>The memory <strong>M</strong> in Fig7 has to be trained so as to approximate the distribution of <strong>X</strong> (<strong>X</strong> is an exchangeable-order invariant episode: <strong>X</strong> = { $x_{1}$, &hellip;, $x_{N}$ }, a subset of the input data consisting of <strong>N</strong> samples). To do so, the model is trained to maximize the conditional log-likelihood of ln<em>p</em> (<strong>X</strong>|<strong>M</strong>). In this way, the model learns to compress <strong>X</strong> in a memory <strong>M</strong>, which then becomes a distributed associative memory. This process is similar to that of encoder in VAE. (Look at the green arrows in Fig7)</p>
 <h5 id="2-reading">
   (2) Reading
   <a class="anchor" href="#2-reading">#</a>
 </h5>
-<p>The reading weight matrix, <strong>W</strong>, is a random variable to enforce generative ability of the model. Memory readouts are obtained as <strong>Z</strong>_{readout} = <strong>WM</strong>.</p>
-<p>Next, writing weight and reading weight
-consider how to determine the writing weight and reading weight.</p>
-<p>First of all, let&rsquo;s consider the write operation (green arrows in Fig7). Data episode of length N is transformed into a latent vector through an encoder. Then, the posterior memory M given the data Z and the writing weight W0 is calculated [8].</p>
-<p>First, overall flow shows that model architecture is based on that of VAE.</p>
-<p>sparse distributed memory is used for stroing and retrieving large amounts of information without focusing on the accuracy but on similarity of information. - wiki</p>
-<p>$$A_{11} \equiv B(modC)$$</p>
+<p>The reading weight matrix, <strong>W</strong>, is a random variable for generative ability of the model. In this paper, authors set a standard Gaussian prior <em>p</em>(<strong>W</strong>) ~ <em>N</em>(0, $I_{N \times K}$ ) and posterior <em>q</em>(<strong>W</strong>) ~ <em>N</em>($\bar{W}$, $\sigma^2_{W} \cdot I_{N \times K}$), where the mean $\bar{W}$ is estimated from each episode and $\sigma_{W}$ is learnable. Memory readouts are obtained as <strong>Z</strong>$_{readout}$ = <strong>WM</strong>.</p>
+<h5 id="3-summary">
+  (3) Summary
+  <a class="anchor" href="#3-summary">#</a>
+</h5>
+<p>Three main components - encoder(<em>e</em>), associative memory(<strong>M</strong>), and decoder(<em>d</em>) - are jointly trained and optimized for an episode <strong>X</strong>, using the following loss:</p>
+<p align="center">
+    <img src='loss.png' width="350">
+</p>
+<h4 id="3-2-inference">
+  3-2. Inference
+  <a class="anchor" href="#3-2-inference">#</a>
+</h4>
+<p>Once <strong>M</strong>$_{0}$ is trained via backpropagation, the posterior memory <strong>M</strong> is updated in one-shot by solving a minimization problem below. This problem can be efficiently done with the preudo-inverse of matrix. For more details, please refer to [8].</p>
+<p align="center">
+    <img src='minimization problem.png' width="200">
+</p>
 <h2 id="4-memory-operations">
   4. Memory Operations
   <a class="anchor" href="#4-memory-operations">#</a>
@@ -965,7 +972,7 @@ processing in the latent space, Larimar is also efficient is terms of number of 
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture--memory-operations">3. Model architecture &amp; Memory operations</a>
+    <li><a href="#3-model-architecture">3. Model architecture</a>
       <ul>
         <li></li>
       </ul>

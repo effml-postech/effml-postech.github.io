@@ -685,20 +685,32 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#motivations">#</a>
 </h3>
 <ol>
-<li>Direct linear arithmetic composition reduced the generative power of the model, while normalized linear arithmetic composition retained the generative power of the model but lost its LORA character.
-<p align="center">
- <img src=./motiv1_1.png align="center" width="32%">
- <img src=./motiv1_2.png align="center" width="32%">
- <img src=./motiv1_3.png align="center" width="32%">
- <figcaption align="center">
-</li>
+<li>Direct linear arithmetic composition reduced the generative power of the model, while normalized linear arithmetic composition retained the generative power of the model but lost its LORA character.</li>
 </ol>
+<p align="center">
+    <img src=./motiv1_1.png align="center" width="48%">
+    <img src=./motiv1_2.png align="center" width="48%">
+    <figcaption align="center">
+<p align="center">
+    <img src=./motiv1_3.png>
 </p>
 2. Each layer of the trained LoRA represented a unique characteristic, which cumulatively defined the overall properties of the LoRA.
+<p align="center">
+    <img src=./motiv2_1.png align="center" width="48%">
+    <img src=./motiv2_2.png align="center" width="48%">
+    <figcaption align="center">
+</p>
+Right: Observed that different layers of LoRA encode distinct features, such as dog coat color and facial features.
+<p>left: When evaluated on a subset of datasets, there were significant differences in performance across the different layers of LoRA.</p>
+<p><strong>So, The conjecture is that adjusting the characteristics by varying the layer-specific weights according to the desired domain objective will result in a more effective composition of trained LORAs.</strong></p>
 <h3 id="method">
   Method
   <a class="anchor" href="#method">#</a>
 </h3>
+<div style="display: flex; align-items: center;">
+  <img src=./Method1.png style="width: 150; height: auto; margin-right: 10;">
+  <p>여기에 원하는 문구를 입력하세요. 이미지와 문구가 나란히 배치됩니다.</p>
+</div>
 <h3 id="training">
   Training
   <a class="anchor" href="#training">#</a>
