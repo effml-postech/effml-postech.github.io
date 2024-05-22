@@ -3,14 +3,14 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Leave No Context Behind: Efficient Infinite Context Transformers with Infini-attention # *Team: Younghyun Cho, Sangjun Lee
+<meta name="description" content="Leave No Context Behind: Efficient Infinite Context Transformers with Infini-attention # Posted by Younghyun Cho, Sangjun Lee
 Large Language Models with Inifinite Input Sequence # Currently, Large Language Models (LLM) are based on Transformer architecture [1], which utilize interactions over the segments of an input sequence. However, this architecture has a limitation, requiring huge computations and memory in proportion to the length of input sequences. Thereby, current LLM are struggled to infinite input sequence tasks like summarizing books.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/11_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Leave No Context Behind: Efficient Infinite Context Transformers with Infini-attention # *Team: Younghyun Cho, Sangjun Lee
+  <meta property="og:description" content="Leave No Context Behind: Efficient Infinite Context Transformers with Infini-attention # Posted by Younghyun Cho, Sangjun Lee
 Large Language Models with Inifinite Input Sequence # Currently, Large Language Models (LLM) are based on Transformer architecture [1], which utilize interactions over the segments of an input sequence. However, this architecture has a limitation, requiring huge computations and memory in proportion to the length of input sequences. Thereby, current LLM are struggled to infinite input sequence tasks like summarizing books.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
@@ -643,7 +643,7 @@ https://github.com/alex-shpak/hugo-book
   Leave No Context Behind: Efficient Infinite Context Transformers with Infini-attention
   <a class="anchor" href="#leave-no-context-behind-efficient-infinite-context-transformers-with-infini-attention">#</a>
 </h1>
-<p>*Team: Younghyun Cho, Sangjun Lee</p>
+<p>Posted by Younghyun Cho, Sangjun Lee</p>
 <h2 id="large-language-models-with-inifinite-input-sequence">
   Large Language Models with Inifinite Input Sequence
   <a class="anchor" href="#large-language-models-with-inifinite-input-sequence">#</a>
@@ -950,12 +950,6 @@ Figure from Recurrent Memory Transformer [7]. Memory is added as tokens to the i
 <p align="left" style="color:gray">
 Figure from AutoCompressors [8]. AutoCompressors process long documents by recursively generating summary vectors which are passed as soft prompts to all subsequent segments.
 </p>
-<p align="center">
-    <img src=./Untitled%207.png height=80% width=80%>
-</p>
-<p align="left" style="color:gray">
-Figure 2.  Infini-Transformer (top) has an entire context history whereas Transformer-XL (bottom) discards old contexts since it caches the KV states for the last segment only.
-</p>
 <p>Compare to the above context-based transformer models, <strong>Infini-Transformer</strong> could <strong>catch the entire context</strong> <span>
   \(N\times S\)
 </span>
@@ -969,6 +963,12 @@ Figure 2.  Infini-Transformer (top) has an entire context history whereas Transf
   \(z_s\)
 </span>
  over the every attention heads and layers.</p>
+<p align="center">
+    <img src=./Untitled%207.png height=80% width=80%>
+</p>
+<p align="left" style="color:gray">
+Figure 2.  Infini-Transformer (top) has an entire context history whereas Transformer-XL (bottom) discards old contexts since it caches the KV states for the last segment only.
+</p>
 <h2 id="experiments">
   Experiments
   <a class="anchor" href="#experiments">#</a>
@@ -981,7 +981,7 @@ Figure 2.  Infini-Transformer (top) has an entire context history whereas Transf
 <p align="center">
     <img src=./Untitled%208.png>
 </p>
-<p align="center" style="color:gray">
+<p align="left" style="color:gray">
 Table 2: Long-context language modeling results are compared in terms of average token-level perplexity. Comp. dentoes compression ratio. Infini-Transformer outperforms memorizing transformers with memory length of 65K and achieves 114x compression ratio.
 </p>
 <p>The authors trained and evaluated small Infini-Transformer models on <strong>PG19</strong> [5] and
@@ -1016,13 +1016,13 @@ Table 3: Infini-Transformers solved the passkey task with up to 1M context lengt
 <p align=center>
     <img src=./Untitled%2011.png>
 </p>
-<p align="center" style="color:gray">
+<p align="left" style="color:gray">
 Table 4: 500K length book summarization (BookSum) results. The BART, PRIMERA and Unlimiformer results are from Bertsch et al. (2024).
 </p>
 <p align=center>
     <img src="./Untitled%2012.png">
 </p>
-<p align="center" style="color:gray">
+<p align="left" style="color:gray">
 Figure 4: Infini-Transformers obtain better Rouge overall scores with more book text probived as input.
 </p>
 <p>The researchers scaled up their approach by continuously pre-training an 8B LLM model with an 8K input length over 30K steps. They then <strong>fine-tuned</strong> this model <strong>for the book summarization task</strong>, setting the input length to 32K for fine-tuning and 500K for evaluation. They used a generation temperature of 0.5, a top-p of 0.95, and a decoding step of 1024 to generate book summaries. Their model <strong>outperforms previous best results</strong> and <strong>sets a new state-of-the-art on BookSum</strong> by processing the full text of books. Figure 4 shows the overall Rouge score for the validation split of the BookSum data, indicating a clear trend: <strong>the more text provided from the book, the better the summary performance for Infini-Transformers.</strong></p>

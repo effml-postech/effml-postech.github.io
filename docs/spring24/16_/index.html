@@ -758,7 +758,24 @@ Top-k strategy can guarantee that the most important token is calculated since t
   <strong>Routing Metric</strong>
   <a class="anchor" href="#routing-metric">#</a>
 </h2>
-<p>노테이션 설명</p>
+<ul>
+<li><span>
+  \(l\)
+</span>
+ is a given layer.</li>
+<li><span>
+  \(S\)
+</span>
+ is a sequence length.</li>
+<li><span>
+  \(\beta=1-C/S\)
+</span>
+ is an user-defined capacity per batch element.</li>
+<li><span>
+  \(f\)
+</span>
+ comprises self-attention and subsequent MLP.</li>
+</ul>
 <span>
   \[x^{l&#43;1}_i=\begin{cases}r^{l}_i f_i(\tilde{X}^l)&#43;x^{l}_i, &amp;    \text{if } r^{l}_i &gt;  P_\beta(R^l)\\x^{l}_i, &amp; \text{if }r^{l}_i &lt;  P_\beta(R^l)\end{cases}\]
 </span>
@@ -846,13 +863,6 @@ return weights
 <p><strong>apply_mod_to_hf</strong> function applies the MoD mechanism to an existing Hugging Face model.</p>
 </li>
 </ol>
-<p>&lsquo;&lsquo;&lsquo;bibtex
-@article{MoD2024,
-title={Unofficial implementation for the paper &ldquo;Mixture-of-Depths&rdquo;},
-author={AstraMind AI},
-journal={https://github.com/astramind-ai/Mixture-of-depths},
-year={2024}
-}</p>
 </details>
 <h2 id="results">
   <strong>Results</strong>

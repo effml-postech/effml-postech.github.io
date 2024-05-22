@@ -621,14 +621,14 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#applications">Applications</a>
       <ul>
-        <li><a href="#1-digital-media-processing">1. Digital Media Processing</a></li>
-        <li><a href="#2-algorithm-and-hardware-simulation">2. Algorithm and Hardware Simulation</a></li>
+        <li><a href="#digital-media-processing">Digital Media Processing</a></li>
+        <li><a href="#algorithm-and-hardware-simulation">Algorithm and Hardware Simulation</a></li>
       </ul>
     </li>
     <li><a href="#experiments">Experiments</a>
       <ul>
-        <li><a href="#1-digital-media-processing-well-studied-tasks">1. Digital Media Processing (well-studied tasks)</a></li>
-        <li><a href="#2-algorithm-and-hardware-simulation-underexplored-tasks">2. Algorithm and Hardware Simulation (underexplored tasks)</a></li>
+        <li><a href="#digital-media-processing-well-studied-tasks">Digital Media Processing (well-studied tasks)</a></li>
+        <li><a href="#algorithm-and-hardware-simulation-underexplored-tasks">Algorithm and Hardware Simulation (underexplored tasks)</a></li>
       </ul>
     </li>
     <li><a href="#conclusion-and-future-work">Conclusion and Future Work</a></li>
@@ -710,7 +710,7 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#components-of-bgpt">#</a>
 </h4>
 <ul>
-<li><strong>Byte encoding</strong>: Each byte is one-hot encoded into a 257-dimensional vector, including all possible byte values and <code>&lt;eop&gt;</code> token. Thus, each patch is viewed as a matrix of size <span>
+<li><strong>Byte encoding</strong>: Each byte is one-hot encoded into a 257-dimensional vector, including all possible byte values and <code>&lt;eop&gt;</code> token. Each patch is viewed as a matrix of size <span>
   \(S \times 257\)
 </span>
 .</li>
@@ -725,9 +725,9 @@ https://github.com/alex-shpak/hugo-book
   Training Objectives
   <a class="anchor" href="#training-objectives">#</a>
 </h3>
-<h4 id="1-generative-modeling">
-  1. Generative Modeling
-  <a class="anchor" href="#1-generative-modeling">#</a>
+<h4 id="generative-modeling">
+  Generative Modeling
+  <a class="anchor" href="#generative-modeling">#</a>
 </h4>
 <p>This approach requires the model to predict the next byte in a given byte sequence. The model takes the byte sequence <span>
   \(B = \{b_1, b_2, \ldots, b_T\}\)
@@ -738,17 +738,17 @@ https://github.com/alex-shpak/hugo-book
  at each position.</p>
 <p>As a loss function, the negative log likelihood of the next byte at each step is minimized. This encourages the model to maximize the likelihood of the actual occurrence of the next byte.
 <span>
-  \(\mathcal{L}_{\text{GEN}}(\theta) = - \sum_{i=1}^{T-1} \log p(b_{i&#43;1} \mid b_1, b_2, \ldots, b_i; \theta)\)
+  \[  \mathcal{L}_{\text{GEN}}(\theta) = - \sum_{i=1}^{T-1} \log p(b_{i&#43;1} \mid b_1, b_2, \ldots, b_i; \theta)\]
 </span>
 </p>
-<h4 id="2-classification">
-  2. Classification
-  <a class="anchor" href="#2-classification">#</a>
+<h4 id="classification">
+  Classification
+  <a class="anchor" href="#classification">#</a>
 </h4>
 <p>Based on the knowledge acquired through generative modeling, bGPT can also be applied to classification tasks for labeled datasets. In this process, the model takes a byte sequence as input and predicts the category to which that sequence belongs.
 For classification tasks, the loss function used is the cross-entropy loss, which ensures that the model accurately outputs the prediction probabilities for each category.</p>
 <span>
-  \(\mathcal{L}_{\text{CLF}}(\theta) = - \sum_{k=1}^{K} y_k \log p(y_k \mid B; \theta)\)
+  \[  \mathcal{L}_{\text{CLF}}(\theta) = - \sum_{k=1}^{K} y_k \log p(y_k \mid B; \theta)\]
 </span>
 
 <p>These training objectives enable bGPT to understand various byte-based data and accurately mimic digital patterns of the real world. The combination of generative approaches and classification capabilities grants the model the flexibility to tackle a diverse range of problems. Through this, the model can go beyond simple pattern recognition to play a crucial role in predicting and analyzing the operations of complex digital systems.</p>
@@ -757,15 +757,15 @@ For classification tasks, the loss function used is the cross-entropy loss, whic
   Applications
   <a class="anchor" href="#applications">#</a>
 </h2>
-<h3 id="1-digital-media-processing">
-  1. Digital Media Processing
-  <a class="anchor" href="#1-digital-media-processing">#</a>
+<h3 id="digital-media-processing">
+  Digital Media Processing
+  <a class="anchor" href="#digital-media-processing">#</a>
 </h3>
 <p>bGPT is used for processing various types of digital media data such as text, audio, and images. This model performs learning targeted at media files through generative modeling, transforming the data into features and subsequently performing classification tasks based on these features.</p>
 <p>For example, audio files are converted to and processed in WAV format, while images are processed at a low resolution in BMP format. By utilizing these standardized datasets, bGPT can develop a generalized understanding of various media types.</p>
-<h3 id="2-algorithm-and-hardware-simulation">
-  2. Algorithm and Hardware Simulation
-  <a class="anchor" href="#2-algorithm-and-hardware-simulation">#</a>
+<h3 id="algorithm-and-hardware-simulation">
+  Algorithm and Hardware Simulation
+  <a class="anchor" href="#algorithm-and-hardware-simulation">#</a>
 </h3>
 <p>bGPT is particularly useful for tasks such as data conversion and CPU state modeling. This means bGPT can learn the digital conversion process and simulate the operation of CPUs to predict the state of the CPU after various commands are executed.</p>
 <p>For example, in the task of converting the music data format from ABC notation to MIDI format, bGPT learns to transform text-based music scores in ABC notation into binary performance signals in MIDI. Additionally, this model is also capable of performing the reverse conversion from MIDI back to ABC notation.</p>
@@ -773,9 +773,9 @@ For classification tasks, the loss function used is the cross-entropy loss, whic
   Experiments
   <a class="anchor" href="#experiments">#</a>
 </h2>
-<h3 id="1-digital-media-processing-well-studied-tasks">
-  1. Digital Media Processing (well-studied tasks)
-  <a class="anchor" href="#1-digital-media-processing-well-studied-tasks">#</a>
+<h3 id="digital-media-processing-well-studied-tasks">
+  Digital Media Processing (well-studied tasks)
+  <a class="anchor" href="#digital-media-processing-well-studied-tasks">#</a>
 </h3>
 <p><strong>Experiment Overview</strong>
 To assess the flexibility and versatility of the bGPT model, experiments with various types of digital media data were conducted. This involved handling a wide range of file types including text, audio, and image data, with the aim to measure the model&rsquo;s ability to process these types and to see how well bGPT generalizes compared to specialized models. The experiment included both generative modeling and classification tasks.</p>
@@ -934,9 +934,9 @@ Each model was fine-tuned for specific types of classification and generative ta
 </table>
 </li>
 </ul>
-<h3 id="2-algorithm-and-hardware-simulation-underexplored-tasks">
-  2. Algorithm and Hardware Simulation (underexplored tasks)
-  <a class="anchor" href="#2-algorithm-and-hardware-simulation-underexplored-tasks">#</a>
+<h3 id="algorithm-and-hardware-simulation-underexplored-tasks">
+  Algorithm and Hardware Simulation (underexplored tasks)
+  <a class="anchor" href="#algorithm-and-hardware-simulation-underexplored-tasks">#</a>
 </h3>
 <p><strong>Experiment Overview</strong>
 One of the unique capabilities of the bGPT model is its ability to simulate the operations of algorithms and hardware. This experimental section assesses how bGPT handles complex data conversion processes and CPU state modeling tasks. These capabilities are particularly significant in the fields of cybersecurity, system diagnostics, and hardware optimization.</p>
@@ -1037,14 +1037,14 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
     </li>
     <li><a href="#applications">Applications</a>
       <ul>
-        <li><a href="#1-digital-media-processing">1. Digital Media Processing</a></li>
-        <li><a href="#2-algorithm-and-hardware-simulation">2. Algorithm and Hardware Simulation</a></li>
+        <li><a href="#digital-media-processing">Digital Media Processing</a></li>
+        <li><a href="#algorithm-and-hardware-simulation">Algorithm and Hardware Simulation</a></li>
       </ul>
     </li>
     <li><a href="#experiments">Experiments</a>
       <ul>
-        <li><a href="#1-digital-media-processing-well-studied-tasks">1. Digital Media Processing (well-studied tasks)</a></li>
-        <li><a href="#2-algorithm-and-hardware-simulation-underexplored-tasks">2. Algorithm and Hardware Simulation (underexplored tasks)</a></li>
+        <li><a href="#digital-media-processing-well-studied-tasks">Digital Media Processing (well-studied tasks)</a></li>
+        <li><a href="#algorithm-and-hardware-simulation-underexplored-tasks">Algorithm and Hardware Simulation (underexplored tasks)</a></li>
       </ul>
     </li>
     <li><a href="#conclusion-and-future-work">Conclusion and Future Work</a></li>
