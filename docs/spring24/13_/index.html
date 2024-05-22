@@ -776,17 +776,11 @@ produced by Jeonghyun Choi, Minhye Choo<br/>
 </h3>
 <ol>
 <li>
-<p><strong>Training a Small Proxy Model</strong>: Begin by training a small proxy model, which is easier and less expensive to experiment with. Perform hyperparameter tuning on this model to find the optimal learning rate and other hyperparameters. For instance, let&rsquo;s denote the optimal learning rate found for this small model as <span>
-  \(\( \alpha \)\)
-</span>
-.</p>
+<p><strong>Training a Small Proxy Model</strong>: Begin by training a small proxy model, which is easier and less expensive to experiment with. Perform hyperparameter tuning on this model to find the optimal learning rate and other hyperparameters. For instance, let&rsquo;s denote the optimal learning rate found for this small model as α.</p>
 </li>
 <li>
-<p><strong>Scaling the Hyperparameters</strong>: Use the scaling rules provided by µP to adapt the hyperparameters for a larger model. The key scaling rule here is that the learning rate should be adjusted based on the ratio of the widths of the large model to the small model. For example, if the small model has a width <span>
-  \(\( 128 \)\)
-</span>
- and the large model has a width ( 2048 ), the scaled learning rate for the large model would be <span>
-  \(\( \frac{\alpha \cdot 2048}{128} \)\)
+<p><strong>Scaling the Hyperparameters</strong>: Use the scaling rules provided by µP to adapt the hyperparameters for a larger model. The key scaling rule here is that the learning rate should be adjusted based on the ratio of the widths of the large model to the small model. For example, if the small model has a width 128 and the large model has a width 2048, the scaled learning rate for the large model would be <span>
+  \(\frac{α2048}{128}\)
 </span>
 .</p>
 </li>

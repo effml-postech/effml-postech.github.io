@@ -3,13 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" # ">
+<meta name="description" content="MobileNetV4 - Universal Models for the Mobile Ecosystem # Posted by JoonSeok Kim and DongGyu Kim
+Main Contributions # Universal Inverted Bottleneck (UIB) seach block - Unifies the Inverted Bottleneck (IB), ConvNext, Feed Forward Netowork (FFN), and Extra Depthwise variant Mobile MQA - Attention block tailored for mobile accelerators NAS technique to improve performance Achieves Pareto optimal acorss various devices such as CPUs, DSPs, GPUs, and TPUs Novel distillation technique to boost accuracy.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/09_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" # ">
+  <meta property="og:description" content="MobileNetV4 - Universal Models for the Mobile Ecosystem # Posted by JoonSeok Kim and DongGyu Kim
+Main Contributions # Universal Inverted Bottleneck (UIB) seach block - Unifies the Inverted Bottleneck (IB), ConvNext, Feed Forward Netowork (FFN), and Extra Depthwise variant Mobile MQA - Attention block tailored for mobile accelerators NAS technique to improve performance Achieves Pareto optimal acorss various devices such as CPUs, DSPs, GPUs, and TPUs Novel distillation technique to boost accuracy.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>09 | Efficient ML Systems</title>
@@ -606,7 +608,20 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#mobilenetv4---universal-models-for-the-mobile-ecosystem">MobileNetV4 - Universal Models for the Mobile Ecosystem</a></li>
+    <li><a href="#main-contributions">Main Contributions</a></li>
+    <li><a href="#hardware-independent-pareto-efficiency">Hardware-Independent Pareto Efficiency</a></li>
+    <li><a href="#universal-inverted-bottlenecks-uib">Universal Inverted Bottlenecks (UIB)</a></li>
+    <li><a href="#mobile-mqa">Mobile MQA</a></li>
+    <li><a href="#design-of-mobilenetv4">Design of MobileNetV4</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#enhanced-distillation-recipe">Enhanced Distillation Recipe</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#example--using-katex-for-math-equation">Example : Using KaTeX for math equation</a></li>
+  </ul>
+</nav>
 
 
 
@@ -617,10 +632,113 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
-</h1>
+  <article class="markdown book-article"><h2 id="mobilenetv4---universal-models-for-the-mobile-ecosystem">
+  MobileNetV4 - Universal Models for the Mobile Ecosystem
+  <a class="anchor" href="#mobilenetv4---universal-models-for-the-mobile-ecosystem">#</a>
+</h2>
+<p><em>Posted by JoonSeok Kim and DongGyu Kim</em></p>
+<h2 id="main-contributions">
+  Main Contributions
+  <a class="anchor" href="#main-contributions">#</a>
+</h2>
+<ol>
+<li>Universal Inverted Bottleneck (UIB) seach block - Unifies the Inverted Bottleneck (IB), ConvNext, Feed Forward Netowork (FFN), and Extra Depthwise variant</li>
+<li>Mobile MQA - Attention block tailored for mobile accelerators</li>
+<li>NAS technique to improve performance</li>
+<li>Achieves Pareto optimal acorss various devices such as CPUs, DSPs, GPUs, and TPUs</li>
+<li>Novel distillation technique to boost accuracy. Achieves 87% accuracy on ImageNet-1k and 39x smaller model size</li>
+</ol>
+<h2 id="hardware-independent-pareto-efficiency">
+  Hardware-Independent Pareto Efficiency
+  <a class="anchor" href="#hardware-independent-pareto-efficiency">#</a>
+</h2>
+<p align="center">
+    <img src='./Fig2.png' width="900">
+</p>
+<p align="center">
+    Fig. 2. Ridge Points and Latency/Accuracy Tradeoffs
+</p>
+<p align="center">
+    <img src='./Fig3.png' width="900">
+</p>
+<p align="center">
+    Fig. 3. Op Cost vs. Ridge Point
+</p>
+This research focuses on efficiency on various hardware targets such as DSPs, CPUs, and GPUs. To find whether the hardware is limited by its memory bottlenecked or compute bottlenecked, the Roofline Model of that hardware must be investigated. It is defined by the harware's peak computational throughput and its peak memory bandwidth. The optima of that hardware can be found in its ridge point, which is defined by the hardware's ratio of Peak MACs to Peak memory bandwidth. The algorithm's accuracy and latency are swept by the ridge point on various hardware on Fig. 2, and Fig. 3. The roodline model of MobileNetV4 achieves highest Pareto-optimal performance compared to other MobileNet models. 
+<p>MobileNetV4 is designed to achieve Pareto optimal and hence balances MAC operations and memory bandwidth. The initial layers are designed with high MAC intensity, so as to improve model capacity and downstream accuracy. The end layers use identically-sized FC layers to maximize accuracy. These two initial and end layers are balances so that MobileNetV4 should not see slowdowns at any hardware.</p>
+<h2 id="universal-inverted-bottlenecks-uib">
+  Universal Inverted Bottlenecks (UIB)
+  <a class="anchor" href="#universal-inverted-bottlenecks-uib">#</a>
+</h2>
+<p align="center">
+    <img src='./Fig4.png' width="900">
+</p>
+<p align="center">
+    Fig. 4. Univesal Inverted Bottleneck (UIB) blocks
+</p>
+<p>The main advantage of UIB is its adaptability and flexibility, that mitigates seach complexity. Optional Depthwise (DW) convolution blocks are inserted before the expansion layer, and between the expansion and projection layer. In the NAS procedure, common components such as the pointwise expansion and projection are shared and DWs are added as search options. UIB has four possible instantiations as follows.</p>
+<ul>
+<li>Inverted Bottleneck (IB) : Spatial mixing on the expanded features activations, and provides higher model capacity</li>
+<li>ConvNext : Cheaper spatial mixing before the expansion with larger kernel size</li>
+<li>ExtraDW : Inexpensive increase of the network depth and the receptive field. Combined benefits of ConvNext and IB</li>
+<li>FFN : Stack of two 1x1 pointwise convolutions. Accelerator-friendly operation</li>
+</ul>
+<h2 id="mobile-mqa">
+  Mobile MQA
+  <a class="anchor" href="#mobile-mqa">#</a>
+</h2>
+<p align="center">
+    <img src='./Table1.png' width="900">
+</p>
+<p align="center">
+    Table 1. Efficiency Gains by MQA
+</p>
+<h2 id="design-of-mobilenetv4">
+  Design of MobileNetV4
+  <a class="anchor" href="#design-of-mobilenetv4">#</a>
+</h2>
+<h2 id="results">
+  Results
+  <a class="anchor" href="#results">#</a>
+</h2>
+<p align="center">
+    <img src='./Table5.png' width="900">
+</p>
+<p align="center">
+    Table 5. Classification results on ImageNet-1k
+</p>
+<h2 id="enhanced-distillation-recipe">
+  Enhanced Distillation Recipe
+  <a class="anchor" href="#enhanced-distillation-recipe">#</a>
+</h2>
+<h2 id="conclusion">
+  Conclusion
+  <a class="anchor" href="#conclusion">#</a>
+</h2>
+<p>This paper propose a compression framework that leverages text information mainly by text-adaptive encoding and training with joint image-text loss. By doing so, they avoid decoding based on text-guided generative models&mdash;known for high generative diversity&mdash;and effectively utilize the semantic information of text at a global level.</p>
+
+
+
+
+
+<img src="./overall_architecture.png" alt="." width="600" height="600">
+<h2 id="example--using-katex-for-math-equation">
+  Example : Using KaTeX for math equation
+  <a class="anchor" href="#example--using-katex-for-math-equation">#</a>
+</h2>
+<p>KaTeX shortcode let you render math typesetting in markdown document. See <a href="https://katex.org/">KaTeX</a></p>
+<p>Here is some inline example: 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(\pi(x)\)
+</span>
+, rendered in the same line. And below is <code>display</code> example, having <code>display: block</code>
+<span>
+  \[f(x) = \int_{-\infty}^\infty\hat f(\xi)\,e^{2 \pi i \xi x}\,d\xi\]
+</span>
+
+Text continues here!!!</p>
 </article>
  
       
@@ -673,7 +791,20 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#mobilenetv4---universal-models-for-the-mobile-ecosystem">MobileNetV4 - Universal Models for the Mobile Ecosystem</a></li>
+    <li><a href="#main-contributions">Main Contributions</a></li>
+    <li><a href="#hardware-independent-pareto-efficiency">Hardware-Independent Pareto Efficiency</a></li>
+    <li><a href="#universal-inverted-bottlenecks-uib">Universal Inverted Bottlenecks (UIB)</a></li>
+    <li><a href="#mobile-mqa">Mobile MQA</a></li>
+    <li><a href="#design-of-mobilenetv4">Design of MobileNetV4</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#enhanced-distillation-recipe">Enhanced Distillation Recipe</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#example--using-katex-for-math-equation">Example : Using KaTeX for math equation</a></li>
+  </ul>
+</nav>
 
 
  
