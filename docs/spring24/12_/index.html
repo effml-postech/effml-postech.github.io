@@ -22,7 +22,7 @@ In recent years, there has been a growing interest in image-and-language represe
 <link rel="canonical" href="http://localhost:1313/docs/spring24/12_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.ab7f0c68bb5499f16bd5f47d1e40970ab51995077468aa4d673edeb75e6da1cd.js" integrity="sha256-q38MaLtUmfFr1fR9HkCXCrUZlQd0aKpNZz7et15toc0=" crossorigin="anonymous"></script>
 
   
 
@@ -629,13 +629,6 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#variants-of-vision-transformers">Variants of Vision Transformers</a></li>
     <li><a href="#comparison-of-network-architectures">Comparison of Network Architectures</a></li>
     <li><a href="#training-strategies">Training Strategies</a></li>
-    <li><a href="#performance-evaluation">Performance Evaluation</a>
-      <ul>
-        <li><a href="#zero-shot">Zero-shot</a></li>
-        <li><a href="#linear-probing">Linear Probing</a></li>
-        <li><a href="#retrieval">Retrieval</a></li>
-      </ul>
-    </li>
     <li><a href="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
@@ -705,7 +698,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="./Figure 2.png" width="800"> 
 </p>
 <div align="center">
-  <strong>Figure 1.</strong> Zero-shot performance with the various training strategies
+  <strong>Figure 1.</strong> Data Quantity: Zero-Shot performances with the same dataset size across varied training epochs
 </div>
 </p>
 <p>Results showed that for smaller datasets (e.g., 25M), increasing epochs did not significantly improve ImageNet performance. In contrast, larger datasets (e.g., 400M) benefited from more epochs. Additionally, zero-shot performance on ImageNet variants followed a similar pattern: larger datasets and longer training improved performance. However, the correlation between performance on ImageNet and its variants was inconsistent, with some datasets showing improved results in specific variants but not others.</p>
@@ -721,7 +714,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="./Figure 4.png" width="800"> 
 </p>
 <div align="center">
-  <strong>Figure 3.</strong> Retrieval Performances on MSCOCO
+  <strong>Figure 3.</strong> Data Quantity: Retrieval Performances on MSCOCO
 </div>
 </p>
 <p>In Retrieval Performances, a slightly different trend emerged. Specifically, they found that there was little to no improvement in both image retrieval and text retrieval performance when the number of epochs exceeded eight.</p>
@@ -742,7 +735,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="./Figure 6.png" width="1100"> 
 </p>
 <div align="center">
-  <strong>Figure 5.</strong> Data Quality: Few-Shot Performances on ImageNet. (a) one epoch. (b) the same number of sampled data.
+  <strong>Figure 5.</strong> Data Quality: Few-Shot Performances on ImageNet. (a) and (b) one epoch. (c) and (d) the same number of sampled data.
 </div>
 </p>
 <p>Additionally, when the number of sample data points is the same, higher quality datasets have superior 5-shot and 10-shot performance.</p>
@@ -750,7 +743,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="./Figure 7.png" width="1100"> 
 </p>
 <div align="center">
-  <strong>Figure 6.</strong> Data Quality: Retrieval Performances on MSCOCO. (a) one epoch. (b) the same number of sampled data.
+  <strong>Figure 6.</strong> Data Quality: Retrieval Performances on MSCOCO. (a) and (b) one epoch. (c) and (d) the same number of sampled data.
 </div>
 </p>
 <p>When it comes to search performance, the top 80% datasets in particular show the most impressive retrieval performance.</p>
@@ -810,20 +803,12 @@ https://github.com/alex-shpak/hugo-book
 <p>In this section, the various training strategies for CLIP are explored, including SLIP, FLIP, and a proposed method from this paper called CLIP+Data Augmentation. SLIP enhances the vision encoder through self-supervised learning but is computationally expensive compared to the original CLIP. FLIP masks patches in training images to reduce computation.
 However, CLIP+Data Augmentation aimed to enhance CLIP&rsquo;s vision encoder while mitigating the computational demands associated with previous self-supervised learning approaches. By applying data augmentation directly to input images, they offered a cost-effective alternative, validated across four subsets with 30 epochs of training using techniques like crop&amp;flip, RandAugment, and Stacked RandAugment. The results in Figure 12 demonstrated consistent performance improvements of all three methods over raw CLIP, with no additional computational burden incurred, even enabling comparable performance to larger datasets, exemplified by the Stacked RA model trained on a dataset half the size achieving similar results.</p>
 <p align="center">
-    <img src="./Figure 13.png" width="400"> 
+    <img src="./Figure 13.png" width="300"> 
 </p>
 <div align="center">
   <strong>Figure 12.</strong> Comparison between various data augmentation for CLIP
 </div>
 </p>
-<h2 id="performance-evaluation">
-  Performance Evaluation
-  <a class="anchor" href="#performance-evaluation">#</a>
-</h2>
-<h3 id="zero-shot">
-  Zero-shot
-  <a class="anchor" href="#zero-shot">#</a>
-</h3>
 <p>Their experiments on the ImageNet dataset show that SLIP outperforms CLIP and FLIP when training samples are under one billion, indicating the benefit of self-supervised learning for limited data. However, as sample size increases, CLIP and FLIP surpass SLIP, suggesting that enhancing vision encoders isn&rsquo;t necessary for large datasets. Additionally, SLIP is twice as computationally expensive as CLIP and performs worst in zero-shot tasks when costs are equal. Data augmentation, particularly CLIP + Data Aug, improves performance and generalization on ImageNet and its variants without extra computational costs, especially for larger datasets and multiple epochs of training as presented in Figure 13.</p>
 <p align="center">
     <img src="./Figure 14.png" width="800"> 
@@ -832,10 +817,6 @@ However, CLIP+Data Augmentation aimed to enhance CLIP&rsquo;s vision encoder whi
   <strong>Figure 13.</strong> Zero-shot performance with the various training strategies
 </div>
 </p>
-<h3 id="linear-probing">
-  Linear Probing
-  <a class="anchor" href="#linear-probing">#</a>
-</h3>
 <p>In the linear probing evaluation, vision encoders trained with CLIP + Data Aug consistently outperformed the other strategies, particularly on OOD datasets. CLIP and CLIP + Data Aug also showed better robustness than SLIP with similar ImageNet accuracy. Combining CLIP with data augmentation offers a more effective feature extractor, balancing performance, and computation cost. The training results on linear probing performance are shown in Figure 14.</p>
 <p align="center">
     <img src="./Figure 15.png" width="800"> 
@@ -844,10 +825,6 @@ However, CLIP+Data Augmentation aimed to enhance CLIP&rsquo;s vision encoder whi
   <strong>Figure 14.</strong> Linear probing performance with the various training strategies
 </div>
 </p>
-<h3 id="retrieval">
-  Retrieval
-  <a class="anchor" href="#retrieval">#</a>
-</h3>
 <p>In retrieval tasks, SLIP consistently outperformed CLIP, CLIP + Data Aug, and FLIP on both image and text retrieval across all dataset sizes. Unlike its zero-shot performance, SLIP showed the best results for retrieval tasks as presented in Figure 15, suggesting it is a superior strategy for these tasks despite being less effective for classification.</p>
 <p align="center">
     <img src="./Figure 16.png" width="800"> 
@@ -861,7 +838,7 @@ However, CLIP+Data Augmentation aimed to enhance CLIP&rsquo;s vision encoder whi
   <a class="anchor" href="#conclusion">#</a>
 </h2>
 <p>This study examines how data size, network architecture, and training methods affect CLIP&rsquo;s performance. Their experiments highlight the critical roles of data quantity and quality. They also demonstrate that data augmentation can improve CLIP&rsquo;s performance with minimal additional computational cost. Furthermore, they investigate various network architectures and training strategies, finding that some outperform others depending on the computational budget, emphasizing the need for careful selection.
-From my perspective, the balance between computational efficiency and model accuracy is crucial, and exploring adaptive methods could yield significant benefits. Future research could focus on integrating transfer learning with CLIP to enhance domain-specific performance and investigating AutoML techniques for optimal architecture and strategy selection.</p>
+From our perspective, the balance between computational efficiency and model accuracy is crucial, and exploring adaptive methods could yield significant benefits. Future research could focus on integrating transfer learning with CLIP to enhance domain-specific performance and investigating AutoML techniques for optimal architecture and strategy selection.</p>
 </article>
  
       
@@ -871,7 +848,7 @@ From my perspective, the balance between computational efficiency and model accu
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a2ed747a5359563ac5d3b165394c4d2aef10b398" title='Last modified by junkyeongpark | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/42839379e101fae6887ef32d0ddf249b3aeafc4f" title='Last modified by junkyeongpark | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -933,13 +910,6 @@ From my perspective, the balance between computational efficiency and model accu
     <li><a href="#variants-of-vision-transformers">Variants of Vision Transformers</a></li>
     <li><a href="#comparison-of-network-architectures">Comparison of Network Architectures</a></li>
     <li><a href="#training-strategies">Training Strategies</a></li>
-    <li><a href="#performance-evaluation">Performance Evaluation</a>
-      <ul>
-        <li><a href="#zero-shot">Zero-shot</a></li>
-        <li><a href="#linear-probing">Linear Probing</a></li>
-        <li><a href="#retrieval">Retrieval</a></li>
-      </ul>
-    </li>
     <li><a href="#conclusion">Conclusion</a></li>
   </ul>
 </nav>

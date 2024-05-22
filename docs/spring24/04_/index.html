@@ -20,7 +20,7 @@ Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts Par
 <link rel="canonical" href="http://localhost:1313/docs/spring24/04_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.ab7f0c68bb5499f16bd5f47d1e40970ab51995077468aa4d673edeb75e6da1cd.js" integrity="sha256-q38MaLtUmfFr1fR9HkCXCrUZlQd0aKpNZz7et15toc0=" crossorigin="anonymous"></script>
 
   
 
@@ -622,6 +622,7 @@ https://github.com/alex-shpak/hugo-book
       <ul>
         <li><a href="#multi-token-prediction-task">Multi-Token Prediction Task</a></li>
         <li><a href="#memory-efficient-implementation">Memory-Efficient Implementation</a></li>
+        <li><a href="#faster-inference-with-self-speculative-decoding">Faster Inference with Self-speculative Decoding</a></li>
       </ul>
     </li>
   </ul>
@@ -675,6 +676,29 @@ $$</p>
   <a class="anchor" href="#memory-efficient-implementation">#</a>
 </h3>
 <p>Directly training language models by minimizing the multi-token prediction loss could result in high GPU memory usage, severly limiting the allowable batch-size. Thus, authors propose to carefully adapt the sequence of forward and backward operations for each prediction head rather than operating forward and backword operations simultaneusly for all heads. This could result in reducing peak GPU memory usage $O(nV+d)$ into $O(V+d)$. Here, the $n$ and $V$ denote the number of head and vocabulary size, respectively. Note that $d$ is the vector dimension of shared transformer trunk.</p>
+<p align="center">
+    <img src='./Memory Efficient.png' width="450">
+</p>
+<h3 id="faster-inference-with-self-speculative-decoding">
+  Faster Inference with Self-speculative Decoding
+  <a class="anchor" href="#faster-inference-with-self-speculative-decoding">#</a>
+</h3>
+<h1 id="result">
+  Result
+  <a class="anchor" href="#result">#</a>
+</h1>
+<h1 id="why-does-it-work">
+  Why does it work?
+  <a class="anchor" href="#why-does-it-work">#</a>
+</h1>
+<h1 id="conclusion">
+  Conclusion
+  <a class="anchor" href="#conclusion">#</a>
+</h1>
+<h1 id="discussion">
+  Discussion
+  <a class="anchor" href="#discussion">#</a>
+</h1>
 </article>
  
       
@@ -684,7 +708,7 @@ $$</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a157ccc3d0a55f79198bad99c9e3e4504df84311" title='Last modified by Jinoh Cho | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/6bac5eec44a6a5f95a4b28934e2bba4f8ef62a5f" title='Last modified by Jinoh Cho | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -741,6 +765,7 @@ $$</p>
       <ul>
         <li><a href="#multi-token-prediction-task">Multi-Token Prediction Task</a></li>
         <li><a href="#memory-efficient-implementation">Memory-Efficient Implementation</a></li>
+        <li><a href="#faster-inference-with-self-speculative-decoding">Faster Inference with Self-speculative Decoding</a></li>
       </ul>
     </li>
   </ul>

@@ -22,7 +22,7 @@ Vision Transformers (ViT) is an architecture that utilizes self-attention mechan
 <link rel="canonical" href="http://localhost:1313/docs/spring24/18_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.ab7f0c68bb5499f16bd5f47d1e40970ab51995077468aa4d673edeb75e6da1cd.js" integrity="sha256-q38MaLtUmfFr1fR9HkCXCrUZlQd0aKpNZz7et15toc0=" crossorigin="anonymous"></script>
 
   
 
@@ -617,9 +617,7 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
         <li><a href="#1-adaptive-token-merger-atm-module">1. Adaptive Token Merger (ATM Module)</a></li>
-        <li><a href="#effect-of-adaptive-token-merger-atm-module">Effect of Adaptive Token Merger (ATM) Module</a></li>
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
-        <li><a href="#effect-of-fuzzy-positional-encoding-fpe">Effect of Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
     <li><a href="#experiments">Experiments</a>
@@ -711,10 +709,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
 </span>
 
 <p>In our opinion, Grid Attention appears to add an inductive bias similar to Convolution. It appears that Tokens in adjacent locations in the actual image should be contained within the same Grid. The order of grid patching may have an effect.</p>
-<h3 id="effect-of-adaptive-token-merger-atm-module">
-  Effect of Adaptive Token Merger (ATM) Module
-  <a class="anchor" href="#effect-of-adaptive-token-merger-atm-module">#</a>
-</h3>
+<p>For Ablation study, ViTAR-S Model is used to compare with AvgPool which is another token fusion method. The results of the comparison demonstrate that ATM significantly improves the model&rsquo;s performance and resolution adaptability. Specifically, at a resolution of 4032, our proposed ATM achieves a 7.6% increase in accuracy compared with the baseline.</p>
 <p align="center">
   <img src="./result_ATM.png" alt="." width="300" height="100" > 
 </p>
@@ -731,10 +726,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
 <p>Initially, the learnable positional embedding is randomly initialized and used as the model&rsquo;s positional embedding. At this time, FPE provides only fuzzy positional information and experiences changes within a certain range. Specifically, assuming that the exact coordinates of the target token are (i, j), the fuzzy positional information is (i + s1, j + s2). s1 and s2 satisfy -0.5 ≤ s1, s2 ≤ 0.5 and follows uniform distribution.</p>
 <p>During training, randomly generated coordinate offsets are added to the reference coordinates during the training process, and grid samples for learnable location embeddings are performed based on the newly generated coordinates to generate fuzzy location encoding.</p>
 <p>In case of inference, precise positional encoding is used instead of FPE. When there is a change in input resolution, interpolation is performed on learnable positional embedding. This has strong positional resilience because it was somehow seen and used in the FPE used in the training phase.</p>
-<h3 id="effect-of-fuzzy-positional-encoding-fpe">
-  Effect of Fuzzy Positional Encoding (FPE)
-  <a class="anchor" href="#effect-of-fuzzy-positional-encoding-fpe">#</a>
-</h3>
+<p>To compare the impact of different positional encodings on the model’s resolution generalization ability, several positional encoding methods were used. This includes commonly used sin-cos absolute position encoding (APE), conditional position encoding (CPE), global-local positional encoding (GLPE) in ResFormer, Relative Positional Bias (RPB) in Swin, and FPE. Note that only APE and FPE are compatible with the MAE framework.ViTAR-S is used for experiments without MAE, and ViTAR-M is used for experiments with MAE. As a result, FPE exhibits a significantly pronounced advantage in resolution generalization capability. Additionally, under the MAE self-supervised learning framework, FPE also demonstrates superior performance relative to APE.</p>
 <p align="center">
   <img src="./result_FPE.png" alt="." width="300" height="200" > 
 </p>
@@ -757,6 +749,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   Result of Object Detection Task
   <a class="anchor" href="#result-of-object-detection-task">#</a>
 </h3>
+<p>For object detection, COCO dataset is used ATM iterates only once because it does not utilize the multi-resolution training strategy in this experiment. If $\frac{H}{G_th}$ and $\frac{W}{G_tw}$ in ATM are fixed to 1, the results indicate that ViTAR achieves performance in both object detection and instance segmentation. And if setting $\frac{H}{G_th}$ and $\frac{W}{G_tw}$ to 2 in ATM, ATM module reduces approximately 50% of the computational cost while maintaining high precision in dense predictions, demonstrating its effectiveness.</p>
 <p align="center">
   <img src="./result_object_detection.png" alt="." width="300" height="150" > 
 </p>
@@ -769,7 +762,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/36d5b805f7ad2d68910ba868dbab8a400265fb1a" title='Last modified by Lee Jungwon | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/bbd27f05b1db0af7418840c26c91d895d24bcd8e" title='Last modified by postech-sms | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -819,9 +812,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
         <li><a href="#1-adaptive-token-merger-atm-module">1. Adaptive Token Merger (ATM Module)</a></li>
-        <li><a href="#effect-of-adaptive-token-merger-atm-module">Effect of Adaptive Token Merger (ATM) Module</a></li>
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
-        <li><a href="#effect-of-fuzzy-positional-encoding-fpe">Effect of Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
     <li><a href="#experiments">Experiments</a>
