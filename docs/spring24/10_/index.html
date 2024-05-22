@@ -3,14 +3,16 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length # Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou Reviewer: Hyunho Kook
+<meta name="description" content="Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length # Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou
+Reviewer: Hyunho Kook
 1. Introduction # Recently, Large Language Models (LLMs) have been gaining popularity. The impressive performance and versatility demonstrated by large models above a certain level have started to be utilized in various fields. However, as the size of the models grows, the size of the data that the models are expected to process is also increasing.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/10_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length # Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou Reviewer: Hyunho Kook
+  <meta property="og:description" content="Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length # Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou
+Reviewer: Hyunho Kook
 1. Introduction # Recently, Large Language Models (LLMs) have been gaining popularity. The impressive performance and versatility demonstrated by large models above a certain level have started to be utilized in various fields. However, as the size of the models grows, the size of the data that the models are expected to process is also increasing.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
@@ -20,7 +22,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/10_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
 
   
 
@@ -621,7 +623,7 @@ https://github.com/alex-shpak/hugo-book
       </ul>
     </li>
     <li><a href="#4-experiments">4. Experiments</a></li>
-    <li><a href="#5-related-works">5. Related Works</a></li>
+    <li><a href="#5-comparison-with-related-works">5. Comparison with related works</a></li>
     <li><a href="#6-discussion">6. Discussion</a></li>
   </ul>
 </nav>
@@ -639,8 +641,8 @@ https://github.com/alex-shpak/hugo-book
   Megalodon: Efficient LLM Pretraining and Inference with Unlimited Context Length
   <a class="anchor" href="#megalodon-efficient-llm-pretraining-and-inference-with-unlimited-context-length">#</a>
 </h1>
-<p>Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou
-Reviewer: Hyunho Kook</p>
+<p>Authors: Xuezhe Ma, Xiaomeng Yang, Wenhan Xiong, Beidi Chen, Lili Yu, Hao Zhang, Jonathan May, Luke Zettlemoyer, Omer Levy, Chunting Zhou</p>
+<p>Reviewer: Hyunho Kook</p>
 <p><img src="./Megalodon.jpg" alt="Megalodon" /></p>
 <h2 id="1-introduction">
   1. Introduction
@@ -683,11 +685,20 @@ Reviewer: Hyunho Kook</p>
   4. Experiments
   <a class="anchor" href="#4-experiments">#</a>
 </h2>
-<h2 id="5-related-works">
-  5. Related Works
-  <a class="anchor" href="#5-related-works">#</a>
+<h2 id="5-comparison-with-related-works">
+  5. Comparison with related works
+  <a class="anchor" href="#5-comparison-with-related-works">#</a>
 </h2>
-<p>Mamba</p>
+<p>There have been several similar related studies:</p>
+<ol>
+<li>
+<p>Efficient Attention: FlashAttention optimized the GPU computation of the attention, showing advantages in speed without changing the existing mechanism. Additionally, there have been attempts to increase the context length by converting the attention mechanism to a linear one or compressing the KV cache.</p>
+</li>
+<li>
+<p>Structured State Space Model: A notable study in this area is Mamba, which added mechanisms like Selective Scan to a State Space model with linear time complexity, enabling it to process long context.</p>
+</li>
+</ol>
+<p>However, these studies have limitations. Even if we accept that Flash Attention did not change the attention mechanism itself, Linear Attention, KV cache compression, and State Space Models have shown significantly lower performance on general benchmarks, although they may perform better than standard Transformers in long contexts.</p>
 <h2 id="6-discussion">
   6. Discussion
   <a class="anchor" href="#6-discussion">#</a>
@@ -695,7 +706,7 @@ Reviewer: Hyunho Kook</p>
 <p>In my opinion, there are a few potential limitations that are not extensively discussed in the paper:</p>
 <ol>
 <li>
-<p><strong>Reliance on CEMA for Out-of-Chunk Context</strong>: The self-attention mechanism in MEGALODON is applied within each chunk. For data that falls completely outside the chunk boundaries, the model relies solely on CEMA for processing. However, CEMA is a causal mechanism, which means it may struggle to adequately capture the influence of distant future content on earlier parts of the sequence. This limitation could potentially hinder the model&rsquo;s ability to handle long-range dependencies that span across multiple chunks.</p>
+<p><strong>Reliance on CEMA for Out-of-Chunk Context</strong>: The self-attention mechanism in MEGALODON is applied within each chunk. For data that falls completely outside the chunk boundaries, the model relies solely on CEMA for processing. This limitation could potentially hinder the model&rsquo;s ability to handle long-range dependencies that span across multiple chunks.</p>
 </li>
 <li>
 <p><strong>Complexity of the Architecture</strong>: Compared to the traditional Transformer layer, the MEGALODON architecture is considerably more complex. It requires the computation of EMA, including the complex domain, for each token. Additionally, several normalization and attention components have been introduced, such as Timestep Normalization, which further increases the complexity of the model compared to the previous works.</p>
@@ -714,9 +725,9 @@ Reviewer: Hyunho Kook</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/bf89231105c65f21ce0853e8daf41d28d65268af" title='Last modified by kookhh0827 | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a71166ec9e30dd13db0972df6e65ef4914ea2dbc" title='Last modified by kookhh0827 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 21, 2024</span>
+      <span>May 22, 2024</span>
     </a>
   </div>
 
@@ -770,7 +781,7 @@ Reviewer: Hyunho Kook</p>
       </ul>
     </li>
     <li><a href="#4-experiments">4. Experiments</a></li>
-    <li><a href="#5-related-works">5. Related Works</a></li>
+    <li><a href="#5-comparison-with-related-works">5. Comparison with related works</a></li>
     <li><a href="#6-discussion">6. Discussion</a></li>
   </ul>
 </nav>

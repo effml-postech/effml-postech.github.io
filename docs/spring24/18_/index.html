@@ -22,7 +22,7 @@ Vision Transformers (ViT) is an architecture that utilizes self-attention mechan
 <link rel="canonical" href="http://localhost:1313/docs/spring24/18_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
 
   
 
@@ -617,15 +617,15 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
         <li><a href="#1-adaptive-token-merger-atm-module">1. Adaptive Token Merger (ATM Module)</a></li>
+        <li><a href="#effect-of-adaptive-token-merger-atm-module">Effect of Adaptive Token Merger (ATM) Module</a></li>
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
+        <li><a href="#effect-of-fuzzy-positional-encoding-fpe">Effect of Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
     <li><a href="#experiments">Experiments</a>
       <ul>
         <li><a href="#result-of-image-classification-task">Result of Image Classification Task</a></li>
         <li><a href="#result-of-object-detection-task">Result of Object Detection Task</a></li>
-        <li><a href="#effect-of-adaptive-token-merger-atm-module">Effect of Adaptive Token Merger (ATM) Module</a></li>
-        <li><a href="#effect-of-fuzzy-positional-encoding-fpe">Effect of Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
   </ul>
@@ -651,7 +651,7 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 <p>Vision Transformers (ViT) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.</p>
 <p align="center">
-  <img src="./ViT.png" alt="." width="500" height="300" > 
+  <img src="./ViT.png" alt="." width="700" height="400" > 
 </p>
 <p>Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images. The Vision Transformer Architecture consists of a series of transformer blocks. Each transformer block consists of two sub-layers: a multi-head self-attention layer and a feed-forward layer.</p>
 <p>The self-attention layer calculates attention weights for each pixel in the image based on its relationship with all other pixels, while the feed-forward layer applies a non-linear transformation to the output of the self-attention layer. The multi-head attention extends this mechanism by allowing the model to attend to different parts of the input sequence simultaneously.</p>
@@ -674,7 +674,7 @@ https://github.com/alex-shpak/hugo-book
 <p>The most common method used to address this problem is to apply interpolation to positional encoding before feeding it into the ViT. This approach allows for some compensation of positional information even when the input resolution changes. However, this method has shown significant performance degradation in image classification tasks.</p>
 <p>Recently, ResFormer proposed adding depth-wise convolution to the existing positional encoding method when performing global-local positional embedding, enabling it to work well even with unseen resolutions. (Chu et al., 2023; Tian et al., 2023).</p>
 <p align="center">
-  <img src="./ResFormer_pe.png" alt="." width="400" height="200" > 
+  <img src="./ResFormer_pe.png" alt="." width="500" height="300" > 
 </p>
 <p>However, ResFormer has three drawbacks.</p>
 <ul>
@@ -686,19 +686,38 @@ https://github.com/alex-shpak/hugo-book
   ViTAR: Vision Transformer with Any Resolution
   <a class="anchor" href="#vitar-vision-transformer-with-any-resolution-1">#</a>
 </h2>
-<p>In this section, we introduces two key innovations to address this issue. Firstly, we propose a novel module for dynamic resolution adjustment, designed with a single Transformer block, specifically to achieve highly efficient incremental token integration. Secondly, we introduce fuzzy positional encoding in the Vision Transformer to provide consistent positional awareness across multiple resolutions, thereby preventing overfitting to any single training resolution.</p>
 <p align="center">
-  <img src="./ResFormer_pe.png" alt="." width="500" height="300" > 
+  <img src="./overview.png" alt="." width="600" height="200" > 
 </p>
+In this section, we introduces two key innovations to address this issue. Firstly, we propose a novel module for dynamic resolution adjustment, designed with a single Transformer block, specifically to achieve highly efficient incremental token integration. Secondly, we introduce fuzzy positional encoding in the Vision Transformer to provide consistent positional awareness across multiple resolutions, thereby preventing overfitting to any single training resolution.
 <h3 id="1-adaptive-token-merger-atm-module">
   1. Adaptive Token Merger (ATM Module)
   <a class="anchor" href="#1-adaptive-token-merger-atm-module">#</a>
 </h3>
-<p>The ATM Module separates input tokens in the form of a grid of $G_h \times G_w$. When the size of all tokens is $H \times W$, all tokens are separated in grid form to have tokens of $G_{th}\times G_{tW}$ size. Each Grid is processed through a special operation called Grid Attention. Grid Attention is carried out only between tokens within the Grid. Average Pooling of all Tokens is performed as a Query, and Attention operation is performed by setting each Token as Key and Value. When this is performed for the entire Grid, it is reduced to $G_h \times G_w$, which is equal to the number of Grids. Afterwards, it passes through the FeedForward network and repeats. Through this iterative process, even when the resolution of the image is large, the number of tokens can be effectively reduced, and through a sufficient process, this size can be reduced to the size of the grid of 1. This has the advantage of being computationally efficient because when performing the subsequent MHSA calculation, a token of the same size is always input as input, regardless of resolution.</p>
 <p align="center">
   <img src="./ATM.png" alt="." width="500" height="300" > 
 </p>
+<p>The ATM Module separates input tokens in the form of a grid of $G_h \times G_w$. When the size of all tokens is $H \times W$, all tokens are separated in grid form to have tokens of $G_{th}\times G_{tW}$ size. Each Grid is processed through a special operation called Grid Attention. Grid Attention is carried out only between tokens within the Grid. Average Pooling of all Tokens is performed as a Query, and Attention operation is performed by setting each Token as Key and Value. When this is performed for the entire Grid, it is reduced to $G_h \times G_w$, which is equal to the number of Grids. Afterwards, it passes through the FeedForward network and repeats. Through this iterative process, even when the resolution of the image is large, the number of tokens can be effectively reduced, and through a sufficient process, this size can be reduced to the size of the grid of 1. This has the advantage of being computationally efficient because when performing the subsequent MHSA calculation, a token of the same size is always input as input, regardless of resolution.</p>
+<p align="center">
+  <img src="./grid_attention.png" alt="." width="500" height="300" > 
+</p>
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \[x_{avg} = AvgPool(\{x_{ij}\}) \\
+
+GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
+</span>
+
 <p>In our opinion, Grid Attention appears to add an inductive bias similar to Convolution. It appears that Tokens in adjacent locations in the actual image should be contained within the same Grid. The order of grid patching may have an effect.</p>
+<h3 id="effect-of-adaptive-token-merger-atm-module">
+  Effect of Adaptive Token Merger (ATM) Module
+  <a class="anchor" href="#effect-of-adaptive-token-merger-atm-module">#</a>
+</h3>
+<p align="center">
+  <img src="./result_ATM.png" alt="." width="300" height="100" > 
+</p>
 <h3 id="2-fuzzy-positional-encoding-fpe">
   2. Fuzzy Positional Encoding (FPE)
   <a class="anchor" href="#2-fuzzy-positional-encoding-fpe">#</a>
@@ -712,6 +731,13 @@ https://github.com/alex-shpak/hugo-book
 <p>Initially, the learnable positional embedding is randomly initialized and used as the model&rsquo;s positional embedding. At this time, FPE provides only fuzzy positional information and experiences changes within a certain range. Specifically, assuming that the exact coordinates of the target token are (i, j), the fuzzy positional information is (i + s1, j + s2). s1 and s2 satisfy -0.5 ≤ s1, s2 ≤ 0.5 and follows uniform distribution.</p>
 <p>During training, randomly generated coordinate offsets are added to the reference coordinates during the training process, and grid samples for learnable location embeddings are performed based on the newly generated coordinates to generate fuzzy location encoding.</p>
 <p>In case of inference, precise positional encoding is used instead of FPE. When there is a change in input resolution, interpolation is performed on learnable positional embedding. This has strong positional resilience because it was somehow seen and used in the FPE used in the training phase.</p>
+<h3 id="effect-of-fuzzy-positional-encoding-fpe">
+  Effect of Fuzzy Positional Encoding (FPE)
+  <a class="anchor" href="#effect-of-fuzzy-positional-encoding-fpe">#</a>
+</h3>
+<p align="center">
+  <img src="./result_FPE.png" alt="." width="300" height="200" > 
+</p>
 <h2 id="experiments">
   Experiments
   <a class="anchor" href="#experiments">#</a>
@@ -734,20 +760,6 @@ https://github.com/alex-shpak/hugo-book
 <p align="center">
   <img src="./result_object_detection.png" alt="." width="300" height="150" > 
 </p>
-<h3 id="effect-of-adaptive-token-merger-atm-module">
-  Effect of Adaptive Token Merger (ATM) Module
-  <a class="anchor" href="#effect-of-adaptive-token-merger-atm-module">#</a>
-</h3>
-<p align="center">
-  <img src="./result_ATM.png" alt="." width="300" height="100" > 
-</p>
-<h3 id="effect-of-fuzzy-positional-encoding-fpe">
-  Effect of Fuzzy Positional Encoding (FPE)
-  <a class="anchor" href="#effect-of-fuzzy-positional-encoding-fpe">#</a>
-</h3>
-<p align="center">
-  <img src="./result_FPE.png" alt="." width="300" height="200" > 
-</p>
 </article>
  
       
@@ -757,7 +769,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/85695be4b2b3dc310e0a643cb8f5702070f20a0c" title='Last modified by postech-sms | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/36d5b805f7ad2d68910ba868dbab8a400265fb1a" title='Last modified by Lee Jungwon | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -807,15 +819,15 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
         <li><a href="#1-adaptive-token-merger-atm-module">1. Adaptive Token Merger (ATM Module)</a></li>
+        <li><a href="#effect-of-adaptive-token-merger-atm-module">Effect of Adaptive Token Merger (ATM) Module</a></li>
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
+        <li><a href="#effect-of-fuzzy-positional-encoding-fpe">Effect of Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
     <li><a href="#experiments">Experiments</a>
       <ul>
         <li><a href="#result-of-image-classification-task">Result of Image Classification Task</a></li>
         <li><a href="#result-of-object-detection-task">Result of Object Detection Task</a></li>
-        <li><a href="#effect-of-adaptive-token-merger-atm-module">Effect of Adaptive Token Merger (ATM) Module</a></li>
-        <li><a href="#effect-of-fuzzy-positional-encoding-fpe">Effect of Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
   </ul>

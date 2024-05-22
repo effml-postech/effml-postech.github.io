@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="MobileNetV4 - Universal Models for the Mobile Ecosystem # Posted by JoonSeok Kim and DongGyu Kim
-Main Contributions # Universal Inverted Bottleneck (UIB) seach block - Unifies the Inverted Bottleneck (IB), ConvNext, Feed Forward Netowork (FFN), and Extra Depthwise variant Mobile MQA - Attention block tailored for mobile accelerators NAS technique to improve performance Achieves Pareto optimal acorss various devices such as CPUs, DSPs, GPUs, and TPUs Novel distillation technique to boost accuracy.">
+Qin, Danfeng and Leichner, Chas and Delakis, Manolis and Fornoni, Marco and Luo, Shixin and Yang, Fan and Wang, Weijun and Banbury, Colby and Ye, Chengxi and Akin, Berkin and others arXiv preprint arXiv:2404.1051 Main Contributions # MobileNetV4 targets designing neural networks for mobile devices. Since the mobile platform can only offer limited compuation ability and DRAM utilization, software engineers are trying to design small and efficient neural networks.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/09_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="MobileNetV4 - Universal Models for the Mobile Ecosystem # Posted by JoonSeok Kim and DongGyu Kim
-Main Contributions # Universal Inverted Bottleneck (UIB) seach block - Unifies the Inverted Bottleneck (IB), ConvNext, Feed Forward Netowork (FFN), and Extra Depthwise variant Mobile MQA - Attention block tailored for mobile accelerators NAS technique to improve performance Achieves Pareto optimal acorss various devices such as CPUs, DSPs, GPUs, and TPUs Novel distillation technique to boost accuracy.">
+Qin, Danfeng and Leichner, Chas and Delakis, Manolis and Fornoni, Marco and Luo, Shixin and Yang, Fan and Wang, Weijun and Banbury, Colby and Ye, Chengxi and Akin, Berkin and others arXiv preprint arXiv:2404.1051 Main Contributions # MobileNetV4 targets designing neural networks for mobile devices. Since the mobile platform can only offer limited compuation ability and DRAM utilization, software engineers are trying to design small and efficient neural networks.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>09 | Efficient ML Systems</title>
@@ -20,7 +20,7 @@ Main Contributions # Universal Inverted Bottleneck (UIB) seach block - Unifies t
 <link rel="canonical" href="http://localhost:1313/docs/spring24/09_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
 
   
 
@@ -617,8 +617,9 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#universal-inverted-bottlenecks-uib">Universal Inverted Bottlenecks (UIB)</a></li>
     <li><a href="#mobile-mqa">Mobile MQA</a></li>
     <li><a href="#refined-nas-for-enhanced-architectures">Refined NAS for Enhanced Architectures</a></li>
-    <li><a href="#results">Results</a></li>
+    <li><a href="#results---comparisons-with-other-works">Results - Comparisons with Other Works</a></li>
     <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#references">References</a></li>
   </ul>
 </nav>
 
@@ -636,10 +637,22 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#mobilenetv4---universal-models-for-the-mobile-ecosystem">#</a>
 </h2>
 <p><em>Posted by JoonSeok Kim and DongGyu Kim</em></p>
+<ul>
+<li>Qin, Danfeng and Leichner, Chas and Delakis, Manolis and Fornoni, Marco and Luo, Shixin and Yang, Fan and Wang, Weijun and Banbury, Colby and Ye, Chengxi and Akin, Berkin and others</li>
+<li>arXiv preprint arXiv:2404.1051</li>
+</ul>
 <h2 id="main-contributions">
   Main Contributions
   <a class="anchor" href="#main-contributions">#</a>
 </h2>
+<p>MobileNetV4 targets designing neural networks for mobile devices. Since the mobile platform can only offer limited compuation ability and DRAM utilization, software engineers are trying to design small and efficient neural networks. To use AI at the industry level, the inference latency must also be small. Main objectives of designing inference models for mobile devices are</p>
+<ul>
+<li>Acceptable test performance on widely-used datasets such as ImageNet-1k</li>
+<li>Low inference latency for utilization in mobile devices</li>
+<li>Minimization of the number of parameters for low memory utilization on mobile platforms</li>
+<li>Minimization in the number of MACs for high enegy efficiency</li>
+</ul>
+<p>This paper mainly focuses on lowering inference latency while maintining the test accuracy up to SOTA mobile neural net performance. Since it targets mobile platforms, it analyzes performance of various mobile hardwares, and designs a neural network to fit the harwares maximum performance. The designing process was done by the NAS technique, where the intantiation of UIB blocks were set as the search space. The main contributions of this work can be states as follows.</p>
 <ol>
 <li>Universal Inverted Bottleneck (UIB) seach block - Unifies the Inverted Bottleneck (IB), ConvNext, Feed Forward Netowork (FFN), and Extra Depthwise variant</li>
 <li>Mobile MQA - Attention block tailored for mobile accelerators</li>
@@ -656,20 +669,20 @@ https://github.com/alex-shpak/hugo-book
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \[runtime_computation = {Number of Operatins}/{FLOPS}\]
+  \[\text{runtime\_computation} = \frac{\text{Number of Operations}}{\text{FLOPS}}\]
 </span>
-
-Algorithm runtime can be limited by the memory access bottleneck or communication overhead
+</p>
+<p>Algorithm runtime can be limited by the memory access bottleneck or communication overhead</p>
 <span>
-  \[runtime_communication = {Number of IO Bytes}/{Bandwidth}\]
+  \[\text{runtime\_communication} = \frac{\text{Number of IO Bytes}}{\text{Bandwidth}}\]
 </span>
 
-Hardware performance is determined by the upper bound of the computation time or memory access latency
+<p>Hardware performance is determined by the upper bound of the computation time or memory access latency</p>
 <span>
-  \[performance = max(runtime_computation, runtime_communication)\]
+  \[\text{performance} = \max(\text{runtime\_computation}, \text{runtime\_communication})\]
 </span>
 
-Below Fig. 1(a) and Fig. 1(b) illustrates the roofline model and its characteristics</p>
+<p>Below Fig. 1(a) and Fig. 1(b) illustrates the roofline model and its characteristics</p>
 <p align="center">
     <img src='./Fig0a.png' width="900">
 </p>
@@ -734,9 +747,9 @@ This research focuses on efficiency on various hardware targets such as DSPs, CP
   <a class="anchor" href="#refined-nas-for-enhanced-architectures">#</a>
 </h2>
 <p>As shown above, the insitantiation of UIB blocks are in the neural architecture search process. TuNAS was adopted for the paper&rsquo;s search strategy. The paper uses a two-stage search operation, the coarse-grained search and fine-grained serach to address the variance in parameter counts between UIB&rsquo;s depthwise layers and other search options. The course-grained search process involves determining optimal filter sizes with fixed parameters. The fine-grained stage searches for the UIB&rsquo;s layer configuration.</p>
-<h2 id="results">
-  Results
-  <a class="anchor" href="#results">#</a>
+<h2 id="results---comparisons-with-other-works">
+  Results - Comparisons with Other Works
+  <a class="anchor" href="#results---comparisons-with-other-works">#</a>
 </h2>
 <p align="center">
     <img src='./Table5.png' width="900">
@@ -757,11 +770,26 @@ This research focuses on efficiency on various hardware targets such as DSPs, CP
   <a class="anchor" href="#conclusion">#</a>
 </h2>
 <ul>
-<li>This paper proposes the MobileNet V4 series, a universal high-efficiency model that operates efficiently across a wide range of mobile environments.</li>
-<li>By introducing a new Universal Inverted Bottleneck and Mobile MQA layer and applying an enhanced NAS recipe, MobileNet V4 achieves near Pareto-optimal performance on various hardware, including mobile CPUs, GPUs, DSPs, and dedicated accelerators.</li>
-<li>Additionally, using the latest distillation techniques, it demonstrates cutting-edge performance in mobile computer vision by achieving 87% ImageNet-1K accuracy with a latency of 3.8ms on the Pixel 8 EdgeTPU.</li>
-<li>The paper also presents a theoretical framework and analysis for understanding the model&rsquo;s universality across heterogeneous devices, providing guidance for future design.</li>
+<li>
+<p>This paper proposes the MobileNet V4 series, a universal high-efficiency model that operates efficiently across a wide range of mobile environments.</p>
+</li>
+<li>
+<p>By introducing a new Universal Inverted Bottleneck and Mobile MQA layer and applying an enhanced NAS recipe, MobileNet V4 achieves near Pareto-optimal performance on various hardware, including mobile CPUs, GPUs, DSPs, and dedicated accelerators.</p>
+</li>
+<li>
+<p>Additionally, using the latest distillation techniques, it demonstrates cutting-edge performance in mobile computer vision by achieving 87% ImageNet-1K accuracy with a latency of 3.8ms on the Pixel 8 EdgeTPU.</p>
+</li>
+<li>
+<p>The paper also presents a theoretical framework and analysis for understanding the model&rsquo;s universality across heterogeneous devices, providing guidance for future design.</p>
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+</li>
 </ul>
+<p>MobileNetV4 Implementation: [<a href="https://github.com/scalable-model-editing/unified-model-editing">Link</a>.](<a href="https://github.com/jiaowoguanren0615/MobileNetV4/tree/main">https://github.com/jiaowoguanren0615/MobileNetV4/tree/main</a>)</p>
+<p>Qin, Danfeng and Leichner, Chas and Delakis, Manolis and Fornoni, Marco and Luo, Shixin and Yang, Fan and Wang, Weijun and Banbury, Colby and Ye, Chengxi and Akin, Berkin and others. 2024. [<a href="https://arxiv.org/pdf/2305.13172">Editing large language models: Problems, methods, and opportunities</a>](<a href="https://arxiv.org/pdf/2404.10518%29">https://arxiv.org/pdf/2404.10518)</a>. arXiv preprint arXiv:2404.10518.</p>
+<p>Sandler, Mark and Howard, Andrew and Zhu, Menglong and Zhmoginov, Andrey and Chen, Liang-Chieh. 2018. <a href="https://arxiv.org/pdf/1801.04381">https://arxiv.org/pdf/1801.04381</a>, Proceedings of the IEEE conference on computer vision and pattern recognition.</p>
 </article>
  
       
@@ -771,7 +799,7 @@ This research focuses on efficiency on various hardware targets such as DSPs, CP
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/b3a6aa6fa559ef9d76ddd26250bf2c3478f609f2" title='Last modified by adrs97 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/bec6d750b68fd9e5d05826d0219f6c9de45b624b" title='Last modified by adrs97 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -823,8 +851,9 @@ This research focuses on efficiency on various hardware targets such as DSPs, CP
     <li><a href="#universal-inverted-bottlenecks-uib">Universal Inverted Bottlenecks (UIB)</a></li>
     <li><a href="#mobile-mqa">Mobile MQA</a></li>
     <li><a href="#refined-nas-for-enhanced-architectures">Refined NAS for Enhanced Architectures</a></li>
-    <li><a href="#results">Results</a></li>
+    <li><a href="#results---comparisons-with-other-works">Results - Comparisons with Other Works</a></li>
     <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#references">References</a></li>
   </ul>
 </nav>
 

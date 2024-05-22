@@ -18,7 +18,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/03_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
 
   
 
@@ -646,12 +646,21 @@ https://github.com/alex-shpak/hugo-book
   <strong>Background</strong>
   <a class="anchor" href="#background">#</a>
 </h3>
+<ul>
+<li>
 <h4 id="floating-point-formats-for-deep-learning">
   <strong>Floating-Point Formats for Deep Learning</strong>
   <a class="anchor" href="#floating-point-formats-for-deep-learning">#</a>
 </h4>
 <p>Traditionally, floating-point numbers are defined by the IEEE 754 standard, which specifies the number of exponent bits (E) and mantissa bits (M). Common floating-point formats used in machine learning include FP32, TF32, BFLOAT16, and FP16. Recently, two types of FP8 formats (E4 and E5) have been proposed.</p>
-<p><strong>Suggested Image:</strong> &ldquo;Table A.1. Common floating point formats for deep learning.&rdquo;</p>
+<p align="center">
+  <img src='./TableA.png' width="400">
+</p>
+<p align="center">
+  Table A.1. Common floating point formats for deep learning
+</p>
+</li>
+<li>
 <h4 id="advantages-and-disadvantages-of-low-precision-training">
   <strong>Advantages and Disadvantages of Low-Precision Training</strong>
   <a class="anchor" href="#advantages-and-disadvantages-of-low-precision-training">#</a>
@@ -660,7 +669,14 @@ https://github.com/alex-shpak/hugo-book
 <li><strong>Disadvantages:</strong> FP16 and BFLOAT16 offer different trade-offs. FP16 has higher precision, but BFLOAT16 has a wider range. FP8 formats reduce both range and precision. The use of low-precision formats can introduce quantization noise and other issues.</li>
 <li><strong>Advantages:</strong> Using low-precision formats can significantly improve efficiency in terms of memory usage, bandwidth usage, compute performance, and cross-device communication costs.</li>
 </ul>
-<p><strong>Suggested Image:</strong> &ldquo;Figure 2. The signal to noise ratio (SNR) of samples from a normal distribution, quantised in FP16 and FP8, as a function of the distribution’s scale.&rdquo; 【3†source】</p>
+<p align="center">
+  <img src='./Figure2.png' width="600">
+</p>
+<p align="center">
+  Figure 2. The signal to noise ratio (SNR) of samples from a normal distribution, quantised in FP16 and FP8, as a function of the distribution’s scale
+</p>
+</li>
+<li>
 <h4 id="techniques-for-low-precision-training">
   <strong>Techniques for Low-Precision Training</strong>
   <a class="anchor" href="#techniques-for-low-precision-training">#</a>
@@ -675,13 +691,13 @@ https://github.com/alex-shpak/hugo-book
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \[  \text{scaled\_loss} = \text{loss} \times \text{scale\_factor}
-  \]
+  \[    \text{scaled\_loss} = \text{loss} \times \text{scale\_factor}
+    \]
 </span>
 
 <span>
-  \[  \text{scaled\_gradients} = \text{gradients} \times \text{scale\_factor}
-  \]
+  \[    \text{scaled\_gradients} = \text{gradients} \times \text{scale\_factor}
+    \]
 </span>
 
 </li>
@@ -692,12 +708,21 @@ https://github.com/alex-shpak/hugo-book
 <p><strong>Per-Tensor Scaling:</strong> This system locally rescales based on runtime statistics to address scaling difficulties in FP8 training.</p>
 </li>
 </ul>
-<p><strong>Suggested Image:</strong> &ldquo;Table 1. A comparison of techniques for low precision training.&rdquo;</p>
+<p align="center">
+  <img src='./Table1.png' width="800">
+</p>
+<p align="center">
+    Table 1. A comparison of techniques for low precision training
+</p>
+</li>
+</ul>
 <hr>
 <h3 id="analysis">
   <strong>Analysis</strong>
   <a class="anchor" href="#analysis">#</a>
 </h3>
+<ul>
+<li>
 <h4 id="ideal-scaling">
   <strong>Ideal Scaling</strong>
   <a class="anchor" href="#ideal-scaling">#</a>
@@ -707,8 +732,8 @@ https://github.com/alex-shpak/hugo-book
 </span>
 ) is an optimal balance among various competing factors. This approach helps concentrate values within the representable range, reducing clipping errors during training.</p>
 <ul>
-<li>
-<p>In floating-point formats, values are represented as:</p>
+<li>In floating-point formats, values are represented as:</li>
+</ul>
 <span>
   \[  \text{value} = (-1)^{b_{\text{sign}}} \times 2^{\text{exponent}} \times \left(1 &#43; \frac{b_{\text{mantissa}}}{2^M}\right)
   \]
@@ -724,9 +749,14 @@ https://github.com/alex-shpak/hugo-book
   \(b_{\text{mantissa}}\)
 </span>
  represent the sign, exponent, and mantissa bits, respectively.</p>
+<p align="center">
+    <img src='./Figure1.png' width="700">
+</p>
+<p align="center">
+    Figure 1. Above: Unit scaling of an FFN layer. We multiply each tensor by a fixed scalar to achieve consistent scale, no longer requiring a loss scale to control the scale of gradients. Below: A histogram of exponent values at initialisation for the above FFN
+</p>
 </li>
-</ul>
-<p><strong>Suggested Image:</strong> &ldquo;Figure 1. Above: Unit scaling of an FFN layer. We multiply each tensor by a fixed scalar to achieve consistent scale, no longer requiring a loss scale to control the scale of gradients. Below: A histogram of exponent values at initialisation for the above FFN.&rdquo;</p>
+<li>
 <h4 id="predictable-scaling">
   <strong>Predictable Scaling</strong>
   <a class="anchor" href="#predictable-scaling">#</a>
@@ -736,8 +766,8 @@ https://github.com/alex-shpak/hugo-book
 <li>
 <p>For example, by considering the scaling factors for each operation in the neural network, we can perform scaled operations:</p>
 <span>
-  \[  y = \alpha \cdot f(x)
-  \]
+  \[    y = \alpha \cdot f(x)
+    \]
 </span>
 
 <p>where <span>
@@ -747,6 +777,8 @@ https://github.com/alex-shpak/hugo-book
   \(f\)
 </span>
  represents the operation.</p>
+</li>
+</ul>
 </li>
 </ul>
 <hr>
@@ -1051,7 +1083,7 @@ Unit scaling has demonstrated to address the complexities of low-precision train
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/e04642273542b9849fdd71e8f538e999a77c27fd" title='Last modified by cnyjoo | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/30a540dabc1d6f640c1d6d9c14a6a910384a307c" title='Last modified by cnyjoo | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>

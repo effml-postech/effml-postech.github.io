@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Better &amp; Faster Large Language Models via Multi-token Prediction # Posted by Jinoh Cho and Seonghyeon Park
-Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay Preliminaries # Language Modeling and Next-Token Prediction Task # Standard language modeling involves learning from a large text corpus $x_1, \ldots, x_T$ by implementing a next-token prediction task. The goal is to minimize the cross-entropy loss, defined as:">
+Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay Preliminaries # Language Modeling and Next-Token Prediction Task # Learning through a next-token prediction task has been a mainstream for language modeling. The goal of a next-token prediction task is to maximize the probability of the next token $x_{t&#43;1}$, given the history of previous tokens $x_{t:1} = x_1, \ldots, x_t$.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/04_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="Better &amp; Faster Large Language Models via Multi-token Prediction # Posted by Jinoh Cho and Seonghyeon Park
-Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay Preliminaries # Language Modeling and Next-Token Prediction Task # Standard language modeling involves learning from a large text corpus $x_1, \ldots, x_T$ by implementing a next-token prediction task. The goal is to minimize the cross-entropy loss, defined as:">
+Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts ParisTech and LISN Universite Paris-Saclay Preliminaries # Language Modeling and Next-Token Prediction Task # Learning through a next-token prediction task has been a mainstream for language modeling. The goal of a next-token prediction task is to maximize the probability of the next token $x_{t&#43;1}$, given the history of previous tokens $x_{t:1} = x_1, \ldots, x_t$.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>04 | Efficient ML Systems</title>
@@ -20,7 +20,7 @@ Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts Par
 <link rel="canonical" href="http://localhost:1313/docs/spring24/04_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.e42e2ea2f0d175e58cc27d52583d6af9c3a7e0fd65c0b17b2665b054ed2a5a20.js" integrity="sha256-5C4uovDRdeWMwn1SWD1q&#43;cOn4P1lwLF7JmWwVO0qWiA=" crossorigin="anonymous"></script>
 
   
 
@@ -653,11 +653,11 @@ https://github.com/alex-shpak/hugo-book
   Language Modeling and Next-Token Prediction Task
   <a class="anchor" href="#language-modeling-and-next-token-prediction-task">#</a>
 </h3>
-<p>Standard language modeling involves learning from a large text corpus $x_1, \ldots, x_T$ by implementing a next-token prediction task. The goal is to minimize the cross-entropy loss, defined as:</p>
+<p>Learning through a next-token prediction task has been a mainstream for language modeling. The goal of a next-token prediction task is to maximize the probability of the next token $x_{t+1}$, given the history of previous tokens $x_{t:1} = x_1, \ldots, x_t$. This can be formulated as follow:</p>
 <p>$$
 L_1 = - \sum_{t} \log P_{\theta}(x_{t+1} \mid x_{t:1}),
 $$</p>
-<p>where $P_{\theta}$ represents our large language model under training. The objective is to maximize the probability of the next token $x_{t+1}$, given the history of previous tokens $x_{t:1} = x_1, \ldots, x_t$.</p>
+<p>where $P_{\theta}$ represents large language model under training.</p>
 <h1 id="core-idea">
   Core Idea
   <a class="anchor" href="#core-idea">#</a>
@@ -666,16 +666,15 @@ $$</p>
   Multi-Token Prediction Task
   <a class="anchor" href="#multi-token-prediction-task">#</a>
 </h3>
-<p>In this work, authors generalize this approach by implementing a multi-token prediction task. At each position of the training corpus, the model is instructed to predict $n$ future tokens at once. Thus, training objective can be expressed as follow:</p>
+<p>In this work, authors propose to learn language modeling from a multi-token prediction rather than a next-token prediction. At each position of the training corpus, the model is instructed to predict $n$ future tokens at once. Thus, the training objective is changed as follow:</p>
 <p>$$
 L_n = - \sum_{t} \log P_{\theta}(x_{t+n:t+1} \mid x_{t:1}) = - \sum_{t}\sum_{i=1}^{n} \log P_{\theta}(x_{t+i} \mid x_{t:1}).
 $$</p>
-<p>This formulation allows the model to learn to predict multiple future tokens simultaneously, enhancing its predictive capabilities and efficiency.</p>
 <h3 id="memory-efficient-implementation">
   Memory-Efficient Implementation
   <a class="anchor" href="#memory-efficient-implementation">#</a>
 </h3>
-<p>Naive</p>
+<p>Directly training language models by minimizing the multi-token prediction loss could result in high GPU memory usage, severly limiting the allowable batch-size. Thus, authors propose to carefully adapt the sequence of forward and backward operations for each prediction head rather than operating forward and backword operations simultaneusly for all heads. This could result in reducing peak GPU memory usage $O(nV+d)$ into $O(V+d)$. Here, the $n$ and $V$ denote the number of head and vocabulary size, respectively. Note that $d$ is the vector dimension of shared transformer trunk.</p>
 </article>
  
       
@@ -685,9 +684,9 @@ $$</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/543d4103e349c0b89a568ad10facfa781af3f77b" title='Last modified by Jinoh Cho | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a157ccc3d0a55f79198bad99c9e3e4504df84311" title='Last modified by Jinoh Cho | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 21, 2024</span>
+      <span>May 22, 2024</span>
     </a>
   </div>
 
