@@ -4,16 +4,18 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
-Vision Transformers (ViTs) # Vision Transformers (ViT) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.
-Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images. The Vision Transformer Architecture consists of a series of transformer blocks.">
+Posted by Jungwon Lee, Minsang Seok
+What is Vision Transformer? # Vision Transformers (ViTs) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.
+Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/18_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
-Vision Transformers (ViTs) # Vision Transformers (ViT) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.
-Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images. The Vision Transformer Architecture consists of a series of transformer blocks.">
+Posted by Jungwon Lee, Minsang Seok
+What is Vision Transformer? # Vision Transformers (ViTs) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.
+Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>18 | Efficient ML Systems</title>
@@ -22,7 +24,7 @@ Vision Transformers (ViT) is an architecture that utilizes self-attention mechan
 <link rel="canonical" href="http://localhost:1313/docs/spring24/18_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.ab7f0c68bb5499f16bd5f47d1e40970ab51995077468aa4d673edeb75e6da1cd.js" integrity="sha256-q38MaLtUmfFr1fR9HkCXCrUZlQd0aKpNZz7et15toc0=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
 
   
 
@@ -346,24 +348,6 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/spring24/14_/" class="">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -555,6 +539,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -612,7 +614,7 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#vision-transformers-vits">Vision Transformers (ViTs)</a></li>
+    <li><a href="#what-is-vision-transformer">What is Vision Transformer?</a></li>
     <li><a href="#challenge-multi-resolution-vit-modeling">Challenge: Multi-Resolution ViT Modeling</a></li>
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
@@ -620,10 +622,17 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
-    <li><a href="#experiments">Experiments</a>
+    <li><a href="#vitar-shows-superior-performance-with-any-resolution">ViTAR shows superior performance with any resolution</a>
       <ul>
-        <li><a href="#result-of-image-classification-task">Result of Image Classification Task</a></li>
-        <li><a href="#result-of-object-detection-task">Result of Object Detection Task</a></li>
+        <li><a href="#image-classification">Image Classification</a></li>
+        <li><a href="#object-detection">Object Detection</a></li>
+      </ul>
+    </li>
+    <li><a href="#discussion">Discussion</a>
+      <ul>
+        <li><a href="#applicability-to-diffusion-models">Applicability to Diffusion Models</a></li>
+        <li><a href="#applicability-to-large-language-models-llms">Applicability to Large Language Models (LLMs)</a></li>
+        <li><a href="#can-grid-attention-replace-convolution">Can Grid Attention Replace Convolution?</a></li>
       </ul>
     </li>
   </ul>
@@ -643,11 +652,12 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#vitar-vision-transformer-with-any-resolution">#</a>
 </h1>
 <p><em>Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang</em></p>
-<h2 id="vision-transformers-vits">
-  Vision Transformers (ViTs)
-  <a class="anchor" href="#vision-transformers-vits">#</a>
+<p><em>Posted by Jungwon Lee, Minsang Seok</em></p>
+<h2 id="what-is-vision-transformer">
+  What is Vision Transformer?
+  <a class="anchor" href="#what-is-vision-transformer">#</a>
 </h2>
-<p>Vision Transformers (ViT) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.</p>
+<p>Vision Transformers (ViTs) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.</p>
 <p align="center">
   <img src="./ViT.png" alt="." width="700" height="400" > 
 </p>
@@ -664,6 +674,7 @@ https://github.com/alex-shpak/hugo-book
 <li>Fine-tune the downstream dataset for image classification</li>
 </ol>
 <p>The transformer&rsquo;s encoder has a structure in which L transformer blocks sequentially pass through the Feed Forward, which consists of the Normalization Layer, Multi-head Attention, Normalization Layer, and MLP, as shown on the right of Figure 1.</p>
+<hr>
 <h2 id="challenge-multi-resolution-vit-modeling">
   Challenge: Multi-Resolution ViT Modeling
   <a class="anchor" href="#challenge-multi-resolution-vit-modeling">#</a>
@@ -680,25 +691,39 @@ https://github.com/alex-shpak/hugo-book
 <li>It cannot be used with self-supervised learning methods like masked auto-encoding (MAE).</li>
 <li>Computation cost increases as input resolution increases, which has a negative impact on the training and inference process.</li>
 </ul>
+<hr>
 <h2 id="vitar-vision-transformer-with-any-resolution-1">
   ViTAR: Vision Transformer with Any Resolution
   <a class="anchor" href="#vitar-vision-transformer-with-any-resolution-1">#</a>
 </h2>
 <p align="center">
-  <img src="./overview.png" alt="." width="600" height="200" > 
+  <img src="./ViTAR_overall.png" alt="." width="600" height="200" > 
 </p>
 In this section, we introduces two key innovations to address this issue. Firstly, we propose a novel module for dynamic resolution adjustment, designed with a single Transformer block, specifically to achieve highly efficient incremental token integration. Secondly, we introduce fuzzy positional encoding in the Vision Transformer to provide consistent positional awareness across multiple resolutions, thereby preventing overfitting to any single training resolution.
+<hr>
 <h3 id="1-adaptive-token-merger-atm-module">
   1. Adaptive Token Merger (ATM Module)
   <a class="anchor" href="#1-adaptive-token-merger-atm-module">#</a>
 </h3>
 <p align="center">
   <img src="./ATM.png" alt="." width="500" height="300" > 
-</p>
-<p>The ATM Module separates input tokens in the form of a grid of $G_h \times G_w$. When the size of all tokens is $H \times W$, all tokens are separated in grid form to have tokens of $G_{th}\times G_{tW}$ size. Each Grid is processed through a special operation called Grid Attention. Grid Attention is carried out only between tokens within the Grid. Average Pooling of all Tokens is performed as a Query, and Attention operation is performed by setting each Token as Key and Value. When this is performed for the entire Grid, it is reduced to $G_h \times G_w$, which is equal to the number of Grids. Afterwards, it passes through the FeedForward network and repeats. Through this iterative process, even when the resolution of the image is large, the number of tokens can be effectively reduced, and through a sufficient process, this size can be reduced to the size of the grid of 1. This has the advantage of being computationally efficient because when performing the subsequent MHSA calculation, a token of the same size is always input as input, regardless of resolution.</p>
+</p>    
+<p>Adaptive Token Merger (ATM) module is designed to efficiently process and merge tokens of different resolutions in a neural network using a simple structure that includes GridAttention and FeedForward network (FFN). ATM Module takes tokens $(H\times W)$ processed through patch embedding as input. ATM Module specially processes the inputs of different resolutions M times to reduce them to the same preset size $G_{h} \times G_{w}$ before fed into the MHSA.</p>
 <p align="center">
-  <img src="./grid_attention.png" alt="." width="500" height="300" > 
+  <img src="./grid_attention.png" alt="." width="600" height="300" > 
 </p>
+<p>The detailed process for ATM is as follows:
+First, ATM divides the tokens of shape $H \times W $ into a grid of size $G_{th} \times G_{tw}$.</p>
+<p>For simplicity, we&rsquo;ll use above Figure as an example.
+In the figure, we can see $H=4$, $W=4$, $G_{th}=2$, and $G_{tw}=2$.(We assume that H is divisible by $G_{th}$ and W is divisible by $G_{tw})$. The number of tokens in each grid would then be $H/G_{th} × W/G_{tw}$, which is 2x2.</p>
+<p>Within each grid, the module performs a special operation called Grid Attention.</p>
+<h4 id="gridattention">
+  GridAttention
+  <a class="anchor" href="#gridattention">#</a>
+</h4>
+<p>For a specific grid, we suppose its tokens are denoted as ${x_{ij}}$, where $0 ≤ i &lt; H/G_{th}$ and $0 ≤ j &lt; W/G_{tw}$.</p>
+<p>Average Pooling: First, it averages the tokens within a grid to create a mean token.
+Cross-Attention: Using this mean token as the Query, and all the grid tokens as Key and Value, it applies cross-attention to merge all tokens in the grid into a single token.</p>
 
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
@@ -708,11 +733,15 @@ In this section, we introduces two key innovations to address this issue. Firstl
 GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
 </span>
 
-<p>In our opinion, Grid Attention appears to add an inductive bias similar to Convolution. It appears that Tokens in adjacent locations in the actual image should be contained within the same Grid. The order of grid patching may have an effect.</p>
-<p>For Ablation study, ViTAR-S Model is used to compare with AvgPool which is another token fusion method. The results of the comparison demonstrate that ATM significantly improves the model&rsquo;s performance and resolution adaptability. Specifically, at a resolution of 4032, our proposed ATM achieves a 7.6% increase in accuracy compared with the baseline.</p>
+<p>After passing through GridAttention, the fused token is fed into a standard Feed-Forward Network to complete channel fusion, thereby completing one iteration of merging token. GridAttention and FFN undergo multiple iterations and all iterations share the same weights.</p>
+<p>During these iterations, we gradually decrease the value of $(G_{th} , G_{tw})$, until $G_{th} = G_{h}$ and $G_{tw} = G_{w}$. (typically set $Gh = Gw = 14$, in standard ViT)</p>
+<p>This iteration process effectively reduces the number of tokens even when the resolution of the image is large, and with enough iterations, this size can be reduced effectively. This has the advantage of being computationally efficient because when performing subsequent MHSA calculations, we always use the same size tokens as input, regardless of resolution.</p>
+<hr>
 <p align="center">
-  <img src="./result_ATM.png" alt="." width="300" height="100" > 
+  <img src="./result_ATM.png" alt="." width="600" height="250" > 
 </p>
+<p>For Ablation study, ViTAR-S Model is used to compare with AvgPool which is another token fusion method. The results of the comparison demonstrate that ATM significantly improves the model&rsquo;s performance and resolution adaptability. Specifically, at a resolution of 4032, our proposed ATM achieves a 7.6% increase in accuracy compared with the baseline.</p>
+<hr>
 <h3 id="2-fuzzy-positional-encoding-fpe">
   2. Fuzzy Positional Encoding (FPE)
   <a class="anchor" href="#2-fuzzy-positional-encoding-fpe">#</a>
@@ -726,33 +755,54 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
 <p>Initially, the learnable positional embedding is randomly initialized and used as the model&rsquo;s positional embedding. At this time, FPE provides only fuzzy positional information and experiences changes within a certain range. Specifically, assuming that the exact coordinates of the target token are (i, j), the fuzzy positional information is (i + s1, j + s2). s1 and s2 satisfy -0.5 ≤ s1, s2 ≤ 0.5 and follows uniform distribution.</p>
 <p>During training, randomly generated coordinate offsets are added to the reference coordinates during the training process, and grid samples for learnable location embeddings are performed based on the newly generated coordinates to generate fuzzy location encoding.</p>
 <p>In case of inference, precise positional encoding is used instead of FPE. When there is a change in input resolution, interpolation is performed on learnable positional embedding. This has strong positional resilience because it was somehow seen and used in the FPE used in the training phase.</p>
+<hr>
 <p>To compare the impact of different positional encodings on the model’s resolution generalization ability, several positional encoding methods were used. This includes commonly used sin-cos absolute position encoding (APE), conditional position encoding (CPE), global-local positional encoding (GLPE) in ResFormer, Relative Positional Bias (RPB) in Swin, and FPE. Note that only APE and FPE are compatible with the MAE framework.ViTAR-S is used for experiments without MAE, and ViTAR-M is used for experiments with MAE. As a result, FPE exhibits a significantly pronounced advantage in resolution generalization capability. Additionally, under the MAE self-supervised learning framework, FPE also demonstrates superior performance relative to APE.</p>
 <p align="center">
-  <img src="./result_FPE.png" alt="." width="300" height="200" > 
+  <img src="./result_FPE.png" alt="." width="400" height="300" > 
 </p>
-<h2 id="experiments">
-  Experiments
-  <a class="anchor" href="#experiments">#</a>
+<hr>
+<h2 id="vitar-shows-superior-performance-with-any-resolution">
+  ViTAR shows superior performance with any resolution
+  <a class="anchor" href="#vitar-shows-superior-performance-with-any-resolution">#</a>
 </h2>
 <p align="center">
   <img src="./result1.png" alt="." width="500" height="300" > 
 </p>
-<h3 id="result-of-image-classification-task">
-  Result of Image Classification Task
-  <a class="anchor" href="#result-of-image-classification-task">#</a>
+<h3 id="image-classification">
+  Image Classification
+  <a class="anchor" href="#image-classification">#</a>
 </h3>
 <p>ViTAR is trained on ImageNet-1K form scratch and it demonstrates excellent classification accuracy across a considerable range of resolutions. Especially, when the resolution of the input image exceeds 2240, ViTAR is capable of inference at lower computational cost. In contrast, traditional ViT architectures (DeiT and ResFormer) cannot perform high resolution inference due to computational resource limitations.</p>
 <p align="center">
-  <img src="./result_image_classification.png" alt="." width="500" height="500" > 
+  <img src="./result_image_classification.png" alt="." width="600" height="600" > 
 </p>
-<h3 id="result-of-object-detection-task">
-  Result of Object Detection Task
-  <a class="anchor" href="#result-of-object-detection-task">#</a>
+<h3 id="object-detection">
+  Object Detection
+  <a class="anchor" href="#object-detection">#</a>
 </h3>
-<p>For object detection, COCO dataset is used ATM iterates only once because it does not utilize the multi-resolution training strategy in this experiment. If $\frac{H}{G_th}$ and $\frac{W}{G_tw}$ in ATM are fixed to 1, the results indicate that ViTAR achieves performance in both object detection and instance segmentation. And if setting $\frac{H}{G_th}$ and $\frac{W}{G_tw}$ to 2 in ATM, ATM module reduces approximately 50% of the computational cost while maintaining high precision in dense predictions, demonstrating its effectiveness.</p>
+<p>For object detection, COCO dataset is used ATM iterates only once because it does not utilize the multi-resolution training strategy in this experiment. If $\frac{H}{G_{th}}$ and $\frac{W}{G_{tw}}$ in ATM are fixed to 1, the results indicate that ViTAR achieves performance in both object detection and instance segmentation. And if setting $\frac{H}{G_{th}}$ and $\frac{W}{G_{tw}}$ to 2 in ATM, ATM module reduces approximately 50% of the computational cost while maintaining high precision in dense predictions, demonstrating its effectiveness.</p>
 <p align="center">
-  <img src="./result_object_detection.png" alt="." width="300" height="150" > 
+  <img src="./result_object_detection.png" alt="." width="800" height="350" > 
 </p>
+<h2 id="discussion">
+  Discussion
+  <a class="anchor" href="#discussion">#</a>
+</h2>
+<h3 id="applicability-to-diffusion-models">
+  Applicability to Diffusion Models
+  <a class="anchor" href="#applicability-to-diffusion-models">#</a>
+</h3>
+<p>It is currently challenging to generate images of various resolutions with generative models like Diffusion Models. Additionally, many diffusion models with ViT structures have been proposed recently (e.g. DiT, PixArt-α, Sora). Can the proposed method be applied to Diffusion Models as well? However, one consideration for applying it to diffusion models is how to effectively upscale the reduced size obtained through Grid Attention to ensure that the input and output sizes are the same.</p>
+<h3 id="applicability-to-large-language-models-llms">
+  Applicability to Large Language Models (LLMs)
+  <a class="anchor" href="#applicability-to-large-language-models-llms">#</a>
+</h3>
+<p>In LLMs, when receiving long context as input, positional embeddings are sometimes added using interpolation like this case. Would applying Fuzzy Positional Embedding (FPE) help handle long context inputs better? Or, just like training a network on low-resolution images to perform well on high-resolution images, can a network trained on short context in LLM maintain good performance on long context input?</p>
+<h3 id="can-grid-attention-replace-convolution">
+  Can Grid Attention Replace Convolution?
+  <a class="anchor" href="#can-grid-attention-replace-convolution">#</a>
+</h3>
+<p>The operation of Grid Attention is quite similar to the process performed by kernels in Convolution when calculating each grid. However, ATM maintains parameter efficiency by sharing weights. Would applying Grid Attention to existing CNN structures (e.g., VGG, ResNet) be more efficient?</p>
 </article>
  
       
@@ -762,7 +812,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/bbd27f05b1db0af7418840c26c91d895d24bcd8e" title='Last modified by postech-sms | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/183252bc61c290ce4caf6815b42aa7333da026fb" title='Last modified by Lee Jungwon | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -807,7 +857,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#vision-transformers-vits">Vision Transformers (ViTs)</a></li>
+    <li><a href="#what-is-vision-transformer">What is Vision Transformer?</a></li>
     <li><a href="#challenge-multi-resolution-vit-modeling">Challenge: Multi-Resolution ViT Modeling</a></li>
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
@@ -815,10 +865,17 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
         <li><a href="#2-fuzzy-positional-encoding-fpe">2. Fuzzy Positional Encoding (FPE)</a></li>
       </ul>
     </li>
-    <li><a href="#experiments">Experiments</a>
+    <li><a href="#vitar-shows-superior-performance-with-any-resolution">ViTAR shows superior performance with any resolution</a>
       <ul>
-        <li><a href="#result-of-image-classification-task">Result of Image Classification Task</a></li>
-        <li><a href="#result-of-object-detection-task">Result of Object Detection Task</a></li>
+        <li><a href="#image-classification">Image Classification</a></li>
+        <li><a href="#object-detection">Object Detection</a></li>
+      </ul>
+    </li>
+    <li><a href="#discussion">Discussion</a>
+      <ul>
+        <li><a href="#applicability-to-diffusion-models">Applicability to Diffusion Models</a></li>
+        <li><a href="#applicability-to-large-language-models-llms">Applicability to Large Language Models (LLMs)</a></li>
+        <li><a href="#can-grid-attention-replace-convolution">Can Grid Attention Replace Convolution?</a></li>
       </ul>
     </li>
   </ul>

@@ -22,7 +22,7 @@ Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
 <link rel="canonical" href="http://localhost:1313/docs/spring24/22_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.ab7f0c68bb5499f16bd5f47d1e40970ab51995077468aa4d673edeb75e6da1cd.js" integrity="sha256-q38MaLtUmfFr1fR9HkCXCrUZlQd0aKpNZz7et15toc0=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
 
   
 
@@ -346,24 +346,6 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/spring24/14_/" class="">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -555,6 +537,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -621,12 +621,12 @@ https://github.com/alex-shpak/hugo-book
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture">3. Model architecture</a>
+    <li><a href="#3-model-architecture-1">3. Model architecture [1]</a>
       <ul>
         <li></li>
       </ul>
     </li>
-    <li><a href="#4-memory-operations">4. Memory Operations</a></li>
+    <li><a href="#4-memory-operations-1">4. Memory Operations [1]</a></li>
     <li><a href="#5-results">5. Results</a>
       <ul>
         <li><a href="#wall-clock-time">Wall Clock time</a></li>
@@ -744,9 +744,9 @@ Selective Fact Forgetting and Information Leakage Prevention:</p>
 Recursive Search-Based Solution for Long Context Generalization: A simple recursive search-based approach is provided to enable Larimar&rsquo;s memory to generalize to longer input contexts.</p>
 </li>
 </ol>
-<h2 id="3-model-architecture">
-  3. Model architecture
-  <a class="anchor" href="#3-model-architecture">#</a>
+<h2 id="3-model-architecture-1">
+  3. Model architecture [1]
+  <a class="anchor" href="#3-model-architecture-1">#</a>
 </h2>
 <p>Inspired by human brain (neocortex-hippocampus interactions), authors suggest &ldquo;a class of LLMs augmented with an external episodic memory controller.&rdquo; They utilize an episodic memory to mimic hippocampal fast-learning system, and use LLM as a neocortical slow learning system.</p>
 <p>Fig7 below shows the overall architecture of Larimar. Basic idea is to implement VAE with external memory. It consists of three main components: encoder, decoder, and adaptive memory. Comparing the architecture with Fig5 would be helpful. In Larimar, memory corresponds to a latent vector.</p>
@@ -792,9 +792,9 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
 <p align="center">
     <img src='minimization problem.png' width="200">
 </p>
-<h2 id="4-memory-operations">
-  4. Memory Operations
-  <a class="anchor" href="#4-memory-operations">#</a>
+<h2 id="4-memory-operations-1">
+  4. Memory Operations [1]
+  <a class="anchor" href="#4-memory-operations-1">#</a>
 </h2>
 <p>In this paper, authors followed the ideas from [8] to combine pre-trained LLMs and memory component for knowledge edit. Fig8 illustrates the single training step of the memory.</p>
 <p align="center">
@@ -928,7 +928,7 @@ processing in the latent space, Larimar is also efficient is terms of number of 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/9b7af4377acdd56e1be95a63e68be33f8d9cc1e5" title='Last modified by skjang238 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/563d503aabe981d1401b2e192f5803d961003d83" title='Last modified by skjang238 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -982,12 +982,12 @@ processing in the latent space, Larimar is also efficient is terms of number of 
       </ul>
     </li>
     <li><a href="#2-contributions">2. Contributions</a></li>
-    <li><a href="#3-model-architecture">3. Model architecture</a>
+    <li><a href="#3-model-architecture-1">3. Model architecture [1]</a>
       <ul>
         <li></li>
       </ul>
     </li>
-    <li><a href="#4-memory-operations">4. Memory Operations</a></li>
+    <li><a href="#4-memory-operations-1">4. Memory Operations [1]</a></li>
     <li><a href="#5-results">5. Results</a>
       <ul>
         <li><a href="#wall-clock-time">Wall Clock time</a></li>

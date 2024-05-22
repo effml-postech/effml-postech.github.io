@@ -3,17 +3,17 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="MIXTURE OF LORA EXPERTS # Background # What is LoRA? # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
-Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model&rsquo;s weights frozen and adding trainable low-rank decomposition matrices.
-In the above figure, only the matrices A and B are trained, with dimensions (d x r) and (r x d) respectively.">
+<meta name="description" content="MIXTURE OF LORA EXPERTS # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
+Workflow of MoLE Background # What is LoRA? # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
+Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model&rsquo;s weights frozen and adding trainable low-rank decomposition matrices.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/08_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="MIXTURE OF LORA EXPERTS # Background # What is LoRA? # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
-Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model’s weights frozen and adding trainable low-rank decomposition matrices.
-In the above figure, only the matrices A and B are trained, with dimensions (d x r) and (r x d) respectively.">
+  <meta property="og:description" content="MIXTURE OF LORA EXPERTS # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
+Workflow of MoLE Background # What is LoRA? # LoRA is a methodology for effective fine-tuning large-scale pretrained models.
+Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model’s weights frozen and adding trainable low-rank decomposition matrices.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>08 | Efficient ML Systems</title>
@@ -22,7 +22,7 @@ In the above figure, only the matrices A and B are trained, with dimensions (d x
 <link rel="canonical" href="http://localhost:1313/docs/spring24/08_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.ab7f0c68bb5499f16bd5f47d1e40970ab51995077468aa4d673edeb75e6da1cd.js" integrity="sha256-q38MaLtUmfFr1fR9HkCXCrUZlQd0aKpNZz7et15toc0=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
 
   
 
@@ -346,24 +346,6 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/spring24/14_/" class="">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -555,6 +537,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -644,6 +644,12 @@ https://github.com/alex-shpak/hugo-book
   MIXTURE OF LORA EXPERTS
   <a class="anchor" href="#mixture-of-lora-experts">#</a>
 </h1>
+<p>LoRA is a methodology for effective fine-tuning large-scale pretrained models.</p>
+<p align="center">
+    <img src="./mole.png">
+    <br>
+    <em>Workflow of MoLE</em>
+</p>
 <!--
 제목으로 바꾸기
 처음에 어그로 끌 수 있는 내용 먼저
@@ -659,7 +665,9 @@ https://github.com/alex-shpak/hugo-book
 <p><em>LoRA is a methodology for effective fine-tuning large-scale pretrained models.</em></p>
 <p>Models such as OPT, LLaMA, and CLIP demonstrate remarkable performance when fine-tuned for various downstream tasks. However, full fine-tuning of these massive models requires substantial computational resources. LoRA enables parameter-efficient fine-tuning by keeping the pretrained model&rsquo;s weights frozen and adding trainable low-rank decomposition matrices.</p>
 <p align="center">
-    <img src=./LoRA.png> 
+    <img src="./LoRA2.png" width="40%">
+    <br>
+    <em>LoRA Methodology</em>
 </p>
 <p>In the above figure, only the matrices A and B are trained, with dimensions (d x r) and (r x d) respectively. By setting r &laquo; d, the number of parameters to be trained can be reduced. These trained matrices are then added to the existing pretrained weights, allowing tuning without affecting the inference speed of the original model.</p>
 <h3 id="loras-composistion">
@@ -668,14 +676,46 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <p>The common solution to further improve the performance of LoRA is to compose multiple trained LoRAs. Research on LoRA composition can be broadly categorized into the following two methodologies.</p>
 <p><strong>Linear arithmetic composition.</strong> It is a method of directly adding multiple LoRAs. This approach is simple and has been effective in the NLP and Vision-Language domain, but it can result in the loss of pre-trained model&rsquo;s generative capabilities or the individual characteristics of each LoRA.</p>
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \[$$\hat{\mathbf{W}} = \mathbf{W} &#43; \sum_{i=1}^{N} w_i \cdot \Delta \mathbf{W}_i$$\]
+</span>
+
 <p><strong>Reference tuning-based composition</strong> tackles the above limitations of linear arithmetic method by introducing gradient fusion and controllable sampling, but is requires retaining when incorporating different LoRAs or creating new masks, which results non-trivial computational costs.</p>
 <p align="center">
     <img src=./lora_comp.png> 
+    <br>
+    <em>(Left) Linear arithmetic composition. (Right) Reference tuning-based composition</em>
 </p>
 <h3 id="mixture-of-experts">
   Mixture-of-Experts
   <a class="anchor" href="#mixture-of-experts">#</a>
 </h3>
+<p>MoE is an effective method that allows scaling up the number of parameters while maintaining the computational cost of the model.</p>
+<ul>
+<li>
+<p>Experts FFN Layers: MoE layer is composed of N separate feed-forward networks as the experts. This concept involves dividing the FFN layer of traditional transformers into N experts. These experts can be thought of as being responsible for specific tokens.</p>
+</li>
+<li>
+<p>Gating functions (Router): A function that determines the weights over the experts outputs. For the hidden representation h of input token, and the trainable embedding e of each a expert, the gate value a is obtained as follow:</p>
+</li>
+</ul>
+<span>
+  \[\alpha(E_i) = \frac{\exp(h \cdot e_i)}{\sum_{j=0}^{N} \exp(h \cdot e_j)}\]
+</span>
+
+<p>The output is a weighted sum of the outputs from the top-k experts, determined by the gated values.</p>
+<span>
+  \[O = h &#43; \sum_{i=0}^{N} \alpha(E_i) \cdot E_i(h)\]
+</span>
+
+<p align="center">
+    <img src=./moe.png> 
+    <br>
+    <em>Illustration of a Swith Transformer block.</em>
+</p>
 <h2 id="mixture-of-lora-experts-1">
   Mixture of LoRA experts
   <a class="anchor" href="#mixture-of-lora-experts-1">#</a>
@@ -769,7 +809,7 @@ The gating balancing loss helps prevent bias by ensuring that the loss value dec
 </p>
 <details>
     <summary>See related Symbols</summary>
-    M: the nu of blocks where gating functions are placed <br/>
+    M: The num of blocks where gating functions are placed <br/>
     N: num of LoRAs
 </details>     
 <br/>
@@ -787,6 +827,82 @@ In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
   Results
   <a class="anchor" href="#results">#</a>
 </h2>
+<p><strong>On V&amp;L Domain</strong>
+<br/></p>
+<ul>
+<li>Setup)
+<br/>
+Base generator: DeamBooth(Ruiz et al., 2023) (built on Stable Diffusion V2.1)
+<br/>
+LoRA: combination of three separately trained LoRAs
+<br/>
+Image resolution: 512x512
+<br/>
+learning rate: 1e-5
+<br/>
+DDPM sampler (Ho et al., 2020) with 50 steps in each case
+<br/>
+Train 400 iterations for each required composition with batch size 2 and α as 0.5
+<br/></li>
+<li>Metrics)
+<br/>
+Image alignment: Evaluate the visual similarity of generated images with individual composed concepts in the CLIP image feature space.
+<br/>
+Text alignment: Evaluate the text-image similarity of generated images with given text prompts in the CLIP feature space.
+<br/>
+For each composition, calculated the average scores among 200 generated images per prompt using 5 text prompts.
+<br/></li>
+<li>Compared Baselines)
+<br/>
+<ul>
+<li>Normalized linear arithmetic composition</li>
+<li>SVDiff (Han et al., 2023)</li>
+</ul>
+</li>
+<li>Results)
+<br/></li>
+</ul>
+<p align="center">
+    <img src=./result1.png width="500">
+</p>
+        It demonstrates better performance compared to other models and shows outstanding results in other tasks as well.
+<p align="center">
+    <img src=./result2.png align="center" width="32%">
+    <img src=./result3.png align="center" width="32%">
+    <img src=./result4.png align="center" width="32%">
+    <figcaption align="center">
+</p>
+  When viewing the generated images, it is evident that all specified subjects are accurately represented and maintained.
+  <br/>
+   <br/>
+<p><strong>On NLP Domain</strong>
+<br/></p>
+<ul>
+<li>Setup)
+<br/>
+Base Model: Flan-T5 (Chung et al., 2022)
+<br/>
+LoRA: Several LoRAs based on FLAN datasets
+<br/>
+learning rate: 1e-5
+<br/>
+Train 800 iterations for each required composition with batch size 12 and α as 0.5.
+<br/></li>
+<li>Compared Baselines)
+<br/>
+<ul>
+<li>LoRAhub</li>
+<li>PEMs</li>
+</ul>
+</li>
+<li>Results)</li>
+</ul>
+<p align="center">
+    <img src=./result7.png align="center" width="48%">
+    <img src=./result8.png align="center" width="48%">
+    <figcaption align="center">
+</p>
+  It can be observed that MoLE demonstrates better performance in most tasks.
 <h2 id="analyisis-and-limitations">
   Analyisis and Limitations
   <a class="anchor" href="#analyisis-and-limitations">#</a>
@@ -800,7 +916,7 @@ In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/8476505508d1e08b3499ad4aa44f53d0679d7a81" title='Last modified by darwin406 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/18d84c551f7ca45879b7cfe56409579ac9f1f32e" title='Last modified by jgryu | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>

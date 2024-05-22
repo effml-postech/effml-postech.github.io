@@ -3,15 +3,21 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
-#Introduction">
+<meta name="description" content=" Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im 11
+Introduction # 22
+Backgrounds # 33
+Layer Early Exiting # 44
+Draft Early Exiting # Experiments # Discussion and Conclusion # ">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/05_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
-#Introduction">
+  <meta property="og:description" content=" Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im 11
+Introduction # 22
+Backgrounds # 33
+Layer Early Exiting # 44
+Draft Early Exiting # Experiments # Discussion and Conclusion # ">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>05 | Efficient ML Systems</title>
@@ -20,7 +26,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/05_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.ab7f0c68bb5499f16bd5f47d1e40970ab51995077468aa4d673edeb75e6da1cd.js" integrity="sha256-q38MaLtUmfFr1fR9HkCXCrUZlQd0aKpNZz7et15toc0=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
 
   
 
@@ -344,24 +350,6 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/spring24/14_/" class="">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -553,6 +541,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -608,7 +614,16 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#backgrounds">Backgrounds</a></li>
+    <li><a href="#layer-early-exiting">Layer Early Exiting</a></li>
+    <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
+    <li><a href="#experiments">Experiments</a></li>
+    <li><a href="#discussion-and-conclusion">Discussion and Conclusion</a></li>
+  </ul>
+</nav>
 
 
 
@@ -626,8 +641,35 @@ https://github.com/alex-shpak/hugo-book
 <ul>
 <li>Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y</li>
 </ul>
-<p>Written by Nayoung Kwon and Jiwoong Im</p>
-<p>#Introduction</p>
+<p>Written by Nayoung Kwon and Jiwoong Im
+11</p>
+<h2 id="introduction">
+  Introduction
+  <a class="anchor" href="#introduction">#</a>
+</h2>
+<p>22</p>
+<h2 id="backgrounds">
+  Backgrounds
+  <a class="anchor" href="#backgrounds">#</a>
+</h2>
+<p>33</p>
+<h2 id="layer-early-exiting">
+  Layer Early Exiting
+  <a class="anchor" href="#layer-early-exiting">#</a>
+</h2>
+<p>44</p>
+<h2 id="draft-early-exiting">
+  Draft Early Exiting
+  <a class="anchor" href="#draft-early-exiting">#</a>
+</h2>
+<h2 id="experiments">
+  Experiments
+  <a class="anchor" href="#experiments">#</a>
+</h2>
+<h2 id="discussion-and-conclusion">
+  Discussion and Conclusion
+  <a class="anchor" href="#discussion-and-conclusion">#</a>
+</h2>
 </article>
  
       
@@ -637,7 +679,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/2a962a884e48626d7533f4f4be343c36f88dd2d0" title='Last modified by kwonna0 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a7ad3a7511ca48cf3458783f3162c5af3d89d4bb" title='Last modified by jwl3562 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -680,7 +722,16 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#backgrounds">Backgrounds</a></li>
+    <li><a href="#layer-early-exiting">Layer Early Exiting</a></li>
+    <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
+    <li><a href="#experiments">Experiments</a></li>
+    <li><a href="#discussion-and-conclusion">Discussion and Conclusion</a></li>
+  </ul>
+</nav>
 
 
  
