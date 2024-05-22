@@ -728,7 +728,10 @@ Difference between MoD is, MoD chooses path to transformer or to residual connec
   <strong>Expert-choice MoD</strong>
   <a class="anchor" href="#expert-choice-mod">#</a>
 </h3>
-<p>This method applies expert-choice routing but uses only a single expert. Since only a single path is utilized, if $k$ is less than the sequence length, not all tokens need to undergo self-attention and MLP computation.</p>
+<p>This method applies expert-choice routing but uses only a single expert. Since only a single path is utilized, if <span>
+  \(k\)
+</span>
+ is less than the sequence length, not all tokens need to undergo self-attention and MLP computation.</p>
 <p>Routing scheme에는 다음과 같은 고려해야할 사항이 있다:</p>
 <ul>
 <li>연산 효율성
@@ -791,7 +794,10 @@ top-k 연산이 router weight의 magnitude에 depend하기 때문에 가장 중�
 <ul>
 <li>
 <p>Small auxiliary MLP predictor</p>
-<p>The second method does not affect the primary language modeling objective at all. The authors design a new MLP layer that functions as a binary classifier to determine wheather a token is in top-$k$ during the training process. This classifer is trained to make these demterminations, and it is used in real-time during the autoregressive sampling process.</p>
+<p>The second method does not affect the primary language modeling objective at all. The authors design a new MLP layer that functions as a binary classifier to determine wheather a token is in top-<span>
+  \(k\)
+</span>
+ during the training process. This classifer is trained to make these demterminations, and it is used in real-time during the autoregressive sampling process.</p>
 </li>
 </ul>
 <p>With these methods, authors can sample autoregressively by choosing to route tokens to or around a block based on the router&rsquo;s outer which is not depends on the future tokens. They provide empirical result that auxiliary task achieved 99% accuracy.</p>
