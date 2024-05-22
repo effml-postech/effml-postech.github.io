@@ -673,7 +673,7 @@ https://github.com/alex-shpak/hugo-book
 </ol>
 <p>So, we can ask following question:</p>
 <p align="center">
-_How can multiple trained LoRAs be composed dynamically and efficiently, preserving all their individual characteristics, without the need for retraining?_
+How can multiple trained LoRAs be composed dynamically and efficiently, preserving all their individual characteristics, without the need for retraining?
 </p>
 <p>To address this question, Mixture of LoRA Experts (MoLE) presents a new method for achieving the optimal combination of LoRAs for specific tasks. MoLE considers indivisual LoRA as an expert and determines the weights applied to LoRAs at each layer through a gate function.</p>
 <p align="center">
@@ -824,13 +824,9 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
   <a class="anchor" href="#training">#</a>
 </h3>
 <p>The training loss function used in MoLE is as follows:</p>
-<p align="centor">
+<p align="center">
     <img src=./training5.png">
 </p>
-<span>
-  \[$$\mathcal{L} = \mathcal{L}_{D} &#43; \alpha \mathcal{L}_{balance}$$\]
-</span>
-
 <p>Alpha is a coefficient for weight balancing.</p>
 <p><strong>Gating Balacing Loss</strong></p>
 <p align="center">
@@ -841,7 +837,7 @@ As shown in Figure 5 (a), the average entropy of the distribution probabilities 
 To avoid this, the author created a gating balancing loss.<br/>
 The gating balancing loss helps prevent bias by ensuring that the loss value decreases as the model becomes less biased. <br/>
 <br/>
-<p align="centor">
+<p align="center">
     <img src=./training2.png>
 </p>
 <details>
@@ -853,11 +849,11 @@ The gating balancing loss helps prevent bias by ensuring that the loss value dec
 <p><strong>Domain-specific Loss</strong>
 <br/>
 In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
-<p align="centor">
+<p align="center">
     <img src=./training3.png>
 </p>
 <p>In NLP, Using a loss in FLAN-T5(Chung et al,2022)</p>
-<p align="centor">
+<p align="center">
     <img src=./training4.png>
 </p>
 <h2 id="results">
@@ -918,8 +914,8 @@ In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
 </ul>
 <p><strong>Results</strong></p>
 <p align="center">
-    <img src=./result7.png align="center" width="45%">
-    <img src=./result8.png align="center" width="55%">
+    <img src=./result7.png align="center" width="40%">
+    <img src=./result8.png align="center" width="45%">
     <figcaption align="center">
 </p>
 <p>It can be observed that MoLE demonstrates better performance in most tasks.</p>
