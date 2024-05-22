@@ -3,19 +3,17 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
-Introduction # The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck
-Decoding \(K\) tokens requires \(K\) sequential runs of the model. ⇒ LLM inference is slow.
-To address this issue, speculative decoding has been introduced as a promising approach to accelerate LLM inference without altering the output quality.">
+<meta name="description" content="type: docs bookToc: True weight: 1 # Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
+Introduction # The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck.
+Decoding \(N\) tokens requires \(N\) sequential runs of the model. ⇒ LLM inference is slow.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/05_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
-Introduction # The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck
-Decoding \(K\) tokens requires \(K\) sequential runs of the model. ⇒ LLM inference is slow.
-To address this issue, speculative decoding has been introduced as a promising approach to accelerate LLM inference without altering the output quality.">
+  <meta property="og:description" content="type: docs bookToc: True weight: 1 # Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
+Introduction # The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck.
+Decoding \(N\) tokens requires \(N\) sequential runs of the model. ⇒ LLM inference is slow.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>05 | Efficient ML Systems</title>
@@ -24,7 +22,7 @@ To address this issue, speculative decoding has been introduced as a promising a
 <link rel="canonical" href="http://localhost:1313/docs/spring24/05_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.bb782c6e4bffd59850a229fee25dec53730b0d1895bb722758be85c67a9d84f7.js" integrity="sha256-u3gsbkv/1ZhQoin&#43;4l3sU3MLDRiVu3InWL6FxnqdhPc=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.d1dbcce2f6ff12088d475aa0b4b7d77fe3cd3fff1380f8f278bb804d4a135b7f.js" integrity="sha256-0dvM4vb/EgiNR1qgtLfXf&#43;PNP/8TgPjyeLuATUoTW38=" crossorigin="anonymous"></script>
 
   
 
@@ -169,24 +167,6 @@ https://github.com/alex-shpak/hugo-book
 
   
     <a href="/docs/spring24/04_/" class="">04</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/05_/" class="active">05</a>
   
 
           
@@ -557,6 +537,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/05_/" class="active">05</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -614,26 +612,37 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
+    <li><a href="#weight-1">type: docs
+bookToc: True
+weight: 1</a></li>
+  </ul>
+
+  <ul>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#backgrounds">Backgrounds</a>
       <ul>
-        <li><a href="#what-is-speculative-decoding">What is speculative decoding?</a></li>
+        <li><a href="#speculative-decoding">Speculative Decoding</a></li>
         <li><a href="#kangaroo-self-speculative-decoding">Kangaroo: Self-speculative decoding</a></li>
       </ul>
     </li>
-    <li><a href="#layer-early-exiting">Layer Early Exiting</a>
+    <li><a href="#kangaroo">Kangaroo</a>
       <ul>
         <li><a href="#evaluation-metrics">Evaluation Metrics</a></li>
-        <li><a href="#adapter-network-as-self-drafting-model">Adapter Network as Self-Drafting Model</a></li>
+        <li><a href="#adapter-network-as-self-draft-model">Adapter Network as Self-Draft Model</a></li>
+        <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
       </ul>
     </li>
-    <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
-    <li><a href="#experiments">Experiments</a></li>
+    <li><a href="#experiments">Experiments</a>
+      <ul>
+        <li><a href="#ablation-studies">Ablation Studies</a></li>
+      </ul>
+    </li>
     <li><a href="#discussion-and-conclusion">Discussion and Conclusion</a>
       <ul>
         <li><a href="#limitations-and-future-work">Limitations and future work:</a></li>
       </ul>
     </li>
+    <li><a href="#references">References</a></li>
   </ul>
 </nav>
 
@@ -646,7 +655,13 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="kangaroo-lossless-self-speculative-decoding-via-double-early-exiting">
+  <article class="markdown book-article"><h2 id="weight-1">
+  type: docs
+bookToc: True
+weight: 1
+  <a class="anchor" href="#weight-1">#</a>
+</h2>
+<h1 id="kangaroo-lossless-self-speculative-decoding-via-double-early-exiting">
   Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting
   <a class="anchor" href="#kangaroo-lossless-self-speculative-decoding-via-double-early-exiting">#</a>
 </h1>
@@ -658,16 +673,16 @@ https://github.com/alex-shpak/hugo-book
   Introduction
   <a class="anchor" href="#introduction">#</a>
 </h2>
-<p>The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck</p>
+<p>The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck.</p>
 <ul>
 <li>Decoding 
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \(K\)
+  \(N\)
 </span>
  tokens requires <span>
-  \(K\)
+  \(N\)
 </span>
  sequential runs of the model.</li>
 </ul>
@@ -676,30 +691,36 @@ https://github.com/alex-shpak/hugo-book
 <ul>
 <li>Many tokens can be predicted with minimal computational overhead.</li>
 <li>LLM inference is predominantly constrained by memory bandwidth rather than arithmetic computations.
-<code>Speculative decoding</code> reduce the need for frequent memory operations on their parameters by focusing computational efforts on validating pre-drafted tokens, thus enhancing inference efficiency.</li>
+<em>Speculative decoding</em> reduces the need for frequent memory operations on their parameters by focusing computational efforts on validating pre-drafted tokens, thus enhancing inference efficiency.</li>
 </ul>
-<p>However, existing speculative decoding such as <strong>Medusa</strong> and <strong>Lookahead</strong> still face limitations, such as high inference latency and suboptimal token acceptance rates.
-This papaer proposed Kangaroo to address this challenge.</p>
+<p>However, existing speculative decoding such as <strong>Medusa</strong> [4] and <strong>Lookahead</strong> [3] still face limitations, such as high inference latency and suboptimal token acceptance rates.
+The paper proposes Kangaroo to address this challenge.</p>
 <h2 id="backgrounds">
   Backgrounds
   <a class="anchor" href="#backgrounds">#</a>
 </h2>
-<h3 id="what-is-speculative-decoding">
-  What is speculative decoding?
-  <a class="anchor" href="#what-is-speculative-decoding">#</a>
+<h3 id="speculative-decoding">
+  Speculative Decoding
+  <a class="anchor" href="#speculative-decoding">#</a>
 </h3>
-<p>Speculative decoding is an apporach to accelerate LLM inference.</p>
-<p><strong>Draft model:</strong> Additional model to accelerate inference (also known drafter)</p>
-<p><strong>Verifier or target model</strong>: Original large LLM</p>
+<p>Speculative decoding is an approach to accelerate LLM inference.</p>
+<p><strong>Draft model:</strong> Additional model to accelerate inference (also known as drafter).</p>
+<p><strong>Verifier or target model</strong>: Original LLM.</p>
 <p align="center">
-    <img src='./speculative decoding.png' width="700">
+    <img src='./speculative decoding.png' width="650">
 </p>
 <p align="center">
-    Fig. 1 Contrast to autoregressive decoding and speculative decoding
+    Fig. 1. Contrast between autoregressive decoding and speculative decoding.
 </p>
-<p><strong>Left model</strong>: The target LLM generates K tokens in K forward steps, which is a &ldquo;serial&rdquo; process.</p>
+<p><strong>Left model</strong>: The target LLM generates <span>
+  \(N\)
+</span>
+ tokens in <span>
+  \(N\)
+</span>
+ forward steps, which is a &ldquo;serial&rdquo; process.</p>
 <p><strong>Right model</strong>: The drafter generates tokens in parallel. Each generated token is then verified with a verification step.</p>
-<p><code>Speculative decoding</code> can be implemented through methods such as independent drafting and self-drafting.</p>
+<p><em>Speculative decoding</em> can be implemented through methods such as independent drafting and self-drafting.</p>
 <p><strong>Independent Drafting</strong>: This approach uses a small language model (LM) from the same series as the target LLM.</p>
 <ul>
 <li>Requires additional training and increases computational complexity by integrating separate target and drafting models.</li>
@@ -718,15 +739,51 @@ This papaer proposed Kangaroo to address this challenge.</p>
     <img src='./compare.png' width="700">
 </p>
 <p align="center">
-    Fig. 2 Comparison of variouus self-drafting speculative docding methods
+    Fig. 2. Comparison of various self-drafting speculative decoding methods.
 </p>
 In each decoding step, drafted tokens must be verified in parallel to ensure alignment with the target LLM, which determines the token acceptance rate. High token acceptance rates are crucial for the efficiency of this process. However, methods like Medusa have yet to achieve satisfactory token acceptance rates, as evidenced by performance metrics (see left graph). On the other hand, the Lookahead method achieves a high token acceptance rate but has a very low speedup ratio (see right graph).
-Addressing these trade-off, **Kangaroo** offers a solution by training a lightweight and efficient adapter module integrated with a fixed subnetwork of the target LLM, enhancing both the acceptance rate and overall speedup.
-<h2 id="layer-early-exiting">
-  Layer Early Exiting
-  <a class="anchor" href="#layer-early-exiting">#</a>
+Addressing these trade-offs, **Kangaroo** offers a solution by training a lightweight and efficient adapter module integrated with a fixed subnetwork of the target LLM, enhancing both the acceptance rate and overall speedup.
+<h2 id="kangaroo">
+  Kangaroo
+  <a class="anchor" href="#kangaroo">#</a>
 </h2>
-<p>The author has proposed a novel self-speculative decoding framework, named Kangaroo. Kangaroo utilizes double early exiting mechanisms, layer early exiting and draft early exiting. Layer early exiting suggests the equivalent self-draft small model exiting early from the fixed shallow layers of the large LLM and connecting to an adapter network to generate draft tokens. While this strategy is commonly used for self-speculative decoding frameworks, Kangaroo has further investigated suitable architectures of the adapter module and offered a low-cost approach to train a lightweight model. Draft early exiting uses early exiting at suitable points during the drafting phase to avoid unnecessary computational overhead on more challenging tokens.</p>
+<p>The author has proposed a novel self-speculative decoding framework, named <strong>Kangaroo</strong>. Kangaroo utilizes double early exiting mechanisms, layer early exiting and draft early exiting.</p>
+<ul>
+<li><em>Layer early exiting</em> suggests the equivalent self-draft small model exiting early from the fixed shallow layers of the large LLM and connecting to an adapter network to generate draft tokens. While this strategy is commonly used for self-speculative decoding frameworks, Kangaroo has further investigated suitable architectures of the adapter module and offered a low-cost approach to train a lightweight model.</li>
+<li><em>Draft early exiting</em> uses early exiting at suitable points during the drafting phase to avoid unnecessary computational overhead on more challenging tokens.</li>
+</ul>
+<p align="center">
+    <img src='./Kangaroo.png' width="700">
+</p>
+<p align="center">
+    Fig. 3. The framework of Kangaroo.
+</p>
+<p>Fig. 3 illustrates the framework of Kangaroo.</p>
+<ol>
+<li>The lightweight drafting model <span>
+  \( \mathcal{M}^s \)
+</span>
+, including shallow sub-network and adapter network, predicts the draft tokens autoregressively until draft early exiting occurs.</li>
+<li><span>
+  \(\mathcal{M}^s\)
+</span>
+ stops drafting once the confidence level of the current draft token falls below a certain threshold, e.g., <span>
+  \(\mathcal{M}^s(x_3&#39;) \leq \eta\)
+</span>
+.</li>
+<li>The hidden states, computed in shallow sub-network, are processed in the remaining layers of LLM to generate prediction results.</li>
+<li>The draft tokens and the original prediction results are compared for verification, and once a draft token is rejected, the subsequent tokens are discarded.</li>
+<li>The token <span>
+  \(x_4\)
+</span>
+ that has resulted in an uncertain drafting is also predicted at the verification step. If all draft tokens are accepted, the next decoding step starts with the prediction result of the last token <span>
+  \(x_4\)
+</span>
+. (It is not necessary to predict <span>
+  \(x&#39;_4\)
+</span>
+ once more.)</li>
+</ol>
 <h3 id="evaluation-metrics">
   Evaluation Metrics
   <a class="anchor" href="#evaluation-metrics">#</a>
@@ -735,7 +792,7 @@ Addressing these trade-off, **Kangaroo** offers a solution by training a lightwe
   \(N\)
 </span>
  tokens should be generated via the drafting model. As the drafting model predicts multiple tokens in each decoding step and multiple tokens can be accepted by the large model in a step, we record the number of accepted tokens per step as a list <span>
-  \( S = \[s_1, s_2, \dots, s_{|S|}\] \)
+  \( S = [s_1, s_2, \dots, s_{|S|}] \)
 </span>
 , where <span>
   \( \sum_k s_k = N \)
@@ -766,21 +823,13 @@ where <span>
  denotes a window size. CTAR can be interpreted as a rate of the number of steps to accept over <span>
   \( w \)
 </span>
- tokens.</p>
-
-
-
-
-
-<img src="./CTAR.png" alt="." width="600" height="600">
-<p>Figure 1 represents the empirical CTARs for <span>
+ tokens. Fig. 2 represents the empirical CTARs for <span>
   \(w = 1,2,\dots,6 \)
 </span>
  of self-drafting speculative decoding frameworks including Kangaroo on the mathematical reasoning subtask of Spec-Bench [1].</p>
-<p>[1] Heming Xia, Zhe Yang, Qingxiu Dong, Peiyi Wang, Yongqi Li, Tao Ge, Tianyu Liu, Wenjie Li, and Zhifang Sui. Unlocking efficiency in large language model inference: A comprehensive survey of speculative decoding. <em>arXiv preprint arXiv:2401.07851</em>, 2024.</p>
-<h3 id="adapter-network-as-self-drafting-model">
-  Adapter Network as Self-Drafting Model
-  <a class="anchor" href="#adapter-network-as-self-drafting-model">#</a>
+<h3 id="adapter-network-as-self-draft-model">
+  Adapter Network as Self-Draft Model
+  <a class="anchor" href="#adapter-network-as-self-draft-model">#</a>
 </h3>
 <p>We assume the target LLM has <span>
   \( L \)
@@ -804,24 +853,87 @@ where <span>
   \( \mathcal{A} \)
 </span>
  only encompasses one multi-head attention and two normalization layers. The author emphasizes the feed-forward network (FFN) of the transformer block is too heavy in parameters but redundant, which is presented in the ablation study of the adapter architecture in the Experiments Section.</p>
-
-
-
-
-
-<img src="./Kangaroo.png" alt="." width="600" height="600">
-<p>Figure 2 illustrates the framework of Kangaroo. The lightweight drafting model <span>
-  \( \mathcal{M}^s \)
+<p>The training loss of the self-draft model is formulated by the cross-entropy loss:
+<span>
+  \[\mathcal{A}^* = \text{arg}\min_\mathcal{A} \sum_t \sum_n -\mathcal{M}_n^b (x_t) \log \mathcal{M}_n^s (x_t).\]
 </span>
-, including shallow sub-network and adapter network, predicts the draft tokens autoregressively until draft early exiting occurs. The strategy of draft early exiting will be explained later in the Draft Early Exiting Section. Then, the hidden states, computed in shallow sub-network, are processed in the remaining layers of LLM to generate prediction results. The draft tokens and the original prediction results are now compared for verification, and</p>
-<h2 id="draft-early-exiting">
+</p>
+<h3 id="draft-early-exiting">
   Draft Early Exiting
   <a class="anchor" href="#draft-early-exiting">#</a>
-</h2>
+</h3>
+<p>While speculative decoding typically drafts a fixed number of tokens per step, it leads to several problems of local optima, waste on challenging samples, and prolonged inference latency of the draft model.
+Therefore, the author proposes draft early exiting, which stops drafting once the top-<span>
+  \(1\)
+</span>
+ confidence on the self-draft model is below a predefined threshold <span>
+  \(\eta\)
+</span>
+, i.e.,
+<span>
+  \[\max_n \mathcal{M}_n^s (x) \leq \eta.\]
+</span>
+</p>
 <h2 id="experiments">
   Experiments
   <a class="anchor" href="#experiments">#</a>
 </h2>
+<p>The author has conducted experiments on Vicuna [2] models with sizes of 7B and 13B and compared Kangaroo with other self-speculative decoding approaches, Lookahead [3], Medusa [4], and REST [5], in Fig. 2 and Table 1.</p>
+<p align="center">
+    <img src='./main_exp.png' width="700">
+</p>
+<p align="center">
+    Table 1. Comparison of self-speculative decoding frameworks in terms of compression ratio (CR) and walltime speedup ratio (Speedup).
+</p>
+<h3 id="ablation-studies">
+  Ablation Studies
+  <a class="anchor" href="#ablation-studies">#</a>
+</h3>
+<p align="center">
+    <img src='./exit_layer.png' width="400">
+</p>
+<p align="center">
+    Fig. 4. Ablation study for appropriate exit layer.
+</p>
+<p>Fig. 4 demonstrates the trade-off between the compression rate and the walltime speedup varying by the early exit layer <span>
+  \(l\)
+</span>
+. Later exit layer leads to larger sub-network <span>
+  \(\mathcal{M}^b[:l]\)
+</span>
+ and smaller remaining layers <span>
+  \(\mathcal{M}^b[l:]\)
+</span>
+, so an adapter network easily imitates remaining LLM layers but the self-draft model <span>
+  \(\mathcal{M}^s\)
+</span>
+ becomes heavy. The paper set <span>
+  \(l=2\)
+</span>
+ for Vicuna-7B and <span>
+  \(l=3\)
+</span>
+ for Vicuna-13B.</p>
+<p align="center">
+    <img src='./threshold.png' width="400">
+</p>
+<p align="center">
+    Fig. 5. Ablation study for appropriate threshold.
+</p>
+<p>Fig. 5 demonstrates the effect of draft early exiting comparing the optimal threshold <span>
+  \(\eta\)
+</span>
+. <span>
+  \(\eta=0\)
+</span>
+ points represent a typical self-speculative scheme with a fixed step strategy, which achieves the maximum compression rate but leads to sub-optimal end-to-end walltime speedup.</p>
+<p align="center">
+    <img src='./adapter.png' width="700">
+</p>
+<p align="center">
+    Table 2. The architecture of the adapter module for Vicuna-7B.
+</p>
+<p>Table 2 demonstrates an ablation study on the architecture of the adapter module. In Table 2, removing the FFN and sharing the LM head of LLM (Kangaroo + Head) is most effective.</p>
 <h2 id="discussion-and-conclusion">
   Discussion and Conclusion
   <a class="anchor" href="#discussion-and-conclusion">#</a>
@@ -835,7 +947,7 @@ where <span>
 <li><strong>Flexibility</strong>: By focusing on reducing inference latency and optimizing token acceptance rates, Kangaroo ensures that performance remains robust across various tasks without incurring substantial overhead.</li>
 </ul>
 <p>Compare with others:</p>
-<p>Kangaroo&rsquo;s performance surpasses other speculative decoding methods, such as Medusa and Lookahead, particularly in terms of end-to-end speedup and token acceptance rates (see Fig.2 in introduction). The double early-exit mechanism plays a crucial role in maintaining this balance by efficiently handling easier tokens and exiting early when confidence is lower than predefined threshold, thus minimizing latency.</p>
+<p>Kangaroo&rsquo;s performance surpasses other speculative decoding methods, such as Medusa and Lookahead, particularly in terms of end-to-end speedup and token acceptance rates (see Fig. 2 in the backgrounds). The double early-exit mechanism plays a crucial role in maintaining this balance by efficiently handling easier tokens and exiting early when confidence is lower than the predefined threshold, thus minimizing latency.</p>
 <h3 id="limitations-and-future-work">
   Limitations and future work:
   <a class="anchor" href="#limitations-and-future-work">#</a>
@@ -847,14 +959,10 @@ where <span>
 <li>Currently, confidence is measured only on the top-1 prediction. Future work could explore alternative metrics such as entropy or other measures to provide a more robust assessment of token validity.</li>
 </ul>
 </li>
-<li><strong>Alternative Networks for Verification</strong>:
+<li><strong>Alternative Networks for Adapting</strong>:
 <ul>
 <li>The use of an adapter network in Kangaroo shows promising results. However, experimenting with different network architectures could yield even better performance. Future research could investigate various types of networks to replace the adapter, potentially improving both the efficiency and accuracy of the speculative decoding process.</li>
-</ul>
-</li>
-<li><strong>Expanding Beyond Self-Speculative Decoding</strong>:
-<ul>
-<li>While Kangaroo leverages the target LLM for self-speculative decoding, exploring independent drafting models from the same series might offer additional insights. Balancing the computational trade-offs between these approaches could lead to more optimized frameworks.</li>
+<li>Adapter network parameter can also be reduced by using model compression or quantization method.</li>
 </ul>
 </li>
 <li><strong>Adaptive Early-Exit Mechanisms</strong>:
@@ -863,6 +971,15 @@ where <span>
 </ul>
 </li>
 </ul>
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<p>[1] Heming Xia, Zhe Yang, Qingxiu Dong, Peiyi Wang, Yongqi Li, Tao Ge, Tianyu Liu, Wenjie Li, and Zhifang Sui. Unlocking efficiency in large language model inference: A comprehensive survey of speculative decoding. <em>arXiv preprint arXiv:2401.07851</em>, 2024.</p>
+<p>[2] Wei-Lin Chiang, Zhuohan Li, Zi Lin, Ying Sheng, Zhanghao Wu, Hao Zhang, Lianmin Zheng, Siyuan Zhuang, Yonghao Zhuang, Joseph E Gonzalez, et al. Vicuna: An open-source chatbot impressing gpt-4 with 90%* chatgpt quality. <em>See <a href="https://vicuna.lmsys.org">https://vicuna.lmsys.org</a> (accessed 14 April 2023)</em>, 2(3):6, 2023.</p>
+<p>[3] Yichao Fu, Peter Bailis, Ion Stoica, and Hao Zhang. Break the sequential dependency of llm inference using lookahead decoding. <em>arXiv preprint arXiv:2402.02057</em>, 2024.</p>
+<p>[4] Tianle Cai, Yuhong Li, Zhengyang Geng, Hongwu Peng, Jason D Lee, Deming Chen, and Tri Dao. Medusa: Simple LLM inference acceleration framework with multiple decoding heads. <em>arXiv preprint arXiv:2401.10774</em>, 2024.</p>
+<p>[5] Zhenyu He, Zexuan Zhong, Tianle Cai, Jason D Lee, and Di He. Rest: Retrieval-based speculative decoding. <em>arXiv preprint arXiv:2311.08252</em>, 2023.</p>
 </article>
  
       
@@ -872,7 +989,7 @@ where <span>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/60c93a704d66e1aa9fc5a1429ab5c2fb2c73ad4a" title='Last modified by effml-postech | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/e479fc81943b85c6b6d731fac064d327eb34ee7c" title='Last modified by effml-postech | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -917,26 +1034,37 @@ where <span>
   
 <nav id="TableOfContents">
   <ul>
+    <li><a href="#weight-1">type: docs
+bookToc: True
+weight: 1</a></li>
+  </ul>
+
+  <ul>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#backgrounds">Backgrounds</a>
       <ul>
-        <li><a href="#what-is-speculative-decoding">What is speculative decoding?</a></li>
+        <li><a href="#speculative-decoding">Speculative Decoding</a></li>
         <li><a href="#kangaroo-self-speculative-decoding">Kangaroo: Self-speculative decoding</a></li>
       </ul>
     </li>
-    <li><a href="#layer-early-exiting">Layer Early Exiting</a>
+    <li><a href="#kangaroo">Kangaroo</a>
       <ul>
         <li><a href="#evaluation-metrics">Evaluation Metrics</a></li>
-        <li><a href="#adapter-network-as-self-drafting-model">Adapter Network as Self-Drafting Model</a></li>
+        <li><a href="#adapter-network-as-self-draft-model">Adapter Network as Self-Draft Model</a></li>
+        <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
       </ul>
     </li>
-    <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
-    <li><a href="#experiments">Experiments</a></li>
+    <li><a href="#experiments">Experiments</a>
+      <ul>
+        <li><a href="#ablation-studies">Ablation Studies</a></li>
+      </ul>
+    </li>
     <li><a href="#discussion-and-conclusion">Discussion and Conclusion</a>
       <ul>
         <li><a href="#limitations-and-future-work">Limitations and future work:</a></li>
       </ul>
     </li>
+    <li><a href="#references">References</a></li>
   </ul>
 </nav>
 

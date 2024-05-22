@@ -22,7 +22,7 @@ Preliminary # Diffusion # Diffusion model Diffusion models learn how to remove g
 <link rel="canonical" href="http://localhost:1313/docs/spring24/14_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.bb782c6e4bffd59850a229fee25dec53730b0d1895bb722758be85c67a9d84f7.js" integrity="sha256-u3gsbkv/1ZhQoin&#43;4l3sU3MLDRiVu3InWL6FxnqdhPc=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.d1dbcce2f6ff12088d475aa0b4b7d77fe3cd3fff1380f8f278bb804d4a135b7f.js" integrity="sha256-0dvM4vb/EgiNR1qgtLfXf&#43;PNP/8TgPjyeLuATUoTW38=" crossorigin="anonymous"></script>
 
   
 
@@ -167,24 +167,6 @@ https://github.com/alex-shpak/hugo-book
 
   
     <a href="/docs/spring24/04_/" class="">04</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/05_/" class="">05</a>
   
 
           
@@ -555,6 +537,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/05_/" class="">05</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -626,13 +626,13 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#progressive-binarization"><strong>Progressive binarization</strong></a></li>
       </ul>
     </li>
-    <li><a href="#experiments">Experiments</a>
+    <li><a href="#experiments"><strong>Experiments</strong></a>
       <ul>
-        <li><a href="#generation-performance">Generation Performance</a></li>
-        <li><a href="#ablation-study">Ablation Study</a></li>
+        <li><a href="#generation-performance"><strong>Generation Performance</strong></a></li>
+        <li><a href="#ablation-study"><strong>Ablation Study</strong></a></li>
       </ul>
     </li>
-    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#conclusion"><strong>Conclusion</strong></a></li>
   </ul>
 </nav>
 
@@ -649,8 +649,8 @@ https://github.com/alex-shpak/hugo-book
   BinaryDM: Towards Accurate Binarization of Diffusion Model
   <a class="anchor" href="#binarydm-towards-accurate-binarization-of-diffusion-model">#</a>
 </h1>
-<p><em>Authors: Xingyu Zheng, Haotaong Qin, Xudong Ma, Mingyuan Zhang, Haojie Hao, Jiakai Wang, Zixiang Zhao, Jinyang Guo, Xianglong Liu</em><br>
-<em>Posted by Junhyuk So, Juncheol Shin</em></p>
+<p><em>Authors: Xingyu Zheng, Haotaong Qin, Xudong Ma, Mingyuan Zhang, Haojie Hao, Jiakai Wang, Zixiang Zhao, Jinyang Guo, Xianglong Liu</em></p>
+<p><em>Posted by Junhyuk So, Juncheol Shin</em></p>
 <h2 id="preliminary">
   <strong>Preliminary</strong>
   <a class="anchor" href="#preliminary">#</a>
@@ -688,7 +688,7 @@ In the reverse process, diffusion model tries to restore original image by estim
  with <span>
   \(p_\theta(x_{t-1} | x_{t})\)
 </span>
-. Reparameterization trick is used to estimate mean and variance of gaussian the distribution  
+.
 <p align="center">
   <span>
   \(    q(x_{t} | x_{t-1}) = \mathcal{N}(x_t;\sqrt{1-\beta_t}x_{t-1}, \beta_{t}I) \\p_\theta(x_{t-1} | x_{t}) = \mathcal{N}(x_{t-1}; \tilde{\mu}_\theta(x_t, t) , \tilde{\beta}_{t}I )
@@ -707,10 +707,10 @@ In the reverse process, diffusion model tries to restore original image by estim
   Quantization example
 </p>
 Quantization is an optimization technique which restricts data(weights, activations) in low precision. Not only does it reduce the memory footprint, but it also enables accelerated computations given hardware support to low-precision arithmetic.  
-<p>Values are represented as follows when linear symmetric quantization is applied:</p>
+<p>The quantized values are represented as follows when linear symmetric quantization is applied:</p>
 <p align="center">
   <span>
-  \(    q(x) = clamp(\lfloor \frac{x}{\Delta},-2^{b-1}, 2^{b-1}-1) \rceil,\ \ \Delta = \frac{\alpha}{2^{b-1}-1} 
+  \(    q(x) = clamp(\lfloor \frac{x}{\Delta} \rceil, -2^{b-1}, 2^{b-1}-1) ,\ \ \Delta = \frac{\alpha}{2^{b-1}-1} 
   \)
 </span>
  
@@ -725,17 +725,13 @@ x is value to be quantized and <span>
   \(\Delta\)
 </span>
  is step-size, interval between quantization levels.
-Binarization is extreme case of quantization, which only utilizes 1 bit (<span>
-  \(b = 1\)
-</span>
-).
 <h2 id="motivation">
   <strong>Motivation</strong>
   <a class="anchor" href="#motivation">#</a>
 </h2>
-<p>While diffusion models achieved great success in generation tasks, its iterative nature act as a bottleneck to real-world application. Data must processed through heavy diffusion models for multiple steps and requires huge latency and memory footprint.</p>
+<p>While diffusion models achieved great success in generation tasks, its iterative nature act and huge compuation costs act as a bottleneck to real-world application.</p>
 <p>Quantization is one reasonable choice for the optimization of diffusion models. Especially when binarization is applied to weight, floating point operations can be substituted with cheap addition and memory footprint of the model can be reduced greatly.</p>
-<p>However binary models are hard to binarize in two aspects. One arises from perspective of representation, as binarization is extreme case of quantization which only uses 1bit to represent data. Naive binarization introduces severe degredation in quality of output. Another aspect arises from perspective of optimization. Training becomes unstable with binarized representation and hinders convergence of the model.</p>
+<p>However, models are hard to binarize in two aspects. One arises from perspective of representation, as binarization is extreme case of quantization which only uses 1bit to represent data. Naive binarization introduces severe degredation in quality of output. Another aspect arises from perspective of optimization. Training becomes unstable with binarized representation and hinders convergence of the model.</p>
 <p>This work tackles binarization of diffusion models by handling aformentioned two aspects. By introducing <em>Learnable Multi-basis Binarizer(LMB)</em> and <em>Low-rank representation mimicking(LRM)</em>, BinaryDM is able to achieve <strong>16.0× and 27.1× reductions on FLOPs and size</strong>.</p>
 <h2 id="methodology">
   <strong>Methodology</strong>
@@ -757,21 +753,21 @@ Binarization is extreme case of quantization, which only utilizes 1 bit (<span>
  
 </p>
 In this work, authors propose a learnable multi-basis binarizer(LMB) to maintain quality of representations. Instead of using single base, multiple bases are utilized for the binarization. <span>
-  \(\sigma_{\MakeUppercase{\romannumeral1}}\)
+  \(\sigma_{1}\)
 </span>
  and <span>
-  \(\sigma_{\MakeUppercase{\romannumeral2}}\)
+  \(\sigma_{2}\)
 </span>
  denote learnable scalar values and initialized as <span>
-  \(\sigma_{\MakeUppercase{\romannumeral1}}^0 = \frac{\left \| w  \right \|}{n}\)
+  \(\sigma_{1}^0 = \frac{\left \| w  \right \|}{n}\)
 </span>
  and <span>
-  \(\sigma_{\MakeUppercase{\romannumeral2}}^0 = \frac{\left \| w - \sigma_{\MakeUppercase{\romannumeral1}}sign(w)  \right \|}{n}\)
+  \(\sigma_{2}^0 = \frac{\left \| w - \sigma_{1}sign(w)  \right \|}{n}\)
 </span>
  
 <p align="center">
   <span>
-  \(    w_{LMB}^{bi} = \sigma_{\MakeUppercase{\romannumeral1}} sign(w) &#43; \sigma_{\MakeUppercase{\romannumeral2}} sign(w - \sigma_{\MakeUppercase{\romannumeral1}} sign(w) 
+  \(    w_{LMB}^{bi} = \sigma_{1} sign(w) &#43; \sigma_{2} sign(w - \sigma_{1} sign(w) 
   \)
 </span>
  
@@ -779,8 +775,8 @@ In this work, authors propose a learnable multi-basis binarizer(LMB) to maintain
 Gradient of learnable scalar values can be computed as follows:  
 <p align="center">
   <span>
-  \(    \frac{\partial w_{LMB}^{bi}}{\partial \sigma_{\MakeUppercase{\romannumeral1}}} = \left\{\begin{matrix}
- sign(w)(1-\sigma_{\MakeUppercase{\romannumeral2}} sign(w))), &amp; if \ \sigma_{\MakeUppercase{\romannumeral1}}sign(w) \in (w-1, w&#43;1)  \\ 
+  \(    \frac{\partial w_{LMB}^{bi}}{\partial \sigma_{1}} = \left\{\begin{matrix}
+ sign(w)(1-\sigma_{2} sign(w))), &amp; if \ \sigma_{1}sign(w) \in (w-1, w&#43;1)  \\ 
  sign(w), &amp; otherwise 
 \end{matrix}\right. 
   \)
@@ -796,7 +792,7 @@ Gradient of learnable scalar values can be computed as follows:
   <img src="./lmb.png" alt="." width="500" height="300" > 
 </p>
 <p align="center">
-  Weight quantizatio result of naive binarization and LMB
+  Weight quantization result of naive binarization and LMB
 </p>
 <h3 id="low-rank-representation-mimicking">
   <strong>Low-rank representation mimicking</strong>
@@ -851,7 +847,7 @@ where <span>
  denotes the number of timestep embedding modules and <span>
   \(\lambda\)
 </span>
- is a hyperparmater coefficient to balance loss temrs.
+ is a hyperparmater coefficient to balance loss terms
 <p>Since computation of transformation matrix <span>
   \(E_i\)
 </span>
@@ -877,11 +873,11 @@ where <span>
   <img src="./progressive.png" alt="." width="500" height="300" > 
 </p>
 <h2 id="experiments">
-  Experiments
+  <strong>Experiments</strong>
   <a class="anchor" href="#experiments">#</a>
 </h2>
 <h3 id="generation-performance">
-  Generation Performance
+  <strong>Generation Performance</strong>
   <a class="anchor" href="#generation-performance">#</a>
 </h3>
 <p>To demonstrate the performance of the binarized diffusion model, the author conducted experiments on two major categories of diffusion models: unconditional and conditional models. The metrics used to measure performance included FID and sFID for assessing the perceptual quality of images, IS for measuring diversity, and Recall and Precision for evaluating accuracy.
@@ -904,7 +900,7 @@ Unconditional Generation</p>
 <p align="center">
 <p>Finally, Table 3 shows the experimental results for Conditional Generation. The dataset used was ImageNet 256. In this experiment, two unusual trends were observed: 1. The performance gap between the baseline and BinaryDM is very small, and 2. Lower FID scores than FP were observed in all quantization experiments. However, I personally believe that achieving better performance than FP in all situations, despite using 1-2 bit quantization, is not a reasonable result, suggesting that the experiment may have been conducted incorrectly.</p>
 <h3 id="ablation-study">
-  Ablation Study
+  <strong>Ablation Study</strong>
   <a class="anchor" href="#ablation-study">#</a>
 </h3>
 <p>Three ablation studies were conducted. The first ablation study focused on the various methods of Binary DM, measuring performance changes with the addition of LMB and LRM. The second study evaluated inference efficiency by measuring the FLOPs required during the inference of the binarized DM. The third study examined training efficiency, comparing the training time of the proposed method to that of another diffusion quantization method, Q-Diffusion.</p>
@@ -924,7 +920,7 @@ Unconditional Generation</p>
 <p align="center">
 <p>Lastly, when comparing the training time cost with Q-Diffusion, it was found that the training cost is approximately 1.2 times lower.</p>
 <h2 id="conclusion">
-  Conclusion
+  <strong>Conclusion</strong>
   <a class="anchor" href="#conclusion">#</a>
 </h2>
 <p>BinaryDM is a paper on binary quantization of diffusion models, which achieves dramatic performance improvements by introducing two methods, LMB and LRM, instead of traditional quantization methods. LMB increases the representation quality of binary quantization by using two scaling factors instead of one baseline factor. LRM minimizes the loss of low-frequency components information in the quantized model by performing feature matching in a low-rank space. Furthermore, the progressive quantization proposed in the paper prevents significant information loss in the early iterations, minimizing performance degradation. Extensive experiments demonstrate the superiority of BinaryDM across various tasks.</p>
@@ -937,7 +933,7 @@ Unconditional Generation</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/60c93a704d66e1aa9fc5a1429ab5c2fb2c73ad4a" title='Last modified by effml-postech | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/6fa5bcfb4fd3593b6ae53d36e8a06408aab63f24" title='Last modified by ewsn1593 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -996,13 +992,13 @@ Unconditional Generation</p>
         <li><a href="#progressive-binarization"><strong>Progressive binarization</strong></a></li>
       </ul>
     </li>
-    <li><a href="#experiments">Experiments</a>
+    <li><a href="#experiments"><strong>Experiments</strong></a>
       <ul>
-        <li><a href="#generation-performance">Generation Performance</a></li>
-        <li><a href="#ablation-study">Ablation Study</a></li>
+        <li><a href="#generation-performance"><strong>Generation Performance</strong></a></li>
+        <li><a href="#ablation-study"><strong>Ablation Study</strong></a></li>
       </ul>
     </li>
-    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#conclusion"><strong>Conclusion</strong></a></li>
   </ul>
 </nav>
 

@@ -22,7 +22,7 @@ Introduction # Byte models take traditional language models to the byte level, t
 <link rel="canonical" href="http://localhost:1313/docs/spring24/23_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.bb782c6e4bffd59850a229fee25dec53730b0d1895bb722758be85c67a9d84f7.js" integrity="sha256-u3gsbkv/1ZhQoin&#43;4l3sU3MLDRiVu3InWL6FxnqdhPc=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.d1dbcce2f6ff12088d475aa0b4b7d77fe3cd3fff1380f8f278bb804d4a135b7f.js" integrity="sha256-0dvM4vb/EgiNR1qgtLfXf&#43;PNP/8TgPjyeLuATUoTW38=" crossorigin="anonymous"></script>
 
   
 
@@ -167,24 +167,6 @@ https://github.com/alex-shpak/hugo-book
 
   
     <a href="/docs/spring24/04_/" class="">04</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/05_/" class="">05</a>
   
 
           
@@ -555,6 +537,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/05_/" class="">05</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -627,8 +627,9 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#experiments">Experiments</a>
       <ul>
-        <li><a href="#digital-media-processing-well-studied-tasks">Digital Media Processing (well-studied tasks)</a></li>
-        <li><a href="#algorithm-and-hardware-simulation-underexplored-tasks">Algorithm and Hardware Simulation (underexplored tasks)</a></li>
+        <li><a href="#performance-metrics">Performance Metrics</a></li>
+        <li><a href="#digital-media-processing-1">Digital Media Processing</a></li>
+        <li><a href="#algorithm-and-hardware-simulation-1">Algorithm and Hardware Simulation</a></li>
       </ul>
     </li>
     <li><a href="#conclusion-and-future-work">Conclusion and Future Work</a></li>
@@ -725,60 +726,101 @@ https://github.com/alex-shpak/hugo-book
   Training Objectives
   <a class="anchor" href="#training-objectives">#</a>
 </h3>
-<h4 id="generative-modeling">
-  Generative Modeling
-  <a class="anchor" href="#generative-modeling">#</a>
+<h4 id="pre-training-generative-modeling">
+  Pre-training: Generative Modeling
+  <a class="anchor" href="#pre-training-generative-modeling">#</a>
 </h4>
-<p>This approach requires the model to predict the next byte in a given byte sequence. The model takes the byte sequence <span>
-  \(B = \{b_1, b_2, \ldots, b_T\}\)
+<p>bGPT is pre-trained using a generative modeling approach, i.e., next-byte prediction. For a byte sequence <span>
+  \(B=\{b_1, b_2, \ldots, b_T\}\)
 </span>
- as input and utilizes all previous byte information to predict the next byte <span>
+, the model predicts the next byte <span>
   \(b_{i&#43;1}\)
 </span>
- at each position.</p>
-<p>As a loss function, the negative log likelihood of the next byte at each step is minimized. This encourages the model to maximize the likelihood of the actual occurrence of the next byte.
+ at each position. The loss function is the negative log likelihood of the next byte at each step, encouraging the model to maximize the likelihood of the actual occurrence of the next byte.</p>
 <span>
   \[  \mathcal{L}_{\text{GEN}}(\theta) = - \sum_{i=1}^{T-1} \log p(b_{i&#43;1} \mid b_1, b_2, \ldots, b_i; \theta)\]
 </span>
-</p>
-<h4 id="classification">
-  Classification
-  <a class="anchor" href="#classification">#</a>
+
+<h4 id="fine-tuning-classification">
+  Fine-tuning: Classification
+  <a class="anchor" href="#fine-tuning-classification">#</a>
 </h4>
-<p>Based on the knowledge acquired through generative modeling, bGPT can also be applied to classification tasks for labeled datasets. In this process, the model takes a byte sequence as input and predicts the category to which that sequence belongs.
-For classification tasks, the loss function used is the cross-entropy loss, which ensures that the model accurately outputs the prediction probabilities for each category.</p>
+<p>bGPT is further fine-tuned for classification tasks by adding a classification head on top of the byte-level decoder. The model takes a byte sequence <span>
+  \(B\)
+</span>
+ as input and predicts the category <span>
+  \(y\)
+</span>
+ to which that sequence belongs. The loss function used is the cross-entropy loss, ensuring that the model accurately outputs the prediction probabilities for each category.</p>
 <span>
   \[  \mathcal{L}_{\text{CLF}}(\theta) = - \sum_{k=1}^{K} y_k \log p(y_k \mid B; \theta)\]
 </span>
 
-<p>These training objectives enable bGPT to understand various byte-based data and accurately mimic digital patterns of the real world. The combination of generative approaches and classification capabilities grants the model the flexibility to tackle a diverse range of problems. Through this, the model can go beyond simple pattern recognition to play a crucial role in predicting and analyzing the operations of complex digital systems.</p>
-<hr>
 <h2 id="applications">
   Applications
   <a class="anchor" href="#applications">#</a>
 </h2>
+<p><img src="datasets.png" alt="datasets" /> <br>
+<em><a href="https://arxiv.org/abs/2402.19155">Table 1</a>: Overview of datasets for bGPT evaluation, with computational costs benchmarked in NVIDIA V100 GPU hours.</em></p>
 <h3 id="digital-media-processing">
   Digital Media Processing
   <a class="anchor" href="#digital-media-processing">#</a>
 </h3>
-<p>bGPT is used for processing various types of digital media data such as text, audio, and images. This model performs learning targeted at media files through generative modeling, transforming the data into features and subsequently performing classification tasks based on these features.</p>
-<p>For example, audio files are converted to and processed in WAV format, while images are processed at a low resolution in BMP format. By utilizing these standardized datasets, bGPT can develop a generalized understanding of various media types.</p>
+<p>Having proficiency in processing diverse forms of digital media, including text, audio, and images, is a essential for human communication and interaction. bGPT is trained for generative modeling and classification tasks on text, images and speech dataset, demonstrating its ability to handle different modalities. The standardization for audio and image data was done as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Modality</th>
+<th>Format</th>
+<th>Specifications</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Audio</td>
+<td>WAV</td>
+<td>8000 Hz sampling rate, mono channel, 8-bit depth, 1 second length</td>
+</tr>
+<tr>
+<td>Image</td>
+<td>BMP</td>
+<td>32x32 resolution, RGB color, 24-bit depth</td>
+</tr>
+</tbody>
+</table>
 <h3 id="algorithm-and-hardware-simulation">
   Algorithm and Hardware Simulation
   <a class="anchor" href="#algorithm-and-hardware-simulation">#</a>
 </h3>
-<p>bGPT is particularly useful for tasks such as data conversion and CPU state modeling. This means bGPT can learn the digital conversion process and simulate the operation of CPUs to predict the state of the CPU after various commands are executed.</p>
-<p>For example, in the task of converting the music data format from ABC notation to MIDI format, bGPT learns to transform text-based music scores in ABC notation into binary performance signals in MIDI. Additionally, this model is also capable of performing the reverse conversion from MIDI back to ABC notation.</p>
+<p>Furthermore, to evaluate the model&rsquo;s ability to simulate algorithms and hardware operations, bGPT is trained on two underexplored tasks: data conversion and CPU state modeling. These tasks are crucial for understanding and predicting the behavior of digital systems.</p>
+<ul>
+<li>
+<p><strong>Data Conversion</strong>: bGPT learns to convert music data from ABC notation to MIDI format and vice versa. This task involves understanding the structure of music data and the conversion process between different formats.</p>
+</li>
+<li>
+<p><strong>CPU State Modeling</strong>: bGPT predicts the state of a CPU after executing a sequence of machine instructions. This task requires understanding the internal operations of CPUs and predicting their states based on the given instructions.</p>
+</li>
+</ul>
 <h2 id="experiments">
   Experiments
   <a class="anchor" href="#experiments">#</a>
 </h2>
-<h3 id="digital-media-processing-well-studied-tasks">
-  Digital Media Processing (well-studied tasks)
-  <a class="anchor" href="#digital-media-processing-well-studied-tasks">#</a>
+<h3 id="performance-metrics">
+  Performance Metrics
+  <a class="anchor" href="#performance-metrics">#</a>
+</h3>
+<p>The performance of bGPT is evaluated using the following metrics:</p>
+<ul>
+<li><strong>Bits Per Byte (BPB)</strong>: The average number of bits required to encode each byte in the output sequence. Lower BPB values indicate better performance.</li>
+<li><strong>Accuracy</strong>: The percentage of correctly classified samples in the classification task. Higher accuracy values indicate better performance.</li>
+</ul>
+<h3 id="digital-media-processing-1">
+  Digital Media Processing
+  <a class="anchor" href="#digital-media-processing-1">#</a>
 </h3>
 <p><strong>Experiment Overview</strong>
-To assess the flexibility and versatility of the bGPT model, experiments with various types of digital media data were conducted. This involved handling a wide range of file types including text, audio, and image data, with the aim to measure the model&rsquo;s ability to process these types and to see how well bGPT generalizes compared to specialized models. The experiment included both generative modeling and classification tasks.</p>
+To assess the flexibility and versatility of the bGPT model, experiments with various types of digital media data were conducted. This involved handling a wide range of file types including text, audio, and image data. Also, to evaluate the model&rsquo;s generalization capabilities, various settings of mixed modalities and transfer learning were explored.</p>
+<!-- with the aim to measure the model's ability to process these types and to see how well bGPT generalizes compared to specialized models. The experiment included both generative modeling and classification tasks. -->
 <!-- **Experimental Data**
 The datasets used in the experiment included:
 
@@ -841,115 +883,68 @@ Each model was fine-tuned for specific types of classification and generative ta
 </tr>
 </tbody>
 </table>
-<p><strong>Result and Analysis</strong></p>
+<h4 id="results-and-analysis">
+  Results and Analysis
+  <a class="anchor" href="#results-and-analysis">#</a>
+</h4>
+<p><img src="performance_media.png" alt="performance_media" /> <br>
+<em><a href="https://arxiv.org/abs/2402.19155">Table 2</a>: Performance comparison of bGPT models pre-trained on different datasets and baseline models in their respective modalities: GPT2-small on text, ViT-B/16 on images, and AST on speech.</em></p>
+<h4 id="performance-on-downstream-tasks-yellow">
+  Performance on downstream tasks (yellow)
+  <a class="anchor" href="#performance-on-downstream-tasks-yellow">#</a>
+</h4>
 <ul>
-<li><strong>Text Processing</strong>: bGPTwiki showed high classification accuracy on the AG News dataset, indicating bGPT&rsquo;s strong performance in text-based tasks.</li>
-<li><strong>Audio Processing</strong>: bGPTlibri demonstrated excellent performance on the Speech Commands v2 dataset, showcasing its high potential in audio processing.</li>
-<li><strong>Image Processing</strong>: bGPTimage recorded high accuracy on the CIFAR-10 dataset but showed somewhat lower performance on ImageNet. This suggests that while bGPT works well with relatively simple images, it may have limitations with more complex images.
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>| AG News (4 classes) |</th>
-<th></th>
-<th>CIFAR-10 (10 classes) |</th>
-<th></th>
-<th>Speech Commands v2 (36 classes) |</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td>BPB</td>
-<td>Acc (%)</td>
-<td>BPB</td>
-<td>Acc (%)</td>
-<td>BPB</td>
-</tr>
-<tr>
-<td>&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</td>
-<td>&mdash;&mdash;&mdash;</td>
-<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
-<td>&mdash;&mdash;&mdash;&ndash;</td>
-<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</td>
-<td>&mdash;&mdash;&mdash;&ndash;</td>
-</tr>
-<tr>
-<td>bGPT_random</td>
-<td>1.3496</td>
-<td>84.74</td>
-<td>3.4928</td>
-<td>76.73</td>
-<td>1.5414</td>
-</tr>
-<tr>
-<td>bGPT_wiki</td>
-<td><strong>1.0639</strong></td>
-<td><strong>92.49</strong></td>
-<td>3.6663</td>
-<td>77.02</td>
-<td>1.5719</td>
-</tr>
-<tr>
-<td>bGPT_image</td>
-<td>1.4179</td>
-<td>83.16</td>
-<td><strong>3.1234</strong></td>
-<td><strong>88.69</strong></td>
-<td>1.5326</td>
-</tr>
-<tr>
-<td>bGPT_libri</td>
-<td>1.3993</td>
-<td>83.59</td>
-<td>3.3345</td>
-<td>83.51</td>
-<td><strong>1.4818</strong></td>
-</tr>
-<tr>
-<td>bGPT_signal</td>
-<td>1.4058</td>
-<td>83.80</td>
-<td>3.1554</td>
-<td>87.65</td>
-<td>1.4898</td>
-</tr>
-<tr>
-<td>bGPT_mix</td>
-<td>1.0935</td>
-<td>91.75</td>
-<td>3.2279</td>
-<td>84.32</td>
-<td>1.5086</td>
-</tr>
-<tr>
-<td>Baselines</td>
-<td>0.9237</td>
-<td>94.50</td>
-<td>—</td>
-<td><strong>98.13</strong></td>
-<td>—</td>
-</tr>
-</tbody>
-</table>
-</li>
+<li><strong>Text/speech</strong>: <em>competitive</em> performance compared to baseline models</li>
+<li><strong>Image</strong>: <span style="color:red">Large discrepancy</span> compared to baseline models.</li>
 </ul>
-<h3 id="algorithm-and-hardware-simulation-underexplored-tasks">
-  Algorithm and Hardware Simulation (underexplored tasks)
-  <a class="anchor" href="#algorithm-and-hardware-simulation-underexplored-tasks">#</a>
+<p>The sequential nature of byte-level processing made it <span style="color:red">difficult to capture spatial information</span> in images, which is crucial for image tasks.</p>
+<h4 id="mixed-modality-pre-training">
+  Mixed modality pre-training
+  <a class="anchor" href="#mixed-modality-pre-training">#</a>
+</h4>
+<ul>
+<li><strong>Trade-off</strong> between versatility and performance</li>
+<li>It dilutes the depth of domain-specific understanding in each modality</li>
+</ul>
+<h4 id="cross-modal-fine-tuning">
+  Cross-modal fine-tuning
+  <a class="anchor" href="#cross-modal-fine-tuning">#</a>
+</h4>
+<ul>
+<li><strong>Negative transfer</strong> observed in transitioning between <span style="color:red">text</span> and other modalities.</li>
+<li>Since text is <em>human-created</em>, <span style="color:red">byte-level patterns differ</span> significantly from others.</li>
+</ul>
+<h4 id="cross-model-knowledge-transfer-efficacy">
+  Cross-model knowledge transfer efficacy
+  <a class="anchor" href="#cross-model-knowledge-transfer-efficacy">#</a>
+</h4>
+<p align="center">
+  <img src=performance_transfer.png width="250">
+</p>
+<ul>
+<li><strong>Downstream task</strong>: Classification on <em>spectrogram images</em> with <em>speech content</em></li>
+<li><strong>Result</strong>: Accuracy - bGPTlibri &gt; bGPTimage</li>
+<li><strong>Interpretation</strong>: <span style="color:red">Content alignment is more important</span> than modality alignment</li>
+</ul>
+<h3 id="algorithm-and-hardware-simulation-1">
+  Algorithm and Hardware Simulation
+  <a class="anchor" href="#algorithm-and-hardware-simulation-1">#</a>
 </h3>
 <p><strong>Experiment Overview</strong>
 One of the unique capabilities of the bGPT model is its ability to simulate the operations of algorithms and hardware. This experimental section assesses how bGPT handles complex data conversion processes and CPU state modeling tasks. These capabilities are particularly significant in the fields of cybersecurity, system diagnostics, and hardware optimization.</p>
-<p><strong>Experiment Methods</strong>
-bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
-<ul>
-<li><strong>Data Conversion</strong>: This experiment evaluates whether bGPT can learn the process of converting ABC music notation into MIDI format. The task tests how bGPT models complex algorithms and their ability to convert actual music files.</li>
-<li><strong>CPU State Modeling</strong>: CPU state modeling assesses how bGPT predicts and updates the state of a CPU based on a given set of machine instructions. This is particularly useful for understanding and predicting hardware operations.</li>
-</ul>
-<p><strong>Results and Analysis</strong></p>
+<!-- 
+**Experiment Methods** 
+bGPT's performance was evaluated in the following two key areas:
+
+- **Data Conversion**: This experiment evaluates whether bGPT can learn the process of converting ABC music notation into MIDI format. The task tests how bGPT models complex algorithms and their ability to convert actual music files.
+- **CPU State Modeling**: CPU state modeling assesses how bGPT predicts and updates the state of a CPU based on a given set of machine instructions. This is particularly useful for understanding and predicting hardware operations. -->
+<h4 id="results-and-analysis-1">
+  Results and Analysis
+  <a class="anchor" href="#results-and-analysis-1">#</a>
+</h4>
 <p float="center">
-  <img src="dataconversion.JPG" alt="Image 1" width="400" />
-  <img src="cpumodeling.JPG" alt="Image 2" width="400" /> 
+  <img src="dataconversion.JPG" alt="Image 1" width="250" />
+  <img src="cpumodeling.JPG" alt="Image 2" width="250" /> 
 </p>
 <ul>
 <li><strong>Data Conversion Performance</strong>: bGPT performed the conversion between MIDI and ABC notation with high accuracy. Notably, it also showed high accuracy in converting MIDI back to ABC notation, indicating that bGPT successfully learned the inherent structures and patterns of the data.</li>
@@ -973,7 +968,8 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
   References
   <a class="anchor" href="#references">#</a>
 </h2>
-<p><a href="https://arxiv.org/abs/2402.19155">Beyond Language Models: Byte Models are Digital World Simulators (arXiv)</a> <br></p>
+<p><a href="https://arxiv.org/abs/2402.19155">Beyond Language Models: Byte Models are Digital World Simulators (arXiv)</a> <br>
+<a href="https://byte-gpt.github.io/">Beyond Language Models: Byte Models are Digital World Simulators (Project Page)</a> <br></p>
 </article>
  
       
@@ -983,7 +979,7 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/ad4ec2b5e925795c29a801abc00aa9f8d3c52bdf" title='Last modified by Dohun Kim | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/f863203f06a0565792a5eaa92fae00eb91c96d4f" title='Last modified by Dohun Kim | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -1043,8 +1039,9 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
     </li>
     <li><a href="#experiments">Experiments</a>
       <ul>
-        <li><a href="#digital-media-processing-well-studied-tasks">Digital Media Processing (well-studied tasks)</a></li>
-        <li><a href="#algorithm-and-hardware-simulation-underexplored-tasks">Algorithm and Hardware Simulation (underexplored tasks)</a></li>
+        <li><a href="#performance-metrics">Performance Metrics</a></li>
+        <li><a href="#digital-media-processing-1">Digital Media Processing</a></li>
+        <li><a href="#algorithm-and-hardware-simulation-1">Algorithm and Hardware Simulation</a></li>
       </ul>
     </li>
     <li><a href="#conclusion-and-future-work">Conclusion and Future Work</a></li>

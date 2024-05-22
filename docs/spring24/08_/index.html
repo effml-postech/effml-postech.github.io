@@ -20,7 +20,7 @@ Linear arithmetic composition can diminish the capabilities of the original pre-
 <link rel="canonical" href="http://localhost:1313/docs/spring24/08_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.bb782c6e4bffd59850a229fee25dec53730b0d1895bb722758be85c67a9d84f7.js" integrity="sha256-u3gsbkv/1ZhQoin&#43;4l3sU3MLDRiVu3InWL6FxnqdhPc=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.d1dbcce2f6ff12088d475aa0b4b7d77fe3cd3fff1380f8f278bb804d4a135b7f.js" integrity="sha256-0dvM4vb/EgiNR1qgtLfXf&#43;PNP/8TgPjyeLuATUoTW38=" crossorigin="anonymous"></script>
 
   
 
@@ -165,24 +165,6 @@ https://github.com/alex-shpak/hugo-book
 
   
     <a href="/docs/spring24/04_/" class="">04</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/05_/" class="">05</a>
   
 
           
@@ -553,6 +535,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/05_/" class="">05</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -619,19 +619,33 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#mixture-of-lora-experts-1">Mixture of LoRA experts</a>
       <ul>
-        <li><a href="#motivations">Motivations</a></li>
+        <li><a href="#observations">Observations</a></li>
         <li><a href="#method">Method</a></li>
         <li><a href="#training">Training</a></li>
       </ul>
     </li>
-    <li><a href="#results">Results</a></li>
+    <li><a href="#results">Results</a>
+      <ul>
+        <li><a href="#on-vl-domain">On V&amp;L Domain</a></li>
+        <li><a href="#on-nlp-domain">On NLP Domain</a></li>
+      </ul>
+    </li>
     <li><a href="#analyisis">Analyisis</a>
       <ul>
         <li><a href="#1-gating-balancing-loss-works">1. Gating balancing loss works!</a></li>
         <li><a href="#2-mole-is-even-better-than-sota-multi-concept-generation-methods">2. MoLE is even better than SOTA multi-concept generation methods.</a></li>
+        <li><a href="#3-scale-to-a-larger-number-of-loras">3. Scale to a larger number of LoRAs.</a></li>
+        <li><a href="#4-coarse-gating-vs-fine-gating">4. Coarse gating vs. fine gating</a></li>
+        <li><a href="#5-flexibility-of-mole">5. Flexibility of MoLE.</a></li>
+        <li><a href="#6-hierarchical-control-analysis">6. Hierarchical control analysis</a></li>
       </ul>
     </li>
-    <li><a href="#discussion-and-limitations">Discussion and Limitations</a></li>
+    <li><a href="#discussion-and-limitations">Discussion and Limitations</a>
+      <ul>
+        <li><a href="#limitations"><strong>Limitations</strong></a></li>
+        <li><a href="#discussion"><strong>Discussion</strong></a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 
@@ -695,7 +709,7 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \[$$\hat{\mathbf{W}} = \mathbf{W} &#43; \sum_{i=1}^{N} w_i \cdot \Delta \mathbf{W}_i$$\]
+  \[\hat{\mathbf{W}} = \mathbf{W} &#43; \sum_{i=1}^{N} w_i \cdot \Delta \mathbf{W}_i\]
 </span>
 
 <ul>
@@ -711,6 +725,11 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
   <a class="anchor" href="#mixture-of-experts">#</a>
 </h3>
 <p>MoE is an effective method that allows scaling up the number of parameters while maintaining the computational cost of the model.</p>
+<p align="center">
+    <img src=./moe.png> 
+    <br>
+    <em>Illustration of a Swith Transformer block.</em>
+</p>
 <ul>
 <li>
 <p>Experts FFN Layers: MoE layer is composed of N separate feed-forward networks as the experts. This concept involves dividing the FFN layer of traditional transformers into N experts. These experts can be thought of as being responsible for specific tokens.</p>
@@ -728,51 +747,47 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
   \[O = h &#43; \sum_{i=0}^{N} \alpha(E_i) \cdot E_i(h)\]
 </span>
 
-<p align="center">
-    <img src=./moe.png> 
-    <br>
-    <em>Illustration of a Swith Transformer block.</em>
-</p>
 <h2 id="mixture-of-lora-experts-1">
   Mixture of LoRA experts
   <a class="anchor" href="#mixture-of-lora-experts-1">#</a>
 </h2>
-<h3 id="motivations">
-  Motivations
-  <a class="anchor" href="#motivations">#</a>
+<h3 id="observations">
+  Observations
+  <a class="anchor" href="#observations">#</a>
 </h3>
 <ol>
 <li>Direct linear arithmetic composition reduced the generative power of the model, while normalized linear arithmetic composition retained the generative power of the model but lost its LORA character.</li>
 </ol>
 <p align="center">
-    <img src=./motiv1_1.png align="center" height=300">
-    <img src=./motiv1_2.png align="center" height=300>
+    <img src=./motiv1_1.png align="center" height="150">
+    <img src=./motiv1_2.png align="center" height="150">
     <br>
-    <em>(Left) Result of linear arithmetic composision. (Right) Result of nomalized linear arithmetic composision.</em>
+    <em>(Left) Result of linear arithmetic composision and, (Right) nomalized linear arithmetic composision.</em>
 </p>
 <p align="center">
-    <img src=./motiv1_3.png width="700">
+    <img src=./motiv1_3.png width="40%">
+    <br>
+    <em>Experiment in the NLP domain. NLA denotes normalized linear arithmetic composision </em>
 </p>
-In the V&L domain, directly composing multiple trained LoRAs into the original embedding caused significant parameter variations and meaningless output, while normalization compromised their original characteristics. 
-<br/>
-In the NLP domain, composing four or more LoRAs within the FLAN-T5 model resulted in disordered output, and weight normalization across five datasets decreased the performance, suggesting adverse effects on the intrinsic qualities of the trained LoRAs.
-<br/>
-<br/>
-2. Each layer of the trained LoRA represented a unique characteristic, which cumulatively defined the overall properties of the LoRA.
+<p>In the V&amp;L domain, directly composing multiple trained LoRAs into the original embedding caused significant parameter variations and meaningless output, while normalization compromised their original characteristics.  In the NLP domain, composing four or more LoRAs within the FLAN-T5 model resulted in disordered output, and weight normalization across five datasets decreased the performance, suggesting adverse effects on the intrinsic qualities of the trained LoRAs.</p>
+<ol start="2">
+<li>Each layer of the trained LoRA represented a unique characteristic, which cumulatively defined the overall properties of the LoRA.</li>
+</ol>
 <p align="center">
-    <img src=./motiv2_1.png align="center" width="40%">
-    <img src=./motiv2_2.png align="center" width="53%">
-    <figcaption align="center">
+    <img src=./motiv2_1.png align="center" height=150>
+    <img src=./motiv2_2.png align="center" height=150">
+    <br>
+    <em>(Right) Observed that different layers of LoRA encode distinct features, such as dog coat color and facial features. (Left) When evaluated on a subset of datasets, there were significant differences in performance across the different layers of LoRA.) </em>
 </p>
-(Right: Observed that different layers of LoRA encode distinct features, such as dog coat color and facial features.,<br/>
-left: When evaluated on a subset of datasets, there were significant differences in performance across the different layers of LoRA.) 
 <p><strong>So, The conjecture is that adjusting the characteristics by varying the layer-specific weights according to the desired domain objective will result in a more effective composition of trained LORAs.</strong></p>
 <h3 id="method">
   Method
   <a class="anchor" href="#method">#</a>
 </h3>
 <p align="center">
-    <img src=./Method1.png align="center" width="400">
+    <img src=./Method1.png align="center" width="70%">
+    <br>
+    <em>Illustration of proposed MOLE. MOLE employs a learnable gating function that utilizes the outputs of multiple LoRAs at each layer to determine composition weights.</em>
 </p>
 <details>
     <summary>See related formulas</summary>
@@ -808,12 +823,15 @@ left: When evaluated on a subset of datasets, there were significant differences
   Training
   <a class="anchor" href="#training">#</a>
 </h3>
-<p>The final loss function used in MoLE is as follows:</p>
-<p align="left">
+<p>The training loss function used in MoLE is as follows:</p>
+<p align="centor">
     <img src=./training5.png width="200">
 </p>
-Alpha is a coefficient for weight balancing. 
-<br/>
+<span>
+  \[$$\mathcal{L} = \mathcal{L}_{D} &#43; \alpha \mathcal{L}_{balance}$$\]
+</span>
+
+<p>Alpha is a coefficient for weight balancing.</p>
 <p><strong>Gating Balacing Loss</strong></p>
 <p align="center">
     <img src=./training1.png width="400">
@@ -823,7 +841,7 @@ As shown in Figure 5 (a), the average entropy of the distribution probabilities 
 To avoid this, the author created a gating balancing loss.<br/>
 The gating balancing loss helps prevent bias by ensuring that the loss value decreases as the model becomes less biased. <br/>
 <br/>
-<p align="left">
+<p align="centor">
     <img src=./training2.png width="200">
 </p>
 <details>
@@ -835,93 +853,76 @@ The gating balancing loss helps prevent bias by ensuring that the loss value dec
 <p><strong>Domain-specific Loss</strong>
 <br/>
 In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
-<p align="left">
+<p align="centor">
     <img src=./training3.png width="300">
 </p>
 <p>In NLP, Using a loss in FLAN-T5(Chung et al,2022)</p>
-<p align="left">
+<p align="centor">
     <img src=./training4.png width="200">
 </p>
 <h2 id="results">
   Results
   <a class="anchor" href="#results">#</a>
 </h2>
-<p><strong>On V&amp;L Domain</strong>
-<br/></p>
+<h3 id="on-vl-domain">
+  On V&amp;L Domain
+  <a class="anchor" href="#on-vl-domain">#</a>
+</h3>
+<p><strong>Setup</strong></p>
 <ul>
-<li>Setup)
-<br/>
-Base generator: DeamBooth(Ruiz et al., 2023) (built on Stable Diffusion V2.1)
-<br/>
-LoRA: combination of three separately trained LoRAs
-<br/>
-Image resolution: 512x512
-<br/>
-learning rate: 1e-5
-<br/>
-DDPM sampler (Ho et al., 2020) with 50 steps in each case
-<br/>
-Train 400 iterations for each required composition with batch size 2 and α as 0.5
-<br/></li>
-<li>Metrics)
-<br/>
-Image alignment: Evaluate the visual similarity of generated images with individual composed concepts in the CLIP image feature space.
-<br/>
-Text alignment: Evaluate the text-image similarity of generated images with given text prompts in the CLIP feature space.
-<br/>
-For each composition, calculated the average scores among 200 generated images per prompt using 5 text prompts.
-<br/></li>
-<li>Compared Baselines)
-<br/>
+<li>Base generator: DeamBooth(Ruiz et al., 2023) (built on Stable Diffusion V2.1)</li>
+<li>LoRA: combination of three separately trained LoRAs</li>
+<li>Image resolution: 512x512</li>
+<li>learning rate: 1e-5</li>
+<li>DDPM sampler (Ho et al., 2020) with 50 steps in each case</li>
+<li>Train 400 iterations for each required composition with batch size 2 and α as 0.5</li>
+</ul>
+<p><strong>Metrics</strong></p>
+<ul>
+<li>Image alignment: Evaluate the visual similarity of generated images with individual composed concepts in the CLIP image feature space.</li>
+<li>Text alignment: Evaluate the text-image similarity of generated images with given text prompts in the CLIP feature space.</li>
+<li>For each composition, calculated the average scores among 200 generated images per prompt using 5 text prompts.</li>
+</ul>
+<p><strong>Compared Baselines</strong></p>
 <ul>
 <li>Normalized linear arithmetic composition</li>
 <li>SVDiff (Han et al., 2023)</li>
 </ul>
-</li>
-<li>Results)
-<br/></li>
-</ul>
+<p><strong>Results</strong></p>
 <p align="center">
     <img src=./result1.png width="500">
 </p>
-        It demonstrates better performance compared to other models and shows outstanding results in other tasks as well.
+<p>It demonstrates better performance compared to other models and shows outstanding results in other tasks as well.</p>
 <p align="center">
-    <img src=./result2.png align="center" width="32%">
-    <img src=./result3.png align="center" width="32%">
-    <img src=./result4.png align="center" width="32%">
+    <img src=./figure9.png align="center" width="32%">
+    <img src=./figure10.png align="center" width="32%">
+    <img src=./figure11.png align="center" width="32%">
     <figcaption align="center">
 </p>
-  When viewing the generated images, it is evident that all specified subjects are accurately represented and maintained.
-  <br/>
-   <br/>
-<p><strong>On NLP Domain</strong>
-<br/></p>
+<p>When viewing the generated images, it is evident that all specified subjects are accurately represented and maintained.</p>
+<h3 id="on-nlp-domain">
+  On NLP Domain
+  <a class="anchor" href="#on-nlp-domain">#</a>
+</h3>
+<p><strong>Setup</strong></p>
 <ul>
-<li>Setup)
-<br/>
-Base Model: Flan-T5 (Chung et al., 2022)
-<br/>
-LoRA: Several LoRAs based on FLAN datasets
-<br/>
-learning rate: 1e-5
-<br/>
-Train 800 iterations for each required composition with batch size 12 and α as 0.5.
-<br/></li>
-<li>Compared Baselines)
-<br/>
+<li>Base Model: Flan-T5 (Chung et al., 2022)</li>
+<li>LoRA: Several LoRAs based on FLAN datasets</li>
+<li>learning rate: 1e-5</li>
+<li>Train 800 iterations for each required composition with batch size 12 and α as 0.5.</li>
+</ul>
+<p><strong>Compared Baselines</strong></p>
 <ul>
 <li>LoRAhub</li>
 <li>PEMs</li>
 </ul>
-</li>
-<li>Results)</li>
-</ul>
+<p><strong>Results</strong></p>
 <p align="center">
     <img src=./result7.png align="center" width="48%">
     <img src=./result8.png align="center" width="48%">
     <figcaption align="center">
 </p>
-  It can be observed that MoLE demonstrates better performance in most tasks.
+<p>It can be observed that MoLE demonstrates better performance in most tasks.</p>
 <h2 id="analyisis">
   Analyisis
   <a class="anchor" href="#analyisis">#</a>
@@ -931,20 +932,84 @@ Train 800 iterations for each required composition with batch size 12 and α as 
   <a class="anchor" href="#1-gating-balancing-loss-works">#</a>
 </h3>
 <p>Gating balancing loss function mitigates the reduction in entropy rates within gating functions, and enhance the performance.</p>
+<p align="center">
+    <img src=./anal1-2.png> 
+    <br>
+    <em>Experimental results on gating balance of MOLE. NLA denotes normalized linear arithmetic composition</em>
+</p>
 <h3 id="2-mole-is-even-better-than-sota-multi-concept-generation-methods">
   2. MoLE is even better than SOTA multi-concept generation methods.
   <a class="anchor" href="#2-mole-is-even-better-than-sota-multi-concept-generation-methods">#</a>
 </h3>
 <p>MoLE outperforms two multi-concept generation algorithms (Custom, Textual Inversion), both of which emphasize full-parameter training for enhanced results.</p>
-<ol start="4">
-<li>Scale to a larger number of LoRAs.</li>
-<li>Coarse gating vs. fine gating</li>
-<li>Flexibility of MoLE.</li>
-</ol>
+<p align="center">
+    <img src=./anal2.png> 
+    <br>
+    <em>Text-alignment and image-alignment results for multiple LoRA experts composition in CLIP feature space. SOTA full-parameter training methods are highlighted by pink boxes</em>
+</p>
+<h3 id="3-scale-to-a-larger-number-of-loras">
+  3. Scale to a larger number of LoRAs.
+  <a class="anchor" href="#3-scale-to-a-larger-number-of-loras">#</a>
+</h3>
+<p>MOLE demonstrated optimal performance across varying numbers of LoRA, notably surpassing LoRAHub with larger LoRA counts of 48 and 128. However, all methods, including MOLE, showed performance declines with an extremely large number of LoRA</p>
+<p align="center">
+    <img src=./anal3.png> 
+    <br>
+    <em>NLP domain experimental results on the impact of exploring expand expert numbers on model performance. The result is the average EM on the Big-Bench Hard (BBH) dataset.</em>
+</p>
+<h3 id="4-coarse-gating-vs-fine-gating">
+  4. Coarse gating vs. fine gating
+  <a class="anchor" href="#4-coarse-gating-vs-fine-gating">#</a>
+</h3>
+<p>Among  matrix-wise, layer-wise, block-wise, and network-wise MoLEs, intermediate granularities, b-MoLE and l-MoLE, achieved the highest performance.</p>
+<p align="center">
+    <img src=./anal4.png> 
+    <br>
+    <em>Coarse-to-fine gating comparison</em>
+</p>
+<h3 id="5-flexibility-of-mole">
+  5. Flexibility of MoLE.
+  <a class="anchor" href="#5-flexibility-of-mole">#</a>
+</h3>
+<p>MoLE not only achieves effective LoRA composition but also retains the characteristics of individual LoRA. It can generate images that closely resemble the original features of the LoRA experts</p>
+<p align="center">
+    <img src=./anal5.png> 
+    <br>
+    <em>Qualitative result for retaining ability experiment.</em>
+</p>
+<h3 id="6-hierarchical-control-analysis">
+  6. Hierarchical control analysis
+  <a class="anchor" href="#6-hierarchical-control-analysis">#</a>
+</h3>
+<p>MOLE adaptively assigns weights to different LoRA experts across various layers, resulting in finer-grained weight combinations that yield superior results.</p>
+<p align="center">
+    <img src=./anal6.png> 
+    <br>
+    <em>Visualization of the weights (%) predicted by each gating function (horizontal axis) for LoRA experts (vertical axis) during inference. The top row corresponds to experiments in the NLP domain, while the bottom row pertains to experiments in the V&L domain.</em>
+</p>
 <h2 id="discussion-and-limitations">
   Discussion and Limitations
   <a class="anchor" href="#discussion-and-limitations">#</a>
 </h2>
+<h3 id="limitations">
+  <strong>Limitations</strong>
+  <a class="anchor" href="#limitations">#</a>
+</h3>
+<ol>
+<li>LoRA scale <br/></li>
+</ol>
+<p>When the number of LoRAs increases to a very large value (e.g., 128), the performance of all LoRA composition methods, including MOLE, tends to decrease despite MOLE&rsquo;s superior performance. This indicates that MOLE still faces challenges with large-scale LoRA composition and emphasizes the need for better approaches to handle it effectively.</p>
+<ol start="2">
+<li>Parameter <br/></li>
+</ol>
+<p>The learnable parameter 𝑒 used in MoLE has dimensions of $N^2 \times L \times D$. As the number of LoRAs increases, the number of parameters grows quadratically, resulting in a substantial increase. Additionally, since e exists for each transformer block, the number of parameters added by 𝑒 is considerable. This can be seen as a drawback of MoLE.
+<br/></p>
+<h3 id="discussion">
+  <strong>Discussion</strong>
+  <a class="anchor" href="#discussion">#</a>
+</h3>
+<p><em>How to address MoLE&rsquo;s limitations at LoRA scale?</em></p>
+<p>Currently, MoLE&rsquo;s performance decreases when the number of LoRAs exceeds a certain threshold. By reducing the number of LoRAs to below this threshold with minimal loss, performance could be improved. Assuming there is a large number of LoRAs, there will likely be many LoRAs for similar tasks. Given this, we believe that clustering to derive representative LoRAs for similar tasks and using only the representative LoRAs instead of all similar task LoRAs could overcome MoLE&rsquo;s limitations.</p>
 </article>
  
       
@@ -954,7 +1019,7 @@ Train 800 iterations for each required composition with batch size 12 and α as 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/d0c425502b6d5f0384375d3deb43ba3cb9abbac3" title='Last modified by jgryu | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/8cc4626d9590cd11865caf519560c36ae165d677" title='Last modified by jgryu | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -1008,19 +1073,33 @@ Train 800 iterations for each required composition with batch size 12 and α as 
     </li>
     <li><a href="#mixture-of-lora-experts-1">Mixture of LoRA experts</a>
       <ul>
-        <li><a href="#motivations">Motivations</a></li>
+        <li><a href="#observations">Observations</a></li>
         <li><a href="#method">Method</a></li>
         <li><a href="#training">Training</a></li>
       </ul>
     </li>
-    <li><a href="#results">Results</a></li>
+    <li><a href="#results">Results</a>
+      <ul>
+        <li><a href="#on-vl-domain">On V&amp;L Domain</a></li>
+        <li><a href="#on-nlp-domain">On NLP Domain</a></li>
+      </ul>
+    </li>
     <li><a href="#analyisis">Analyisis</a>
       <ul>
         <li><a href="#1-gating-balancing-loss-works">1. Gating balancing loss works!</a></li>
         <li><a href="#2-mole-is-even-better-than-sota-multi-concept-generation-methods">2. MoLE is even better than SOTA multi-concept generation methods.</a></li>
+        <li><a href="#3-scale-to-a-larger-number-of-loras">3. Scale to a larger number of LoRAs.</a></li>
+        <li><a href="#4-coarse-gating-vs-fine-gating">4. Coarse gating vs. fine gating</a></li>
+        <li><a href="#5-flexibility-of-mole">5. Flexibility of MoLE.</a></li>
+        <li><a href="#6-hierarchical-control-analysis">6. Hierarchical control analysis</a></li>
       </ul>
     </li>
-    <li><a href="#discussion-and-limitations">Discussion and Limitations</a></li>
+    <li><a href="#discussion-and-limitations">Discussion and Limitations</a>
+      <ul>
+        <li><a href="#limitations"><strong>Limitations</strong></a></li>
+        <li><a href="#discussion"><strong>Discussion</strong></a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 

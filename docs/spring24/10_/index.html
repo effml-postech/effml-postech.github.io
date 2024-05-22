@@ -22,7 +22,7 @@ Reviewer: Hyunho Kook
 <link rel="canonical" href="http://localhost:1313/docs/spring24/10_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.bb782c6e4bffd59850a229fee25dec53730b0d1895bb722758be85c67a9d84f7.js" integrity="sha256-u3gsbkv/1ZhQoin&#43;4l3sU3MLDRiVu3InWL6FxnqdhPc=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.d1dbcce2f6ff12088d475aa0b4b7d77fe3cd3fff1380f8f278bb804d4a135b7f.js" integrity="sha256-0dvM4vb/EgiNR1qgtLfXf&#43;PNP/8TgPjyeLuATUoTW38=" crossorigin="anonymous"></script>
 
   
 
@@ -167,24 +167,6 @@ https://github.com/alex-shpak/hugo-book
 
   
     <a href="/docs/spring24/04_/" class="">04</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/05_/" class="">05</a>
   
 
           
@@ -555,6 +537,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/05_/" class="">05</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -685,55 +685,82 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#2a-moving-average-with-damping">#</a>
 </h3>
 <p>At the core of MEGA lies the moving average with damping, which can be expressed by the following equations:</p>
-<p>$$
-\begin{aligned}
-u_t^{(j)} &amp;= \beta_j x_{t,j} \
-h_t^{(j)} &amp;= \alpha_j \odot u_t^{(j)} + (1 - \alpha_j \odot \delta_j) \odot h_{t-1}^{(j)} \
-y_{t,j} &amp;= \eta_j^T h_t^{(j)}
-\end{aligned}
-$$</p>
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(u_t^{(j)} &amp;= \beta_j x_{t,j} \\
+h_t^{(j)} &amp;= \alpha_j \odot u_t^{(j)} &#43; (1 - \alpha_j \odot \delta_j) \odot h_{t-1}^{(j)} \\
+y_{t,j} &amp;= \eta_j^T h_t^{(j)}\)
+</span>
+
 <p>This exponential moving average (EMA) serves as the foundation for the subsequent attention mechanism.</p>
 <h3 id="2b-generating-query-and-key">
   2.b Generating Query and Key
   <a class="anchor" href="#2b-generating-query-and-key">#</a>
 </h3>
-<p>The EMA is then fed into the attention mechanism to generate the Query and Key matrices after applying the SiLU activation function. First, we calculate the shared representation $Z$ using the EMA of the input $X$:</p>
-<p>$$
-\begin{aligned}
-X&rsquo; &amp;= EMA(X) \in \mathbb{R}^{n \times d} \
-Z &amp;= \phi_{silu}(X&rsquo;W_z + b_z) \in \mathbb{R}^{n \times z}
-\end{aligned}
-$$</p>
-<p>Using the shared representation $Z$, we can now compute the queries and keys. It&rsquo;s important to note that the original input $X$ is used to calculate the values:</p>
-<p>$$
-\begin{aligned}
-Q &amp;= \kappa_q \odot Z + \mu_q \in \mathbb{R}^{n \times z}\
-K &amp;= \kappa_k \odot Z + \mu_k \in \mathbb{R}^{n \times z}\
-V &amp;= \phi_{silu}(XW_v + b_v) \in \mathbb{R}^{n \times v}
-\end{aligned}
-$$</p>
+<p>The EMA is then fed into the attention mechanism to generate the Query and Key matrices after applying the SiLU activation function. First, we calculate the shared representation <span>
+  \(Z\)
+</span>
+ using the EMA of the input <span>
+  \(X\)
+</span>
+:</p>
+<span>
+  \(X&#39; &amp;= EMA(X) \in \mathbb{R}^{n \times d} \\
+Z &amp;= \phi_{silu}(X&#39;W_z &#43; b_z) \in \mathbb{R}^{n \times z}\)
+</span>
+
+<p>Using the shared representation <span>
+  \(Z\)
+</span>
+, we can now compute the queries and keys. It&rsquo;s important to note that the original input <span>
+  \(X\)
+</span>
+ is used to calculate the values:</p>
+<span>
+  \(Q &amp;= \kappa_q \odot Z &#43; \mu_q \in \mathbb{R}^{n \times z}\\
+K &amp;= \kappa_k \odot Z &#43; \mu_k \in \mathbb{R}^{n \times z}\\
+V &amp;= \phi_{silu}(XW_v &#43; b_v) \in \mathbb{R}^{n \times v}\)
+</span>
+
 <h3 id="2c-attention-output-calculation">
   2.c Attention Output Calculation
   <a class="anchor" href="#2c-attention-output-calculation">#</a>
 </h3>
 <p>After obtaining the Query, Key, and Value matrices, we can calculate the output of the attention mechanism using the standard formula:</p>
-<p>$$
-O = f\left(\frac{QK^T}{\tau(X)}\right)V \in \mathbb{R}^{n \times v}
-$$</p>
-<p>Here, $f$ is typically the softmax function, and $\tau$ is a temperature function based on the input $X$.</p>
+<span>
+  \(O = f\left(\frac{QK^T}{\tau(X)}\right)V \in \mathbb{R}^{n \times v}\)
+</span>
+
+<p>Here, <span>
+  \(f\)
+</span>
+ is typically the softmax function, and <span>
+  \(\tau\)
+</span>
+ is a temperature function based on the input <span>
+  \(X\)
+</span>
+.</p>
 <h3 id="2d-gating-mechanisms">
   2.d Gating Mechanisms
   <a class="anchor" href="#2d-gating-mechanisms">#</a>
 </h3>
-<p>MEGA employs gating mechanisms, similar to the Gated Linear Unit (GLU), to generate the final output $Y$ and the internal activation $\hat{H}$. This is achieved through the following equations:</p>
-<p>$$
-\begin{aligned}
-\gamma &amp;= \phi_{silu}(X&rsquo;W_\gamma + b_\gamma) \in \mathbb{R}^{n \times v} \
-\varphi &amp;= \phi_{sigmoid}(X&rsquo;W_\varphi + b_\varphi) \in \mathbb{R}^{n \times d} \
-\hat{H} &amp;= \phi_{silu}(X&rsquo;W_h + (\gamma \odot O)U_h + b_h) \in \mathbb{R}^{n \times d} \
-Y &amp;= \varphi \odot \hat{H} + (1 - \varphi) \odot X \in \mathbb{R}^{n \times d}
-\end{aligned}
-$$</p>
+<p>MEGA employs gating mechanisms, similar to the Gated Linear Unit (GLU), to generate the final output <span>
+  \(Y\)
+</span>
+ and the internal activation <span>
+  \(\hat{H}\)
+</span>
+. This is achieved through the following equations:</p>
+<span>
+  \(\gamma &amp;= \phi_{silu}(X&#39;W_\gamma &#43; b_\gamma) \in \mathbb{R}^{n \times v} \\
+\varphi &amp;= \phi_{sigmoid}(X&#39;W_\varphi &#43; b_\varphi) \in \mathbb{R}^{n \times d} \\ 
+\hat{H} &amp;= \phi_{silu}(X&#39;W_h &#43; (\gamma \odot O)U_h &#43; b_h) \in \mathbb{R}^{n \times d} \\
+Y &amp;= \varphi \odot \hat{H} &#43; (1 - \varphi) \odot X \in \mathbb{R}^{n \times d}\)
+</span>
+
 <h3 id="2e-chunk-wise-attention-for-linear-time-complexity">
   2.e Chunk-wise Attention for Linear Time Complexity
   <a class="anchor" href="#2e-chunk-wise-attention-for-linear-time-complexity">#</a>
@@ -762,39 +789,74 @@ $$</p>
   <a class="anchor" href="#3a-cema-extending-multi-dimensional-damped-ema-to-complex-domain">#</a>
 </h3>
 <p>To improve EMA (Exponential Moving Average) capability when working over the complex number system, the authors propose CEMA (Complex Exponential Moving Average), which extends the idea of EMA to the complex plane. The key equations for CEMA are:</p>
-<p>$$
-\begin{aligned}
-h_t^{(j)} &amp;= \alpha_j(\cos \theta_j + i \sin \theta_j) \odot u_t^{(j)} + (1 - \alpha_j \odot \delta_j)(\cos \theta_j + i \sin \theta_j) \odot h_{t-1}^{(j)} \
-y_{t,j} &amp;= \mathcal{Re}(\eta_j^T h_t^{(j)})
-\end{aligned}
-$$</p>
-<p>Here, $\alpha$ and $\delta$ are real-valued parameters, just like in the original EMA. However, $\eta$ is a complex-valued parameter in CEMA. The $\theta_j$ values are learnable parameters that are used to uniformly distribute the $h$ arguments over the period of $2\pi$. This is achieved by parameterizing $\theta_j$ as:</p>
-<p>$$
-\theta_{j,k} = \frac{2\pi k}{h} \omega_j, \quad \forall k \in {1, 2, \dots, h}
-$$</p>
-<p>where $\omega$ is a learnable parameter that determines the base angles.</p>
-<p>The introduction of complex numbers in CEMA allows it to capture positional features of internal embeddings without changing the magnitude of $h$. Instead, it periodically changes the angle in the complex domain. This makes CEMA a powerful tool for modeling long sequences and improving the capability of EMA in complex-valued systems.</p>
+<span>
+  \(h_t^{(j)} &amp;= \alpha_j(\cos \theta_j &#43; i \sin \theta_j) \odot u_t^{(j)} &#43; (1 - \alpha_j \odot \delta_j)(\cos \theta_j &#43; i \sin \theta_j) \odot h_{t-1}^{(j)} \\
+y_{t,j} &amp;= \mathcal{Re}(\eta_j^T h_t^{(j)})\)
+</span>
+
+<p>Here, <span>
+  \(\alpha\)
+</span>
+ and <span>
+  \(\delta\)
+</span>
+ are real-valued parameters, just like in the original EMA. However, <span>
+  \(\eta\)
+</span>
+ is a complex-valued parameter in CEMA. The <span>
+  \(\theta_j\)
+</span>
+ values are learnable parameters that are used to uniformly distribute the <span>
+  \(h\)
+</span>
+ arguments over the period of <span>
+  \(2\pi\)
+</span>
+. This is achieved by parameterizing <span>
+  \(\theta_j\)
+</span>
+ as:</p>
+<span>
+  \(\theta_{j,k} = \frac{2\pi k}{h} \omega_j, \quad \forall k \in {1, 2, \dots, h}\)
+</span>
+
+<p>where <span>
+  \(\omega\)
+</span>
+ is a learnable parameter that determines the base angles.</p>
+<p>The introduction of complex numbers in CEMA allows it to capture positional features of internal embeddings without changing the magnitude of <span>
+  \(h\)
+</span>
+. Instead, it periodically changes the angle in the complex domain. This makes CEMA a powerful tool for modeling long sequences and improving the capability of EMA in complex-valued systems.</p>
 <h3 id="3b-timestep-normalization">
   3.b Timestep Normalization
   <a class="anchor" href="#3b-timestep-normalization">#</a>
 </h3>
 <p><img src="./Timestep_norm.png" alt="Timestep_norm" /></p>
 <p>Transformer-based models typically use Layer Normalization (LayerNorm) instead of Batch Normalization (BatchNorm) due to the significant variation in input batch sizes across different timesteps. While this approach has led to great success in large language models, the authors argue that LayerNorm cannot effectively capture and reduce the internal covariance along the temporal domain. To address this issue, they propose using a GroupNorm-like method. However, applying GroupNorm directly is challenging because it cannot access future information during auto-regressive inference.</p>
-<p>To overcome this obstacle, the authors introduce Timestep Normalization, a superset of GroupNorm. This technique divides the total timesteps into $k$ groups and applies group normalization to each group independently. By doing so, Timestep Normalization can reduce the covariance shift along the temporal domain while still being compatible with the causal nature of auto-regressive models.</p>
+<p>To overcome this obstacle, the authors introduce Timestep Normalization, a superset of GroupNorm. This technique divides the total timesteps into <span>
+  \(k\)
+</span>
+ groups and applies group normalization to each group independently. By doing so, Timestep Normalization can reduce the covariance shift along the temporal domain while still being compatible with the causal nature of auto-regressive models.</p>
 <h3 id="3c-normalized-attention">
   3.c Normalized Attention
   <a class="anchor" href="#3c-normalized-attention">#</a>
 </h3>
-<p>During the calculation of attentions, the results can have a hugh instability along the temporal domain because the value of CEMA keeps changing. Therfore, the authors propose to use normalizaion on $Z$ before calculating the queries and keys. In this case, we do not have to scale the $QK^{T}$ since the values are already normalized while improving the stability of the attention mechanism.</p>
-<p>$$
-\begin{aligned}
-X&rsquo; &amp;= \mathcal{CEMA}(X) &amp;&amp; \in \mathbb{R}^{n \times d} \
-Z &amp;= X&rsquo;W_z + b_z, \quad Z&rsquo; = \frac{Z}{|Z|} &amp;&amp; \in \mathbb{R}^{n \times z} \
-Q &amp;= \kappa_q \odot Z&rsquo; + \mu_q &amp;&amp; \in \mathbb{R}^{n \times z} \
-K &amp;= \kappa_k \odot Z&rsquo; + \mu_k &amp;&amp; \in \mathbb{R}^{n \times z} \
-O &amp;= f_{\text{softmax}}\left(QK^T\right)V &amp;&amp; \in \mathbb{R}^{n \times v}
-\end{aligned}
-$$</p>
+<p>During the calculation of attentions, the results can have a hugh instability along the temporal domain because the value of CEMA keeps changing. Therfore, the authors propose to use normalizaion on <span>
+  \(Z\)
+</span>
+ before calculating the queries and keys. In this case, we do not have to scale the <span>
+  \(QK^{T}\)
+</span>
+ since the values are already normalized while improving the stability of the attention mechanism.</p>
+<span>
+  \(X&#39; &amp;= \mathcal{CEMA}(X) &amp;&amp; \in \mathbb{R}^{n \times d} \\
+Z &amp;= X&#39;W_z &#43; b_z, \quad Z&#39; = \frac{Z}{|Z|} &amp;&amp; \in \mathbb{R}^{n \times z} \\
+Q &amp;= \kappa_q \odot Z&#39; &#43; \mu_q &amp;&amp; \in \mathbb{R}^{n \times z} \\
+K &amp;= \kappa_k \odot Z&#39; &#43; \mu_k &amp;&amp; \in \mathbb{R}^{n \times z} \\
+O &amp;= f_{\text{softmax}}\left(QK^T\right)V &amp;&amp; \in \mathbb{R}^{n \times v}\)
+</span>
+
 <h3 id="3d-2-hop-residual-connection">
   3.d 2-hop Residual Connection
   <a class="anchor" href="#3d-2-hop-residual-connection">#</a>
@@ -805,7 +867,10 @@ $$</p>
   3.e Summary of Methods
   <a class="anchor" href="#3e-summary-of-methods">#</a>
 </h3>
-<p>The main contribution of this paper lies in the application of CEMA (Complex Exponential Moving Average), which effectively captures the positional information of internal embeddings ($H$) by incorporating a circular system in the complex domain. By using periodic functions like sine and cosine, CEMA can encode the sequential nature of the input data, allowing the model to better understand and utilize the temporal dependencies.</p>
+<p>The main contribution of this paper lies in the application of CEMA (Complex Exponential Moving Average), which effectively captures the positional information of internal embeddings (<span>
+  \(H\)
+</span>
+) by incorporating a circular system in the complex domain. By using periodic functions like sine and cosine, CEMA can encode the sequential nature of the input data, allowing the model to better understand and utilize the temporal dependencies.</p>
 <p>However, the introduction of complex numbers in CEMA doubles the dimensionality of the variables, which can potentially lead to significant instability during the training process. To address this issue, the authors propose three additional methods: Timestep Normalization, Normalized Attention, and 2-hop Residual Connection. These techniques work in conjunction with CEMA to stabilize the training process and ensure the model&rsquo;s robustness.</p>
 <ol>
 <li>
@@ -895,7 +960,7 @@ $$</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/f91e8072cefcfa3a00ddad59dbbdf2cf74dbb5d0" title='Last modified by kookhh0827 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/faca1f36b9c692023fc5bd32cef6d2b51b53fae3" title='Last modified by kookhh0827 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
