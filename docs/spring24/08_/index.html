@@ -20,7 +20,7 @@ Linear arithmetic composition can diminish the capabilities of the original pre-
 <link rel="canonical" href="http://localhost:1313/docs/spring24/08_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.095e8dbbbe9a063b74856513016780674cb7ba906df2c60ec1e4655afad878aa.js" integrity="sha256-CV6Nu76aBjt0hWUTAWeAZ0y3upBt8sYOweRlWvrYeKo=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.268a47946a95787174dd9a9766ec6e695f29d1d2555e28446e888abc97d8c054.js" integrity="sha256-JopHlGqVeHF03ZqXZuxuaV8p0dJVXihEboiKvJfYwFQ=" crossorigin="anonymous"></script>
 
   
 
@@ -165,6 +165,24 @@ https://github.com/alex-shpak/hugo-book
 
   
     <a href="/docs/spring24/04_/" class="">04</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/05_/" class="">05</a>
   
 
           
@@ -535,24 +553,6 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/05_/" class="">05</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
   </ul>
 
         </li>
@@ -785,7 +785,7 @@ How can multiple trained LoRAs be composed dynamically and efficiently, preservi
   <a class="anchor" href="#method">#</a>
 </h3>
 <p align="center">
-    <img src=./Method1.png align="center" width="80%">
+    <img src=./Untitled.png align="center" width="80%">
     <br>
     <em>Illustration of proposed MOLE. MOLE employs a learnable gating function that utilizes the outputs of multiple LoRAs at each layer to determine composition weights.</em>
 </p>
@@ -830,7 +830,7 @@ How can multiple trained LoRAs be composed dynamically and efficiently, preservi
 <p>Alpha is a coefficient for weight balancing.</p>
 <p><strong>Gating Balacing Loss</strong></p>
 <p align="center">
-    <img src=./training1.png width="80%">
+    <img src=./Untitled1.png width="80%">
 </p>
 As shown in Figure 5 (a), the average entropy of the distribution probabilities from the gating functions gradually decreases as training progresses. In Figure 5 (b), we can see a gating probability of 64% for LoRA β among the three LoRAs, indicating that the gating function tends to converge to a state where it assigns large weights to well-performing LoRAs in the early stages. This can result in a significantly larger impact from a few specific LoRAs compared to others, potentially leading to biased outcomes. <br/>
 <br/>
