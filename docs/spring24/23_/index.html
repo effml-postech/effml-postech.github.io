@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Beyond Language Models: Byte Models are Digital World Simulators # Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun Links: Paper, GitHub, Hugging Face, Official Project Page
 Posted by Dohun Kim and Yeongwoo Kim
-bGPT: from Language Models to Byte Models # Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.">
+bGPT: from Language Models to Byte Models # Byte models extend traditional language models to the byte level, treating all digital data and operations as fundamentally byte-based. These models process data from different modalities (such as text, image, and audio) uniformly as bytes, making them versatile in a wide digital environment.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/23_/">
@@ -13,7 +13,7 @@ bGPT: from Language Models to Byte Models # Byte models expand traditional langu
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="Beyond Language Models: Byte Models are Digital World Simulators # Authors: Shangda Wu, Xu Tan, Zili Wang, Rui Wang, Xiaobing Li, Maosong Sun Links: Paper, GitHub, Hugging Face, Official Project Page
 Posted by Dohun Kim and Yeongwoo Kim
-bGPT: from Language Models to Byte Models # Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.">
+bGPT: from Language Models to Byte Models # Byte models extend traditional language models to the byte level, treating all digital data and operations as fundamentally byte-based. These models process data from different modalities (such as text, image, and audio) uniformly as bytes, making them versatile in a wide digital environment.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>23 | Efficient ML Systems</title>
@@ -22,7 +22,7 @@ bGPT: from Language Models to Byte Models # Byte models expand traditional langu
 <link rel="canonical" href="http://localhost:1313/docs/spring24/23_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.895537bccff056e685676053a26dfc4fa81b562ccd1b0ca7578ce1a18a86b761.js" integrity="sha256-iVU3vM/wVuaFZ2BTom38T6gbVizNGwynV4zhoYqGt2E=" crossorigin="anonymous"></script>
 
   
 
@@ -617,11 +617,21 @@ https://github.com/alex-shpak/hugo-book
       <ul>
         <li><a href="#architecture">Architecture</a></li>
         <li><a href="#training-objectives">Training Objectives</a></li>
-        <li><a href="#applications">Applications</a></li>
-        <li><a href="#experiment">Experiment</a></li>
-        <li><a href="#conclusion-and-future-work"><strong>Conclusion and Future Work</strong></a></li>
       </ul>
     </li>
+    <li><a href="#applications">Applications</a>
+      <ul>
+        <li><a href="#1-digital-media-processing">1. Digital Media Processing</a></li>
+        <li><a href="#2-algorithm-and-hardware-simulation">2. Algorithm and Hardware Simulation</a></li>
+      </ul>
+    </li>
+    <li><a href="#experiments">Experiments</a>
+      <ul>
+        <li><a href="#1-digital-media-processing-well-studied-tasks">1. Digital Media Processing (well-studied tasks)</a></li>
+        <li><a href="#2-algorithm-and-hardware-simulation-underexplored-tasks">2. Algorithm and Hardware Simulation (underexplored tasks)</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion-and-future-work">Conclusion and Future Work</a></li>
     <li><a href="#references">References</a></li>
   </ul>
 </nav>
@@ -646,16 +656,16 @@ https://github.com/alex-shpak/hugo-book
   bGPT: from Language Models to Byte Models
   <a class="anchor" href="#bgpt-from-language-models-to-byte-models">#</a>
 </h2>
-<p>Byte models expand traditional language models to the byte level, starting from the premise that all digital data and operations are fundamentally byte-based. These models process data from various modalities such as text, audio, and images uniformly as bytes, increasing their applicability in a wide digital environment.</p>
+<p>Byte models extend traditional language models to the byte level, treating all digital data and operations as fundamentally byte-based. These models process data from different modalities (such as text, image, and audio) uniformly as bytes, making them versatile in a wide digital environment. However, recent research on byte models has been limited, with a focus on narrow tasks. These studies often overlook the broader potential of byte models in the digital world simulation.</p>
 <p><img src="framework.JPG" alt="bgpt_framework" /> <br>
 <em><a href="https://byte-gpt.github.io/">Figure 1</a>: The bGPT framework simulates digital systems using native binary data. It integrates diverse data types into a single model by treating everything as a byte sequence.</em></p>
-<p>In this paper, bGPT is introduced. bGPT is designed to model digital data at the byte level and is optimized to effectively process byte sequences. It has demonstrated performance comparable to specialized models across various modalities, including text, audio, and images, and offers new possibilities for predicting, simulating, and diagnosing algorithms or hardware operations. Designed to predict and understand bytes, bGPT provides a deeper understanding of and interaction with digital systems.</p>
+<p>To address this issue, the authors proposed bGPT, which is designed for modeling digital data at byte-level. It performs comparably to specialized models across various well-studied modalities, and opens up new possibilities for simulating algorithm and hardware operations. By learning to predict next byte, bGPT provides a deeper understanding of the intricate patterns in the digital world.</p>
 <p>The main contributions of this paper are as follows:</p>
 <ul>
 <li><strong>bGPT</strong>, a model with <em>next-byte prediction</em> is presented to simulate digital systems</li>
 <li><strong>Hierarchical Transformer architecture</strong> is adapted to handle byte sequences efficiently.</li>
 <li><strong>In-depth analysis</strong> of bGPT&rsquo;s performance on text, audio, and image data is provided.</li>
-<li><strong>Novel benchmarks</strong> are introduced to show bGPT&rsquo;s capabilities for digital world modeling.</li>
+<li><strong>Novel benchmarks</strong> are introduced to show bGPT&rsquo;s capabilities for digital world simulation.</li>
 </ul>
 <h2 id="proposed-bgpt-framework">
   Proposed bGPT Framework
@@ -748,40 +758,94 @@ For classification tasks, the loss function used is the cross-entropy loss, whic
 
 <p>These training objectives enable bGPT to understand various byte-based data and accurately mimic digital patterns of the real world. The combination of generative approaches and classification capabilities grants the model the flexibility to tackle a diverse range of problems. Through this, the model can go beyond simple pattern recognition to play a crucial role in predicting and analyzing the operations of complex digital systems.</p>
 <hr>
-<h3 id="applications">
+<h2 id="applications">
   Applications
   <a class="anchor" href="#applications">#</a>
+</h2>
+<h3 id="1-digital-media-processing">
+  1. Digital Media Processing
+  <a class="anchor" href="#1-digital-media-processing">#</a>
 </h3>
-<p><em><strong>1. Digital Media Processing</strong></em></p>
 <p>bGPT is used for processing various types of digital media data such as text, audio, and images. This model performs learning targeted at media files through generative modeling, transforming the data into features and subsequently performing classification tasks based on these features.</p>
 <p>For example, audio files are converted to and processed in WAV format, while images are processed at a low resolution in BMP format. By utilizing these standardized datasets, bGPT can develop a generalized understanding of various media types.</p>
-<p><em><strong>2. Algorithm and Hardware Simulation</strong></em></p>
+<h3 id="2-algorithm-and-hardware-simulation">
+  2. Algorithm and Hardware Simulation
+  <a class="anchor" href="#2-algorithm-and-hardware-simulation">#</a>
+</h3>
 <p>bGPT is particularly useful for tasks such as data conversion and CPU state modeling. This means bGPT can learn the digital conversion process and simulate the operation of CPUs to predict the state of the CPU after various commands are executed.</p>
 <p>For example, in the task of converting the music data format from ABC notation to MIDI format, bGPT learns to transform text-based music scores in ABC notation into binary performance signals in MIDI. Additionally, this model is also capable of performing the reverse conversion from MIDI back to ABC notation.</p>
-<hr>
-<h3 id="experiment">
-  Experiment
-  <a class="anchor" href="#experiment">#</a>
+<h2 id="experiments">
+  Experiments
+  <a class="anchor" href="#experiments">#</a>
+</h2>
+<h3 id="1-digital-media-processing-well-studied-tasks">
+  1. Digital Media Processing (well-studied tasks)
+  <a class="anchor" href="#1-digital-media-processing-well-studied-tasks">#</a>
 </h3>
-<p><em><strong>1. Processing Various Digital Media</strong></em></p>
 <p><strong>Experiment Overview</strong>
 To assess the flexibility and versatility of the bGPT model, experiments with various types of digital media data were conducted. This involved handling a wide range of file types including text, audio, and image data, with the aim to measure the model&rsquo;s ability to process these types and to see how well bGPT generalizes compared to specialized models. The experiment included both generative modeling and classification tasks.</p>
-<p><strong>Experimental Data</strong>
-The datasets used in the experiment included:</p>
-<ul>
-<li><strong>Text</strong>: Wikipedia data and AG news dataset.</li>
-<li><strong>Audio</strong>: LibriSpeech and Speech Commands v2 dataset.</li>
-<li><strong>Images</strong>: ImageNet and CIFAR-10 dataset.</li>
-</ul>
-<p>These datasets are ideal resources for evaluating the diverse media processing capabilities of bGPT.</p>
-<p><strong>Experimental Setup</strong>
-The bGPT model was trained under various settings:</p>
-<ul>
-<li><strong>bGPTimage</strong>: Trained exclusively with image data (ImageNet).</li>
-<li><strong>bGPTlibri</strong>: Trained exclusively with text data (Wikipedia).</li>
-<li><strong>bGPTmix</strong>: Trained with a mix of all the above datasets.</li>
-</ul>
-<p>Each model was fine-tuned for specific types of classification and generative tasks post-pretraining, providing a direct comparison of each model&rsquo;s performance.</p>
+<!-- **Experimental Data**
+The datasets used in the experiment included:
+
+- **Text**: Wikipedia data and AG news dataset.
+- **Audio**: LibriSpeech and Speech Commands v2 dataset.
+- **Images**: ImageNet and CIFAR-10 dataset.
+
+These datasets are ideal resources for evaluating the diverse media processing capabilities of bGPT.
+
+**Experimental Setup** 
+The bGPT model was trained under various settings:
+
+- **bGPTimage**: Trained exclusively with image data (ImageNet).
+- **bGPTlibri**: Trained exclusively with text data (Wikipedia).
+- **bGPTmix**: Trained with a mix of all the above datasets.
+
+Each model was fine-tuned for specific types of classification and generative tasks post-pretraining, providing a direct comparison of each model's performance. -->
+<h4 id="experimental-setup">
+  Experimental Setup
+  <a class="anchor" href="#experimental-setup">#</a>
+</h4>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Modality</th>
+<th>Pre-training dataset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bGPTrandom</td>
+<td>(None)</td>
+<td>(None, randomly initialized)</td>
+</tr>
+<tr>
+<td>bGPTwiki</td>
+<td>Text</td>
+<td>Wikipedia</td>
+</tr>
+<tr>
+<td>bGPTimage</td>
+<td>Image</td>
+<td>ImageNet</td>
+</tr>
+<tr>
+<td>bGPTlibri</td>
+<td>Speech</td>
+<td>LibriSpeech</td>
+</tr>
+<tr>
+<td>bGPTsignal</td>
+<td>Image+Speech</td>
+<td>ImageNet+LibriSpeech</td>
+</tr>
+<tr>
+<td>bGPTmix</td>
+<td>Text+Image+Speech</td>
+<td>Wikipedia+ImageNet+LibriSpeech</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Result and Analysis</strong></p>
 <ul>
 <li><strong>Text Processing</strong>: bGPTwiki showed high classification accuracy on the AG News dataset, indicating bGPT&rsquo;s strong performance in text-based tasks.</li>
@@ -875,7 +939,10 @@ The bGPT model was trained under various settings:</p>
 </table>
 </li>
 </ul>
-<p><em><strong>2.  Algorithm and Hardware Simulation</strong></em></p>
+<h3 id="2-algorithm-and-hardware-simulation-underexplored-tasks">
+  2. Algorithm and Hardware Simulation (underexplored tasks)
+  <a class="anchor" href="#2-algorithm-and-hardware-simulation-underexplored-tasks">#</a>
+</h3>
 <p><strong>Experiment Overview</strong>
 One of the unique capabilities of the bGPT model is its ability to simulate the operations of algorithms and hardware. This experimental section assesses how bGPT handles complex data conversion processes and CPU state modeling tasks. These capabilities are particularly significant in the fields of cybersecurity, system diagnostics, and hardware optimization.</p>
 <p><strong>Experiment Methods</strong>
@@ -894,10 +961,10 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
 <li><strong>CPU State Modeling Performance</strong>: bGPT accurately predicted the resulting state of CPUs from an initial state across a variety of CPU instructions. It achieved over 99% accuracy even with complex instruction sequences, demonstrating bGPT&rsquo;s detailed understanding of the internal workings of hardware.</li>
 </ul>
 <hr>
-<h3 id="conclusion-and-future-work">
-  <strong>Conclusion and Future Work</strong>
+<h2 id="conclusion-and-future-work">
+  Conclusion and Future Work
   <a class="anchor" href="#conclusion-and-future-work">#</a>
-</h3>
+</h2>
 <p>bGPT has proven to be a powerful model capable of effectively processing various types of digital media data. Particularly, this model can be flexibly applied to different types of data and has demonstrated performance that can compete with models pretrained on specific datasets. These results show that bGPT can be extremely useful in solving a wide range of real-world problems.</p>
 <p>Moreover, bGPT has proven its ability to go beyond simply processing data, successfully modeling and simulating the operations of complex algorithms and hardware. This capability will be particularly valuable in fields related to technical problem solving and new hardware design.</p>
 <p>bGPT extends deep learning to binary data processing through byte prediction. Experiments have demonstrated bGPT&rsquo;s strong scalability in native binary data modeling.</p>
@@ -921,7 +988,7 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/befdae434844e213b0bc8a16f5627908139f1dc7" title='Last modified by Dohun Kim | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/c7475e4abf26d71992173b85504becffd9b384e0" title='Last modified by Dohun Kim | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -971,11 +1038,21 @@ bGPT&rsquo;s performance was evaluated in the following two key areas:</p>
       <ul>
         <li><a href="#architecture">Architecture</a></li>
         <li><a href="#training-objectives">Training Objectives</a></li>
-        <li><a href="#applications">Applications</a></li>
-        <li><a href="#experiment">Experiment</a></li>
-        <li><a href="#conclusion-and-future-work"><strong>Conclusion and Future Work</strong></a></li>
       </ul>
     </li>
+    <li><a href="#applications">Applications</a>
+      <ul>
+        <li><a href="#1-digital-media-processing">1. Digital Media Processing</a></li>
+        <li><a href="#2-algorithm-and-hardware-simulation">2. Algorithm and Hardware Simulation</a></li>
+      </ul>
+    </li>
+    <li><a href="#experiments">Experiments</a>
+      <ul>
+        <li><a href="#1-digital-media-processing-well-studied-tasks">1. Digital Media Processing (well-studied tasks)</a></li>
+        <li><a href="#2-algorithm-and-hardware-simulation-underexplored-tasks">2. Algorithm and Hardware Simulation (underexplored tasks)</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion-and-future-work">Conclusion and Future Work</a></li>
     <li><a href="#references">References</a></li>
   </ul>
 </nav>

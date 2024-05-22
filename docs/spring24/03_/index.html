@@ -3,13 +3,13 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Introduction # The significant advances in deep learning over the past decade have largely relied on the development of algorithms that efficiently leverage available hardware. As the size of state-of-the-art models increases, hardware efficiency becomes crucial for reducing training costs, which have grown substantially in terms of money, time, and environmental impact. However, with the end of Moore&rsquo;s Law and Dennard scaling, increased transistor density alone cannot provide a straightforward path to greater efficiency.">
+<meta name="description" content="Boosting Efficiency in Deep Learning: Introducing Unit Scaling for Low-Precision Training # Paper : Unit Scaling Out-of-the-Box Low-Precision Training Author : Charlie Blake, Douglas Orr, Carlo Luschi posted by Seongrok Moon, Changyoung Ju Introduction # The significant advances in deep learning over the past decade have largely relied on the development of algorithms that efficiently leverage available hardware. As the size of state-of-the-art models increases, hardware efficiency becomes crucial for reducing training costs, which have grown substantially in terms of money, time, and environmental impact.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/03_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="Introduction # The significant advances in deep learning over the past decade have largely relied on the development of algorithms that efficiently leverage available hardware. As the size of state-of-the-art models increases, hardware efficiency becomes crucial for reducing training costs, which have grown substantially in terms of money, time, and environmental impact. However, with the end of Moore’s Law and Dennard scaling, increased transistor density alone cannot provide a straightforward path to greater efficiency.">
+  <meta property="og:description" content="Boosting Efficiency in Deep Learning: Introducing Unit Scaling for Low-Precision Training # Paper : Unit Scaling Out-of-the-Box Low-Precision Training Author : Charlie Blake, Douglas Orr, Carlo Luschi posted by Seongrok Moon, Changyoung Ju Introduction # The significant advances in deep learning over the past decade have largely relied on the development of algorithms that efficiently leverage available hardware. As the size of state-of-the-art models increases, hardware efficiency becomes crucial for reducing training costs, which have grown substantially in terms of money, time, and environmental impact.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>03 | Efficient ML Systems</title>
@@ -18,7 +18,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/03_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.895537bccff056e685676053a26dfc4fa81b562ccd1b0ca7578ce1a18a86b761.js" integrity="sha256-iVU3vM/wVuaFZ2BTom38T6gbVizNGwynV4zhoYqGt2E=" crossorigin="anonymous"></script>
 
   
 
@@ -608,7 +608,7 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#boosting-efficiency-in-deep-learning-introducing-unit-scaling-for-low-precision-training">Boosting Efficiency in Deep Learning: Introducing Unit Scaling for Low-Precision Training</a>
       <ul>
         <li><a href="#introduction"><strong>Introduction</strong></a></li>
         <li><a href="#background"><strong>Background</strong></a></li>
@@ -636,12 +636,19 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h3 id="introduction">
+  <article class="markdown book-article"><h2 id="boosting-efficiency-in-deep-learning-introducing-unit-scaling-for-low-precision-training">
+  Boosting Efficiency in Deep Learning: Introducing Unit Scaling for Low-Precision Training
+  <a class="anchor" href="#boosting-efficiency-in-deep-learning-introducing-unit-scaling-for-low-precision-training">#</a>
+</h2>
+<p><em>Paper : Unit Scaling Out-of-the-Box Low-Precision Training<br/></em>
+<em>Author : Charlie Blake, Douglas Orr, Carlo Luschi<br/></em>
+<em>posted by Seongrok Moon, Changyoung Ju <br/></em>
+<br/></p>
+<h3 id="introduction">
   <strong>Introduction</strong>
   <a class="anchor" href="#introduction">#</a>
 </h3>
 <p>The significant advances in deep learning over the past decade have largely relied on the development of algorithms that efficiently leverage available hardware. As the size of state-of-the-art models increases, hardware efficiency becomes crucial for reducing training costs, which have grown substantially in terms of money, time, and environmental impact. However, with the end of Moore&rsquo;s Law and Dennard scaling, increased transistor density alone cannot provide a straightforward path to greater efficiency. The use of low-precision number formats is a promising alternative. These formats offer substantial gains in compute, memory, and bandwidth efficiency, making them valuable in the context of modern deep learning.</p>
-<hr>
 <h3 id="background">
   <strong>Background</strong>
   <a class="anchor" href="#background">#</a>
@@ -716,7 +723,6 @@ https://github.com/alex-shpak/hugo-book
 </p>
 </li>
 </ul>
-<hr>
 <h3 id="analysis">
   <strong>Analysis</strong>
   <a class="anchor" href="#analysis">#</a>
@@ -781,7 +787,6 @@ https://github.com/alex-shpak/hugo-book
 </ul>
 </li>
 </ul>
-<hr>
 <h3 id="unit-scaling">
   Unit Scaling
   <a class="anchor" href="#unit-scaling">#</a>
@@ -817,7 +822,7 @@ as <em>ops</em>.</li>
 <li>In deep learning we typically apply reverse-mode automatic differentiation to the forward graph to create a second computational graph whose output nodes represent the partial derivatives of the model with respect to its inputs: <span>
   \( \frac{\partial f_{model}}{\partial x_i}, \forall i \in[1 . . m] \)
 </span>
-. We call this the <em>backward graph</em></li>
+. We call this the <strong>backward graph</strong></li>
 </ul>
 </li>
 <li>
@@ -838,13 +843,13 @@ as <em>ops</em>.</li>
 </ul>
 <p align="center">
 <span>
-  \(f^* &amp; \triangleq \alpha \cdot f\left(x_1, \ldots, x_k\right)\)
+  \( f^{*} &amp; \triangleq \alpha \cdot f(x_1, \ldots, x_k)\)
 </span>
 
 </p>  
 <p align="center">  
 <span>
-  \( f_{\text {grad }}^*\left(x_1, \ldots x_k, g\right)_i &amp; \triangleq \beta_i \cdot f_{\text {grad }}\left(x_1, \ldots x_k, g\right)_i, \forall i \in[1 . . k] \)
+  \( f_{\text {grad }}^{*}\left(x_1, \ldots x_k, g\right)_i &amp; \triangleq \beta_i \cdot f_{\text {grad }}\left(x_1, \ldots x_k, g\right)_i, \forall i \in[1 . . k] \)
 </span>
 
 </p>  
@@ -1083,7 +1088,7 @@ Unit scaling has demonstrated to address the complexities of low-precision train
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/30a540dabc1d6f640c1d6d9c14a6a910384a307c" title='Last modified by cnyjoo | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/9c5fc8a95ff6c5fdc119dfd86aa7630f4a270439" title='Last modified by cnyjoo | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -1128,7 +1133,7 @@ Unit scaling has demonstrated to address the complexities of low-precision train
   
 <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#boosting-efficiency-in-deep-learning-introducing-unit-scaling-for-low-precision-training">Boosting Efficiency in Deep Learning: Introducing Unit Scaling for Low-Precision Training</a>
       <ul>
         <li><a href="#introduction"><strong>Introduction</strong></a></li>
         <li><a href="#background"><strong>Background</strong></a></li>

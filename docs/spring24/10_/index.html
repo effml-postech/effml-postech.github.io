@@ -22,7 +22,7 @@ Reviewer: Hyunho Kook
 <link rel="canonical" href="http://localhost:1313/docs/spring24/10_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.895537bccff056e685676053a26dfc4fa81b562ccd1b0ca7578ce1a18a86b761.js" integrity="sha256-iVU3vM/wVuaFZ2BTom38T6gbVizNGwynV4zhoYqGt2E=" crossorigin="anonymous"></script>
 
   
 
@@ -613,16 +613,34 @@ https://github.com/alex-shpak/hugo-book
 <nav id="TableOfContents">
   <ul>
     <li><a href="#1-introduction">1. Introduction</a></li>
-    <li><a href="#2-mega-exponential-moving-average-with-gated-attention">2. MEGA (exponential Moving avErage with Gated Attention)</a></li>
-    <li><a href="#3-methods">3. Methods</a>
+    <li><a href="#2-mega-exponential-moving-average-with-gated-attention">2. MEGA (exponential Moving avErage with Gated Attention)</a>
       <ul>
-        <li><a href="#cema-extending-multi-dimensional-damped-ema-to-complex-domain">CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)</a></li>
-        <li><a href="#timestep-normalization">Timestep Normalization</a></li>
-        <li><a href="#normalized-attention">Normalized Attention</a></li>
-        <li><a href="#2-hop-residual-connection">2-hop Residual Connection</a></li>
+        <li><a href="#2a-moving-average-with-damping">2.a Moving Average with Damping</a></li>
+        <li><a href="#2b-generating-query-and-key">2.b Generating Query and Key</a></li>
+        <li><a href="#2c-attention-output-calculation">2.c Attention Output Calculation</a></li>
+        <li><a href="#2d-gating-mechanisms">2.d Gating Mechanisms</a></li>
+        <li><a href="#2e-chunk-wise-attention-for-linear-time-complexity">2.e Chunk-wise Attention for Linear Time Complexity</a></li>
+        <li><a href="#2f-limitations-and-future-directions">2.f Limitations and Future Directions</a></li>
       </ul>
     </li>
-    <li><a href="#4-experiments">4. Experiments</a></li>
+    <li><a href="#3-methods">3. Methods</a>
+      <ul>
+        <li><a href="#3a-cema-extending-multi-dimensional-damped-ema-to-complex-domain">3.a CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)</a></li>
+        <li><a href="#3b-timestep-normalization">3.b Timestep Normalization</a></li>
+        <li><a href="#3c-normalized-attention">3.c Normalized Attention</a></li>
+        <li><a href="#3d-2-hop-residual-connection">3.d 2-hop Residual Connection</a></li>
+        <li><a href="#3e-summary-of-methods">3.e Summary of Methods</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-experiments">4. Experiments</a>
+      <ul>
+        <li><a href="#4a-short-context-evaluation">4.a Short-Context Evaluation</a></li>
+        <li><a href="#4b-long-context-evaluation">4.b Long-Context Evaluation</a></li>
+        <li><a href="#4c-instuction-finetuning">4.c Instuction Finetuning</a></li>
+        <li><a href="#4d-medium-scale-benchmarks">4.d Medium-scale Benchmarks</a></li>
+        <li><a href="#4e-summary-of-experiments">4.e Summary of Experiments</a></li>
+      </ul>
+    </li>
     <li><a href="#5-comparison-with-related-works">5. Comparison with related works</a></li>
     <li><a href="#6-discussion">6. Discussion</a></li>
   </ul>
@@ -661,30 +679,182 @@ https://github.com/alex-shpak/hugo-book
   2. MEGA (exponential Moving avErage with Gated Attention)
   <a class="anchor" href="#2-mega-exponential-moving-average-with-gated-attention">#</a>
 </h2>
+<p>Before diving into the main contributions of our work, it&rsquo;s essential to grasp the concepts behind MEGA (Moving Average with Gating Attention), a technique that serves as a stepping stone towards more efficient transformer models. MEGA leverages the moving average with damping to enhance the attention mechanism. Let&rsquo;s break it down step by step.</p>
+<h3 id="2a-moving-average-with-damping">
+  2.a Moving Average with Damping
+  <a class="anchor" href="#2a-moving-average-with-damping">#</a>
+</h3>
+<p>At the core of MEGA lies the moving average with damping, which can be expressed by the following equations:</p>
+<p>$$
+\begin{aligned}
+u_t^{(j)} &amp;= \beta_j x_{t,j} \
+h_t^{(j)} &amp;= \alpha_j \odot u_t^{(j)} + (1 - \alpha_j \odot \delta_j) \odot h_{t-1}^{(j)} \
+y_{t,j} &amp;= \eta_j^T h_t^{(j)}
+\end{aligned}
+$$</p>
+<p>This exponential moving average (EMA) serves as the foundation for the subsequent attention mechanism.</p>
+<h3 id="2b-generating-query-and-key">
+  2.b Generating Query and Key
+  <a class="anchor" href="#2b-generating-query-and-key">#</a>
+</h3>
+<p>The EMA is then fed into the attention mechanism to generate the Query and Key matrices after applying the SiLU activation function. First, we calculate the shared representation $Z$ using the EMA of the input $X$:</p>
+<p>$$
+\begin{aligned}
+X&rsquo; &amp;= EMA(X) \in \mathbb{R}^{n \times d} \
+Z &amp;= \phi_{silu}(X&rsquo;W_z + b_z) \in \mathbb{R}^{n \times z}
+\end{aligned}
+$$</p>
+<p>Using the shared representation $Z$, we can now compute the queries and keys. It&rsquo;s important to note that the original input $X$ is used to calculate the values:</p>
+<p>$$
+\begin{aligned}
+Q &amp;= \kappa_q \odot Z + \mu_q \in \mathbb{R}^{n \times z}\
+K &amp;= \kappa_k \odot Z + \mu_k \in \mathbb{R}^{n \times z}\
+V &amp;= \phi_{silu}(XW_v + b_v) \in \mathbb{R}^{n \times v}
+\end{aligned}
+$$</p>
+<h3 id="2c-attention-output-calculation">
+  2.c Attention Output Calculation
+  <a class="anchor" href="#2c-attention-output-calculation">#</a>
+</h3>
+<p>After obtaining the Query, Key, and Value matrices, we can calculate the output of the attention mechanism using the standard formula:</p>
+<p>$$
+O = f\left(\frac{QK^T}{\tau(X)}\right)V \in \mathbb{R}^{n \times v}
+$$</p>
+<p>Here, $f$ is typically the softmax function, and $\tau$ is a temperature function based on the input $X$.</p>
+<h3 id="2d-gating-mechanisms">
+  2.d Gating Mechanisms
+  <a class="anchor" href="#2d-gating-mechanisms">#</a>
+</h3>
+<p>MEGA employs gating mechanisms, similar to the Gated Linear Unit (GLU), to generate the final output $Y$ and the internal activation $\hat{H}$. This is achieved through the following equations:</p>
+<p>$$
+\begin{aligned}
+\gamma &amp;= \phi_{silu}(X&rsquo;W_\gamma + b_\gamma) \in \mathbb{R}^{n \times v} \
+\varphi &amp;= \phi_{sigmoid}(X&rsquo;W_\varphi + b_\varphi) \in \mathbb{R}^{n \times d} \
+\hat{H} &amp;= \phi_{silu}(X&rsquo;W_h + (\gamma \odot O)U_h + b_h) \in \mathbb{R}^{n \times d} \
+Y &amp;= \varphi \odot \hat{H} + (1 - \varphi) \odot X \in \mathbb{R}^{n \times d}
+\end{aligned}
+$$</p>
+<h3 id="2e-chunk-wise-attention-for-linear-time-complexity">
+  2.e Chunk-wise Attention for Linear Time Complexity
+  <a class="anchor" href="#2e-chunk-wise-attention-for-linear-time-complexity">#</a>
+</h3>
+<p><img src="./Mega.png" alt="Mega" /></p>
+<p>To reduce the time complexity to a linear function of O(nc), MEGA employs chunk-wise attention, as illustrated in the figure above. By maintaining an internal accumulation of information and processing the input in chunks, MEGA enables transformers to achieve comparable performance on long context datasets.</p>
+<h3 id="2f-limitations-and-future-directions">
+  2.f Limitations and Future Directions
+  <a class="anchor" href="#2f-limitations-and-future-directions">#</a>
+</h3>
+<p><img src="./Mega_table.png" alt="Mega_table" /></p>
+<p>Despite its benefits, MEGA still faces two primary challenges:</p>
+<ol>
+<li>Performance falls short compared to typical transformers with full attention.</li>
+<li>Different architectures are required for different tasks.</li>
+</ol>
+<p>Moreover, the effectiveness of MEGA in large-scale networks remains to be demonstrated conclusively.</p>
+<p>In the following sections, we will explore how our proposed approach addresses these limitations and pushes the boundaries of efficient transformer models.</p>
 <h2 id="3-methods">
   3. Methods
   <a class="anchor" href="#3-methods">#</a>
 </h2>
-<h3 id="cema-extending-multi-dimensional-damped-ema-to-complex-domain">
-  CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)
-  <a class="anchor" href="#cema-extending-multi-dimensional-damped-ema-to-complex-domain">#</a>
+<p>Now, this paper, Megalodon, proposes four different methods that makes a network have even better performance than the baseline, while it can be applied for general cases.</p>
+<h3 id="3a-cema-extending-multi-dimensional-damped-ema-to-complex-domain">
+  3.a CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)
+  <a class="anchor" href="#3a-cema-extending-multi-dimensional-damped-ema-to-complex-domain">#</a>
 </h3>
-<h3 id="timestep-normalization">
-  Timestep Normalization
-  <a class="anchor" href="#timestep-normalization">#</a>
+<p>To improve EMA (Exponential Moving Average) capability when working over the complex number system, the authors propose CEMA (Complex Exponential Moving Average), which extends the idea of EMA to the complex plane. The key equations for CEMA are:</p>
+<p>$$
+\begin{aligned}
+h_t^{(j)} &amp;= \alpha_j(\cos \theta_j + i \sin \theta_j) \odot u_t^{(j)} + (1 - \alpha_j \odot \delta_j)(\cos \theta_j + i \sin \theta_j) \odot h_{t-1}^{(j)} \
+y_{t,j} &amp;= \mathcal{Re}(\eta_j^T h_t^{(j)})
+\end{aligned}
+$$</p>
+<p>Here, $\alpha$ and $\delta$ are real-valued parameters, just like in the original EMA. However, $\eta$ is a complex-valued parameter in CEMA. The $\theta_j$ values are learnable parameters that are used to uniformly distribute the $h$ arguments over the period of $2\pi$. This is achieved by parameterizing $\theta_j$ as:</p>
+<p>$$
+\theta_{j,k} = \frac{2\pi k}{h} \omega_j, \quad \forall k \in {1, 2, \dots, h}
+$$</p>
+<p>where $\omega$ is a learnable parameter that determines the base angles.</p>
+<p>The introduction of complex numbers in CEMA allows it to capture positional features of internal embeddings without changing the magnitude of $h$. Instead, it periodically changes the angle in the complex domain. This makes CEMA a powerful tool for modeling long sequences and improving the capability of EMA in complex-valued systems.</p>
+<h3 id="3b-timestep-normalization">
+  3.b Timestep Normalization
+  <a class="anchor" href="#3b-timestep-normalization">#</a>
 </h3>
-<h3 id="normalized-attention">
-  Normalized Attention
-  <a class="anchor" href="#normalized-attention">#</a>
+<p><img src="./Timestep_norm.png" alt="Timestep_norm" /></p>
+<p>Transformer-based models typically use Layer Normalization (LayerNorm) instead of Batch Normalization (BatchNorm) due to the significant variation in input batch sizes across different timesteps. While this approach has led to great success in large language models, the authors argue that LayerNorm cannot effectively capture and reduce the internal covariance along the temporal domain. To address this issue, they propose using a GroupNorm-like method. However, applying GroupNorm directly is challenging because it cannot access future information during auto-regressive inference.</p>
+<p>To overcome this obstacle, the authors introduce Timestep Normalization, a superset of GroupNorm. This technique divides the total timesteps into $k$ groups and applies group normalization to each group independently. By doing so, Timestep Normalization can reduce the covariance shift along the temporal domain while still being compatible with the causal nature of auto-regressive models.</p>
+<h3 id="3c-normalized-attention">
+  3.c Normalized Attention
+  <a class="anchor" href="#3c-normalized-attention">#</a>
 </h3>
-<h3 id="2-hop-residual-connection">
-  2-hop Residual Connection
-  <a class="anchor" href="#2-hop-residual-connection">#</a>
+<p>During the calculation of attentions, the results can have a hugh instability along the temporal domain because the value of CEMA keeps changing. Therfore, the authors propose to use normalizaion on $Z$ before calculating the queries and keys. In this case, we do not have to scale the $QK^{T}$ since the values are already normalized while improving the stability of the attention mechanism.</p>
+<p>$$
+\begin{aligned}
+X&rsquo; &amp;= \mathcal{CEMA}(X) &amp;&amp; \in \mathbb{R}^{n \times d} \
+Z &amp;= X&rsquo;W_z + b_z, \quad Z&rsquo; = \frac{Z}{|Z|} &amp;&amp; \in \mathbb{R}^{n \times z} \
+Q &amp;= \kappa_q \odot Z&rsquo; + \mu_q &amp;&amp; \in \mathbb{R}^{n \times z} \
+K &amp;= \kappa_k \odot Z&rsquo; + \mu_k &amp;&amp; \in \mathbb{R}^{n \times z} \
+O &amp;= f_{\text{softmax}}\left(QK^T\right)V &amp;&amp; \in \mathbb{R}^{n \times v}
+\end{aligned}
+$$</p>
+<h3 id="3d-2-hop-residual-connection">
+  3.d 2-hop Residual Connection
+  <a class="anchor" href="#3d-2-hop-residual-connection">#</a>
 </h3>
+<p><img src="./Architecture.png" alt="Architecture" /></p>
+<p>Finnally, the last contribution of this paper is the use of the 2-hop residual connection. The authors point out that pre-normalizaion can achieve more stable training in deep learning, this can further lead instability when scaling up the model size. Therefore, to reduce the instability, this paper uses 2-hop residual connections which propagate the input to the end of the layer without modifying it.</p>
+<h3 id="3e-summary-of-methods">
+  3.e Summary of Methods
+  <a class="anchor" href="#3e-summary-of-methods">#</a>
+</h3>
+<p>The main contribution of this paper lies in the application of CEMA (Complex Exponential Moving Average), which effectively captures the positional information of internal embeddings ($H$) by incorporating a circular system in the complex domain. By using periodic functions like sine and cosine, CEMA can encode the sequential nature of the input data, allowing the model to better understand and utilize the temporal dependencies.</p>
+<p>However, the introduction of complex numbers in CEMA doubles the dimensionality of the variables, which can potentially lead to significant instability during the training process. To address this issue, the authors propose three additional methods: Timestep Normalization, Normalized Attention, and 2-hop Residual Connection. These techniques work in conjunction with CEMA to stabilize the training process and ensure the model&rsquo;s robustness.</p>
+<ol>
+<li>
+<p>Timestep Normalization is employed to reduce the covariance shift along the temporal domain while maintaining compatibility with the causal nature of auto-regressive models. By normalizing the activations within each timestep group, this method helps to mitigate the impact of the increased dimensionality introduced by CEMA.</p>
+</li>
+<li>
+<p>Normalized Attention is used to stabilize the attention mechanism by properly scaling the attention weights. This prevents extreme values that could otherwise destabilize the training process, ensuring that the model can learn effectively from the input data.</p>
+</li>
+<li>
+<p>2-hop Residual Connection provides a more direct path for gradient flow, allowing the model to propagate information more efficiently during the backward pass. This helps to alleviate the vanishing gradient problem and facilitates faster convergence of the model.</p>
+</li>
+</ol>
+<p>These three methods work in harmony with CEMA to counterbalance the potential instability caused by the increased dimensionality. By carefully integrating these techniques, the authors aim to create a robust and effective model that can leverage the benefits of CEMA while maintaining stable training dynamics.</p>
+<p>In essence, while CEMA is the primary contribution of this paper, the additional methods proposed by the authors play a crucial role in ensuring the model&rsquo;s stability and performance. The combination of CEMA with Timestep Normalization, Normalized Attention, and 2-hop Residual Connection demonstrates a well-rounded approach to tackling the challenges associated with modeling sequential data in the complex domain.</p>
 <h2 id="4-experiments">
   4. Experiments
   <a class="anchor" href="#4-experiments">#</a>
 </h2>
+<p>In most cases, the authors try to compare the proposed idea with the LLAMA2-7B model. They use MEGALODON-7B model and use the same amount of training tokens to pre-train it. They try to show that MEGALODON can not only achieve the higher performance on long context datasets, but also show superior skills on short context problems than a naive transformer architecture.</p>
+<h3 id="4a-short-context-evaluation">
+  4.a Short-Context Evaluation
+  <a class="anchor" href="#4a-short-context-evaluation">#</a>
+</h3>
+<p><img src="./figure1.png" alt="figure1" /></p>
+<p><img src="./table1.png" alt="table1" /></p>
+<p>The authors first show the loss during training and the performance on short context datasets during inference. The proposed method can achieve training loss between LLAMA-7b and LLAMA-13b with 7b parameters. Furthermore, if you look at the table 1, then during inference the MEGALODON-7B truly show the performance between LLAMA-7b and LLAMA-13b. This proves that MEGALODON can ahieve better performance than the original model unlike the previous work, MEGA.</p>
+<h3 id="4b-long-context-evaluation">
+  4.b Long-Context Evaluation
+  <a class="anchor" href="#4b-long-context-evaluation">#</a>
+</h3>
+<p><img src="./table2.png" alt="table2" /></p>
+<p>To verify the performance on long context datasets, the authors provide two results. The figure 5 describes that if the context length increases, then the MEGALODON can truly output lower PPL answers. Then, the table 2 shows the performance on a long context benchmark, Scrolls. Although the LLAMA2 can show slightly better performance when it is finetuned for long context datasets with 500B tokens, the MEGALODON can show comparable accuracies without applying any fine-tuning techniques.</p>
+<h3 id="4c-instuction-finetuning">
+  4.c Instuction Finetuning
+  <a class="anchor" href="#4c-instuction-finetuning">#</a>
+</h3>
+<p><img src="./table3.png" alt="table3" /></p>
+<p>The authors also prove that MEGALODON can have a generalization power by testing the pre-trained model on MT-Bench. They do not utilized further techniques such as RLHF during fine-tuning for a specific instruction. They show a comparable or sometimes competitive performance.</p>
+<h3 id="4d-medium-scale-benchmarks">
+  4.d Medium-scale Benchmarks
+  <a class="anchor" href="#4d-medium-scale-benchmarks">#</a>
+</h3>
+<p><img src="./table4.png" alt="table4" /></p>
+<p>Finnally, the authors prove that the MEGALODON can show competitive performance compared to the previous long-context-agnostic models on general benchmarks. Inside the table 4 and 5, the MEGALODON achieves highest performance on ImageNet classifcation task and medium-scale benchmakr (PG-19).</p>
+<h3 id="4e-summary-of-experiments">
+  4.e Summary of Experiments
+  <a class="anchor" href="#4e-summary-of-experiments">#</a>
+</h3>
+<p>In the experiment part, the authors try to prove that the MEGALODON can have the features that have been proven for the previous foundation models, while showing superior performance on long context benchmarks. This implies that the MEGALODON is not a sophisticately tuned model for long contexts.</p>
 <h2 id="5-comparison-with-related-works">
   5. Comparison with related works
   <a class="anchor" href="#5-comparison-with-related-works">#</a>
@@ -725,7 +895,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a71166ec9e30dd13db0972df6e65ef4914ea2dbc" title='Last modified by kookhh0827 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/f91e8072cefcfa3a00ddad59dbbdf2cf74dbb5d0" title='Last modified by kookhh0827 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -771,16 +941,34 @@ https://github.com/alex-shpak/hugo-book
 <nav id="TableOfContents">
   <ul>
     <li><a href="#1-introduction">1. Introduction</a></li>
-    <li><a href="#2-mega-exponential-moving-average-with-gated-attention">2. MEGA (exponential Moving avErage with Gated Attention)</a></li>
-    <li><a href="#3-methods">3. Methods</a>
+    <li><a href="#2-mega-exponential-moving-average-with-gated-attention">2. MEGA (exponential Moving avErage with Gated Attention)</a>
       <ul>
-        <li><a href="#cema-extending-multi-dimensional-damped-ema-to-complex-domain">CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)</a></li>
-        <li><a href="#timestep-normalization">Timestep Normalization</a></li>
-        <li><a href="#normalized-attention">Normalized Attention</a></li>
-        <li><a href="#2-hop-residual-connection">2-hop Residual Connection</a></li>
+        <li><a href="#2a-moving-average-with-damping">2.a Moving Average with Damping</a></li>
+        <li><a href="#2b-generating-query-and-key">2.b Generating Query and Key</a></li>
+        <li><a href="#2c-attention-output-calculation">2.c Attention Output Calculation</a></li>
+        <li><a href="#2d-gating-mechanisms">2.d Gating Mechanisms</a></li>
+        <li><a href="#2e-chunk-wise-attention-for-linear-time-complexity">2.e Chunk-wise Attention for Linear Time Complexity</a></li>
+        <li><a href="#2f-limitations-and-future-directions">2.f Limitations and Future Directions</a></li>
       </ul>
     </li>
-    <li><a href="#4-experiments">4. Experiments</a></li>
+    <li><a href="#3-methods">3. Methods</a>
+      <ul>
+        <li><a href="#3a-cema-extending-multi-dimensional-damped-ema-to-complex-domain">3.a CEMA (Extending Multi-dimensional Damped EMA to Complex Domain)</a></li>
+        <li><a href="#3b-timestep-normalization">3.b Timestep Normalization</a></li>
+        <li><a href="#3c-normalized-attention">3.c Normalized Attention</a></li>
+        <li><a href="#3d-2-hop-residual-connection">3.d 2-hop Residual Connection</a></li>
+        <li><a href="#3e-summary-of-methods">3.e Summary of Methods</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-experiments">4. Experiments</a>
+      <ul>
+        <li><a href="#4a-short-context-evaluation">4.a Short-Context Evaluation</a></li>
+        <li><a href="#4b-long-context-evaluation">4.b Long-Context Evaluation</a></li>
+        <li><a href="#4c-instuction-finetuning">4.c Instuction Finetuning</a></li>
+        <li><a href="#4d-medium-scale-benchmarks">4.d Medium-scale Benchmarks</a></li>
+        <li><a href="#4e-summary-of-experiments">4.e Summary of Experiments</a></li>
+      </ul>
+    </li>
     <li><a href="#5-comparison-with-related-works">5. Comparison with related works</a></li>
     <li><a href="#6-discussion">6. Discussion</a></li>
   </ul>

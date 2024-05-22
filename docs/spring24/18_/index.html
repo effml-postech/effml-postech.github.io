@@ -22,7 +22,7 @@ What is Vision Transformer? # Vision Transformer (ViT) is an innovative approach
 <link rel="canonical" href="http://localhost:1313/docs/spring24/18_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.895537bccff056e685676053a26dfc4fa81b562ccd1b0ca7578ce1a18a86b761.js" integrity="sha256-iVU3vM/wVuaFZ2BTom38T6gbVizNGwynV4zhoYqGt2E=" crossorigin="anonymous"></script>
 
   
 
@@ -655,6 +655,7 @@ https://github.com/alex-shpak/hugo-book
 </h1>
 <p><em>Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang</em></p>
 <p><em>Posted by Jungwon Lee, Minsang Seok</em></p>
+<hr>
 <h2 id="what-is-vision-transformer">
   What is Vision Transformer?
   <a class="anchor" href="#what-is-vision-transformer">#</a>
@@ -689,11 +690,40 @@ Each patch is then flattened into a single vector, essentially treating each pat
   <a class="anchor" href="#c-self-attention">#</a>
 </h4>
 <ul>
-<li>The self-attention layer calculates attention weights for each pixel in the image based on its relationship with all other pixels.</li>
+<li>
+<p>The self-attention layer calculates attention weights for each pixel in the image based on its relationship with all other pixels.</p>
+</li>
+<li>
+<p>For each input vector X, three new vectors are created through learned linear transformations: Query (Q), Key (K), and Value (V), where 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(W_{Q}, W_{K}, W_{V}\)
+</span>
+ are learnd weight matrices.</p>
+</li>
 </ul>
-<p>$$ Q = XW_Q, K=XW_K, V=XW_V $$</p>
-<p>$$ Attention Score = Q K^T $$</p>
-<p>$$ Attention Output = softmax(\frac{Q \dot K^T}{\sqrt{d_k}}V) $$</p>
+<span>
+  \[Q = XW_Q, K=XW_K, V=XW_V\]
+</span>
+
+<ul>
+<li>The attention score for each pair of input vectors is calculated using the dot product of their Query and Key vectors:</li>
+</ul>
+<span>
+  \[Attention Score = Q K^T\]
+</span>
+
+<ul>
+<li>These scores indicate how much focus the model should place on one part of the input when considering another part.</li>
+</ul>
+<span>
+  \[Attention Output = softmax(\frac{Q \dot K^T}{\sqrt{d_k}}V)\]
+</span>
+
+<ul>
+<li>The attention scores are scaled by the square root of the dimensionality of the Key vectors to prevent excessively large values that could destabilize training. The scaled attention scores are passed through a softmax function to obtain the attention weights. This ensures that the weights are normalized (summing to one) and highlight the relative importance of each input vector. Each input vector is then updated by computing a weighted sum of the Value vectors, using the attention weights.</li>
+</ul>
 <h4 id="c-multi-head-self-attention-mhsa">
   C. Multi-Head Self Attention (MHSA)
   <a class="anchor" href="#c-multi-head-self-attention-mhsa">#</a>
@@ -709,6 +739,7 @@ Each patch is then flattened into a single vector, essentially treating each pat
 <li>Each self-attention layer is followed by a feedforward neural network that further processes the information.
 These networks consist of fully connected layers and typically include activation functions and normalization.</li>
 </ul>
+<p>If interested in more details about ViT, please refer to the following paper. &ldquo;An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale&rdquo;</p>
 <hr>
 <h2 id="challenge-multi-resolution-vit-modeling">
   Challenge: Multi-Resolution ViT Modeling
@@ -718,7 +749,7 @@ These networks consist of fully connected layers and typically include activatio
 <p>The most common method used to address this problem is to apply interpolation to positional encoding before feeding it into the ViT. This approach allows for some compensation of positional information even when the input resolution changes. However, this method has shown significant performance degradation in image classification tasks.</p>
 <p>Recently, ResFormer proposed adding depth-wise convolution to the existing positional encoding method when performing global-local positional embedding, enabling it to work well even with unseen resolutions. (Chu et al., 2023; Tian et al., 2023).</p>
 <p align="center">
-  <img src="./ResFormer_pe.png" alt="." width="500" height="300" > 
+  <img src="./ResFormer_pe.png" alt="." width="600" height="350" > 
 </p>
 <p>However, ResFormer has three drawbacks.</p>
 <ul>
@@ -734,7 +765,19 @@ These networks consist of fully connected layers and typically include activatio
 <p align="center">
   <img src="./ViTAR_overall.png" alt="." width="600" height="200" > 
 </p>
-In this section, we introduces two key innovations to address this issue. Firstly, we propose a novel module for dynamic resolution adjustment, designed with a single Transformer block, specifically to achieve highly efficient incremental token integration. Secondly, we introduce fuzzy positional encoding in the Vision Transformer to provide consistent positional awareness across multiple resolutions, thereby preventing overfitting to any single training resolution.
+<p>To address this issue, ViTAR introduces two key innovations.</p>
+<ul>
+<li>
+<ol>
+<li>Adaptive Token Merger : A novel module for dynamic resolution adjustment, designed with a single Transformer block to achieve highly efficient incremental token integration.</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>Fuzzy positional encoding : A novel positional encoding to ensure consistent positional awareness across multiple resolutions, thereby preventing overfitting to any specific training resolution.</li>
+</ol>
+</li>
+</ul>
 <hr>
 <h3 id="1-adaptive-token-merger-atm-module">
   1. Adaptive Token Merger (ATM Module)
@@ -743,39 +786,89 @@ In this section, we introduces two key innovations to address this issue. Firstl
 <p align="center">
   <img src="./ATM.png" alt="." width="500" height="300" > 
 </p>    
-<p>Adaptive Token Merger (ATM) module is designed to efficiently process and merge tokens of different resolutions in a neural network using a simple structure that includes GridAttention and FeedForward network (FFN). ATM Module takes tokens $(H\times W)$ processed through patch embedding as input. ATM Module specially processes the inputs of different resolutions M times to reduce them to the same preset size $G_{h} \times G_{w}$ before fed into the MHSA.</p>
+<p>Adaptive Token Merger (ATM) module is designed to efficiently process and merge tokens of different resolutions in a neural network using a simple structure that includes GridAttention and FeedForward network (FFN). ATM Module takes tokens processed through patch embedding as input. ATM Module specially processes the inputs of different resolutions M times to reduce them to the same preset size <span>
+  \(G_{h} \times G_{w}\)
+</span>
+ before fed into the MHSA.</p>
 <p align="center">
   <img src="./grid_attention.png" alt="." width="600" height="300" > 
 </p>
-<p>The detailed process for ATM is as follows:
-First, ATM divides the tokens of shape $H \times W $ into a grid of size $G_{th} \times G_{tw}$.</p>
+<p>The detailed process for ATM is as follows:</p>
+<p>First, ATM divides the tokens of shape <span>
+  \((H\ times W)\)
+</span>
+ into a grid of size <span>
+  \(G_{th} \times G_{tw}\)
+</span>
+.</p>
 <p>For simplicity, we&rsquo;ll use above Figure as an example.
-In the figure, we can see $H=4$, $W=4$, $G_{th}=2$, and $G_{tw}=2$.(We assume that H is divisible by $G_{th}$ and W is divisible by $G_{tw})$. The number of tokens in each grid would then be $H/G_{th} × W/G_{tw}$, which is 2x2.</p>
+In the figure, we can see <span>
+  \(H=4\)
+</span>
+, <span>
+  \(W=4\)
+</span>
+, <span>
+  \(G_{th}=2\)
+</span>
+, and <span>
+  \(G_{tw}=2\)
+</span>
+.(We assume that H is divisible by <span>
+  \(G_{th}=2\)
+</span>
+ and W is divisible by <span>
+  \(G_{tw}=2\)
+</span>
+. The number of tokens in each grid would then be <span>
+  \(H/G_{th} × W/G_{tw}\)
+</span>
+, which is 2x2.</p>
 <p>Within each grid, the module performs a special operation called Grid Attention.</p>
 <h4 id="gridattention">
   GridAttention
   <a class="anchor" href="#gridattention">#</a>
 </h4>
-<p>For a specific grid, we suppose its tokens are denoted as ${x_{ij}}$, where $0 ≤ i &lt; H/G_{th}$ and $0 ≤ j &lt; W/G_{tw}$.</p>
-<p>Average Pooling: First, it averages the tokens within a grid to create a mean token.
-Cross-Attention: Using this mean token as the Query, and all the grid tokens as Key and Value, it applies cross-attention to merge all tokens in the grid into a single token.</p>
-
-<link rel="stylesheet" href="/katex/katex.min.css" />
-<script defer src="/katex/katex.min.js"></script>
-<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \[x_{avg} = AvgPool(\{x_{ij}\}) \\
+<p>For a specific grid, we suppose its tokens are denoted as <span>
+  \({x_{ij}}\)
+</span>
+, where <span>
+  \(0 \geq i &lt; H/G_{th}\)
+</span>
+ and <span>
+  \(0 \geq j &lt; W/G_{tw}\)
+</span>
+.</p>
+<ul>
+<li>Average Pooling: First, it averages the tokens within a grid to create a mean token.</li>
+<li>Cross-Attention: Using this mean token as the Query, and all the grid tokens as Key and Value, it applies cross-attention to merge all tokens in the grid into a single token.</li>
+</ul>
+<span>
+  \[x_{avg} = AvgPool(\{x_{ij}\})
 
 GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
 </span>
 
 <p>After passing through GridAttention, the fused token is fed into a standard Feed-Forward Network to complete channel fusion, thereby completing one iteration of merging token. GridAttention and FFN undergo multiple iterations and all iterations share the same weights.</p>
-<p>During these iterations, we gradually decrease the value of $(G_{th} , G_{tw})$, until $G_{th} = G_{h}$ and $G_{tw} = G_{w}$. (typically set $Gh = Gw = 14$, in standard ViT)</p>
+<p>During these iterations, we gradually decrease the value of <span>
+  \((G_{th} , G_{tw})\)
+</span>
+, until <span>
+  \(G_{th} = G_{h}\)
+</span>
+ and <span>
+  \(G_{tw} = G_{w}\)
+</span>
+. (typically set <span>
+  \(Gh = Gw = 14\)
+</span>
+, in standard ViT)</p>
 <p>This iteration process effectively reduces the number of tokens even when the resolution of the image is large, and with enough iterations, this size can be reduced effectively. This has the advantage of being computationally efficient because when performing subsequent MHSA calculations, we always use the same size tokens as input, regardless of resolution.</p>
 <hr>
+<p>For Ablation study, ViTAR-S Model is used to compare with AvgPool which is another token fusion method. The results of the comparison demonstrate that ATM significantly improves the model&rsquo;s performance and resolution adaptability. Specifically, at a resolution of 4032, our proposed ATM achieves a 7.6% increase in accuracy compared with the baseline.</p>
 <p align="center">
   <img src="./result_ATM.png" alt="." width="600" height="250" > 
 </p>
-<p>For Ablation study, ViTAR-S Model is used to compare with AvgPool which is another token fusion method. The results of the comparison demonstrate that ATM significantly improves the model&rsquo;s performance and resolution adaptability. Specifically, at a resolution of 4032, our proposed ATM achieves a 7.6% increase in accuracy compared with the baseline.</p>
 <hr>
 <h3 id="2-fuzzy-positional-encoding-fpe">
   2. Fuzzy Positional Encoding (FPE)
@@ -800,9 +893,6 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   ViTAR shows superior performance with any resolution
   <a class="anchor" href="#vitar-shows-superior-performance-with-any-resolution">#</a>
 </h2>
-<p align="center">
-  <img src="./result1.png" alt="." width="500" height="300" > 
-</p>
 <h3 id="image-classification">
   Image Classification
   <a class="anchor" href="#image-classification">#</a>
@@ -811,14 +901,31 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
 <p align="center">
   <img src="./result_image_classification.png" alt="." width="600" height="600" > 
 </p>
+<p>As can be seen in the pareto frontier figure, ViTAR has high performance for various resolution images and can also be used for high resolution images of 2240 or higher.</p>
+<p align="center">
+  <img src="./result1.png" alt="." width="500" height="300" > 
+</p>
 <h3 id="object-detection">
   Object Detection
   <a class="anchor" href="#object-detection">#</a>
 </h3>
-<p>For object detection, COCO dataset is used ATM iterates only once because it does not utilize the multi-resolution training strategy in this experiment. If $\frac{H}{G_{th}}$ and $\frac{W}{G_{tw}}$ in ATM are fixed to 1, the results indicate that ViTAR achieves performance in both object detection and instance segmentation. And if setting $\frac{H}{G_{th}}$ and $\frac{W}{G_{tw}}$ to 2 in ATM, ATM module reduces approximately 50% of the computational cost while maintaining high precision in dense predictions, demonstrating its effectiveness.</p>
+<p>For object detection, COCO dataset is used ATM iterates only once because it does not utilize the multi-resolution training strategy in this experiment. If <span>
+  \(\frac{H}{G_{th}}\)
+</span>
+ and <span>
+  \(\frac{w}{G_{tw}}\)
+</span>
+ in ATM are fixed to 1, the results indicate that ViTAR achieves performance in both object detection and instance segmentation. And if setting <span>
+  \(\frac{H}{G_{th}}\)
+</span>
+ and <span>
+  \(\frac{w}{G_{tw}}\)
+</span>
+ to 2 in ATM, ATM module reduces approximately 50% of the computational cost while maintaining high precision in dense predictions, demonstrating its effectiveness.</p>
 <p align="center">
   <img src="./result_object_detection.png" alt="." width="800" height="350" > 
 </p>
+<hr>
 <h2 id="discussion">
   Discussion
   <a class="anchor" href="#discussion">#</a>
@@ -827,17 +934,23 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   Applicability to Diffusion Models
   <a class="anchor" href="#applicability-to-diffusion-models">#</a>
 </h3>
-<p>It is currently challenging to generate images of various resolutions with generative models like Diffusion Models. Additionally, many diffusion models with ViT structures have been proposed recently (e.g. DiT, PixArt-α, Sora). Can the proposed method be applied to Diffusion Models as well? However, one consideration for applying it to diffusion models is how to effectively upscale the reduced size obtained through Grid Attention to ensure that the input and output sizes are the same.</p>
+<ul>
+<li>It is currently challenging to generate images of various resolutions with generative models like Diffusion Models. Additionally, many diffusion models with ViT structures have been proposed recently (e.g. DiT, PixArt-α, Sora). Can the proposed method be applied to Diffusion Models as well? However, one consideration for applying it to diffusion models is how to effectively upscale the reduced size obtained through Grid Attention to ensure that the input and output sizes are the same.</li>
+</ul>
 <h3 id="applicability-to-large-language-models-llms">
   Applicability to Large Language Models (LLMs)
   <a class="anchor" href="#applicability-to-large-language-models-llms">#</a>
 </h3>
-<p>In LLMs, when receiving long context as input, positional embeddings are sometimes added using interpolation like this case. Would applying Fuzzy Positional Embedding (FPE) help handle long context inputs better? Or, just like training a network on low-resolution images to perform well on high-resolution images, can a network trained on short context in LLM maintain good performance on long context input?</p>
+<ul>
+<li>In LLMs, when receiving long context as input, positional embeddings are sometimes added using interpolation like this case. Would applying Fuzzy Positional Embedding (FPE) help handle long context inputs better? Or, just like training a network on low-resolution images to perform well on high-resolution images, can a network trained on short context in LLM maintain good performance on long context input?</li>
+</ul>
 <h3 id="can-grid-attention-replace-convolution">
   Can Grid Attention Replace Convolution?
   <a class="anchor" href="#can-grid-attention-replace-convolution">#</a>
 </h3>
-<p>The operation of Grid Attention is quite similar to the process performed by kernels in Convolution when calculating each grid. However, ATM maintains parameter efficiency by sharing weights. Would applying Grid Attention to existing CNN structures (e.g., VGG, ResNet) be more efficient?</p>
+<ul>
+<li>The operation of GridAttention is quite similar to the process performed by kernels in Convolution when calculating each grid. However, ATM maintains parameter efficiency by sharing weights. We expect that applying GridAttention to existing CNN structures (e.g., VGG, ResNet) will allow us to design more efficient architectures.</li>
+</ul>
 </article>
  
       
@@ -847,7 +960,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/97106e83cec8c277e140fd07ba09807bd2ce3b37" title='Last modified by Lee Jungwon | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/7d9db96aa04ab53a85c7555957a386f55ea2d839" title='Last modified by postech-sms | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
