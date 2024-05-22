@@ -3,21 +3,19 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im 11
-Introduction # 22
-Backgrounds # 33
-Layer Early Exiting # 44
-Draft Early Exiting # Experiments # Discussion and Conclusion # ">
+<meta name="description" content="Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
+Introduction # The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck
+Decoding K tokens requires K sequential runs of the model. ⇒ LLM inference is slow
+To address this issue, speculative decoding has been introduced as a promising approach to accelerate LLM inference without altering the output quality.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/05_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im 11
-Introduction # 22
-Backgrounds # 33
-Layer Early Exiting # 44
-Draft Early Exiting # Experiments # Discussion and Conclusion # ">
+  <meta property="og:description" content="Kangaroo: Lossless Self-Speculative Decoding via Double Early Exiting # Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y Written by Nayoung Kwon and Jiwoong Im
+Introduction # The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck
+Decoding K tokens requires K sequential runs of the model. ⇒ LLM inference is slow
+To address this issue, speculative decoding has been introduced as a promising approach to accelerate LLM inference without altering the output quality.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>05 | Efficient ML Systems</title>
@@ -26,7 +24,7 @@ Draft Early Exiting # Experiments # Discussion and Conclusion # ">
 <link rel="canonical" href="http://localhost:1313/docs/spring24/05_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
 
   
 
@@ -350,6 +348,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -541,24 +557,6 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/14_/" class="">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
   </ul>
 
         </li>
@@ -618,7 +616,11 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#backgrounds">Backgrounds</a></li>
-    <li><a href="#layer-early-exiting">Layer Early Exiting</a></li>
+    <li><a href="#layer-early-exiting">Layer Early Exiting</a>
+      <ul>
+        <li><a href="#evaluation-metrics">Evaluation Metrics</a></li>
+      </ul>
+    </li>
     <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
     <li><a href="#experiments">Experiments</a></li>
     <li><a href="#discussion-and-conclusion">Discussion and Conclusion</a></li>
@@ -641,23 +643,72 @@ https://github.com/alex-shpak/hugo-book
 <ul>
 <li>Author: Liu F, Tang Y, Liu Z, Ni Y, Han K, Wang Y</li>
 </ul>
-<p>Written by Nayoung Kwon and Jiwoong Im
-11</p>
+<p>Written by Nayoung Kwon and Jiwoong Im</p>
 <h2 id="introduction">
   Introduction
   <a class="anchor" href="#introduction">#</a>
 </h2>
-<p>22</p>
+<p>The growing demand for rapid and efficient inference in large language models (LLMs) faces a significant bottleneck</p>
+<ul>
+<li>Decoding K tokens requires K sequential runs of the model.</li>
+</ul>
+<p>⇒ LLM inference is slow</p>
+<p>To address this issue, speculative decoding has been introduced as a promising approach to accelerate LLM inference without altering the output quality. This method leverages two key observations about LLM inference:</p>
+<ul>
+<li>Many tokens can be predicted with minimal computational overhead.</li>
+<li>LLM inference is predominantly constrained by memory bandwidth rather than arithmetic computations.</li>
+</ul>
+<p>However, existing speculative decoding still face limitations, such as high inference latency and suboptimal token acceptance rates.
+This papaer proposed Kangaroo to address this challenge.</p>
 <h2 id="backgrounds">
   Backgrounds
   <a class="anchor" href="#backgrounds">#</a>
 </h2>
-<p>33</p>
+<p>#What is speculative decoding?
+Speculative decoding is an apporach to accelerate LLM inference.
+*Draft model: Additional model to accelerate inference (also known drafter)
+*Verifier or target model: Original large LLM</p>
+<p align="center">
+    <img src='./speculative decoding.png' width="700">
+</p>
 <h2 id="layer-early-exiting">
   Layer Early Exiting
   <a class="anchor" href="#layer-early-exiting">#</a>
 </h2>
-<p>44</p>
+<p>The author has proposed a novel self-speculative decoding framework, named Kangaroo. Kangaroo utilizes double early exiting mechanisms, layer early exiting and draft early exiting. Layer early exiting suggests the equivalent self-draft small model exiting early from the fixed shallow layers of the large LLM and connecting to an adapter network to generate draft tokens. While this strategy is common for self-speculative decoding frameworks, Kangaroo has further investigated suitable architectures of the adapter module and offered a low-cost approach to train a lightweight model. Draft early exiting uses early exiting at suitable points during the drafting phase to avoid unnecessary computational overhead on more challenging tokens.</p>
+<h3 id="evaluation-metrics">
+  Evaluation Metrics
+  <a class="anchor" href="#evaluation-metrics">#</a>
+</h3>
+<p>Speculative decoding is often evaluated using two primary metrics: walltime speedup ratio and compression rate. Given a speculative decoding algorithm, we assume that 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(N\)
+</span>
+ tokens should be generated via the drafting model. As the drafting model predicts multiple tokens in each decoding step and multiple tokens can be accepted by the large model in a step, we record the number of accepted tokens per step as a list <span>
+  \( S = \[s_1,\, s_2,\, \dots,\, s_{|S|}\] \)
+</span>
+, where <span>
+  \( \sum_k s_k = N \)
+</span>
+ and <span>
+  \( |S| \)
+</span>
+ denotes the number of steps. Then, the compression rate (CR) is defined as:
+<span>
+  \[\text{CR} = \frac{1}{|S|} \sum_k s_k.\]
+</span>
+
+However, once a draft token is rejected during the verification, all subsequent tokens sampled from the drafting model will be discarded. Therefore, CR does not accurately reflect the acceptance levels for tokens at varying distances, and the author has proposed a new evaluation metric named <em>consistent token acceptance rate</em>.</p>
+<p>The consistent token acceptance rate <span>
+  \( \text{CTAR}(w) \)
+</span>
+ is calculated as:
+<span>
+  \[\text{CTAR}(w) = \frac{1}{|S|} \sum_k \\]
+</span>
+</p>
 <h2 id="draft-early-exiting">
   Draft Early Exiting
   <a class="anchor" href="#draft-early-exiting">#</a>
@@ -679,7 +730,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a7ad3a7511ca48cf3458783f3162c5af3d89d4bb" title='Last modified by jwl3562 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/aa43acc39aeef9a2cb0827bb82bb07f25f91913b" title='Last modified by kwonna0 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -726,7 +777,11 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#backgrounds">Backgrounds</a></li>
-    <li><a href="#layer-early-exiting">Layer Early Exiting</a></li>
+    <li><a href="#layer-early-exiting">Layer Early Exiting</a>
+      <ul>
+        <li><a href="#evaluation-metrics">Evaluation Metrics</a></li>
+      </ul>
+    </li>
     <li><a href="#draft-early-exiting">Draft Early Exiting</a></li>
     <li><a href="#experiments">Experiments</a></li>
     <li><a href="#discussion-and-conclusion">Discussion and Conclusion</a></li>

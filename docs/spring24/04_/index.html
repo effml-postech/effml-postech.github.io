@@ -20,7 +20,7 @@ Authors: Gloeckle et al. Institution : FAIR at Meta, CERMICS Ecole des Ponts Par
 <link rel="canonical" href="http://localhost:1313/docs/spring24/04_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
 
   
 
@@ -344,6 +344,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -535,24 +553,6 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/14_/" class="">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
   </ul>
 
         </li>
@@ -626,6 +626,15 @@ https://github.com/alex-shpak/hugo-book
       </ul>
     </li>
   </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#learning-global-patterns-with-multi-byte-prediction">Learning global patterns with multi-byte prediction</a></li>
+        <li><a href="#coding-benchmarks">Coding Benchmarks</a></li>
+      </ul>
+    </li>
+  </ul>
 </nav>
 
 
@@ -691,6 +700,22 @@ $$</p>
   Result
   <a class="anchor" href="#result">#</a>
 </h1>
+<h3 id="learning-global-patterns-with-multi-byte-prediction">
+  Learning global patterns with multi-byte prediction
+  <a class="anchor" href="#learning-global-patterns-with-multi-byte-prediction">#</a>
+</h3>
+<p>To show using multi-token prediction loss helps to capture global pattern than using next-token prediction loss, they include experiment using extreme case of byte-levle tokenization. Notably, as shown in the table 1, multi-token prediction (8-byte prediction) models significantly solve more problem in the case of trained on small number of data.</p>
+<p align="center">
+    <img src='./global_pattern_table.png' width="800">
+</p>
+<h3 id="coding-benchmarks">
+  Coding Benchmarks
+  <a class="anchor" href="#coding-benchmarks">#</a>
+</h3>
+<p>Pretrained model with multi-token prediction loss maintains an edge on that with next-token prediction loss. At the beginning, they pretrain the 7B parameter models with multi-token prediction loss or next-token prediction loss. (Use the pretrained model on MBPP, HumanEval and APPS) Then, they finetune the models with CodeContests dataset (Li  et al., 2022) with multi-token head or next-token head.</p>
+<p align="center">
+    <img src='./CodeContests.png' width="800">
+</p>
 <h1 id="why-does-it-work">
   Why does it work?
   <a class="anchor" href="#why-does-it-work">#</a>
@@ -712,7 +737,7 @@ $$</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/e8c4df15a000f938148379a25d2a78760aa46ed0" title='Last modified by Jinoh Cho | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/dae44dfa0d6795c43204a4030a93db0e38ae07ff" title='Last modified by Jinoh Cho | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -770,6 +795,15 @@ $$</p>
         <li><a href="#multi-token-prediction-task">Multi-Token Prediction Task</a></li>
         <li><a href="#memory-efficient-implementation">Memory-Efficient Implementation</a></li>
         <li><a href="#faster-inference-with-self-speculative-decoding">Faster Inference with Self-Speculative Decoding</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#learning-global-patterns-with-multi-byte-prediction">Learning global patterns with multi-byte prediction</a></li>
+        <li><a href="#coding-benchmarks">Coding Benchmarks</a></li>
       </ul>
     </li>
   </ul>

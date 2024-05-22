@@ -3,15 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="BinaryDM: Towards Accurate Binarization of Diffusion Model # Preliminary # Diffusion # Diffusion models learn how to remove gaussian noise added to original image. Equation below shows how forward process proceeds. In the forward process, Gaussian noise is gradually added to original image for T times. Strength of the noise is controlled by the term \beta x_t denotes corrupted image at time step t.
-In the reverse process, diffusion model tries to restore original image by estimating conditional distribution ().">
+<meta name="description" content="BinaryDM: Towards Accurate Binarization of Diffusion Model # Authors: Xingyu Zheng, Haotaong Qin, Xudong Ma, Mingyuan Zhang, Haojie Hao, Jiakai Wang, Zixiang Zhao, Jinyang Guo, XianglongLiu Posted by Junhyuk So, Juncheol Shin
+Preliminary # Diffusion # Diffusion models learn how to remove gaussian noise added to original image. Equation below shows how forward process proceeds. During the forward process, Gaussian noise is gradually added to original image for T times.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/14_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="BinaryDM: Towards Accurate Binarization of Diffusion Model # Preliminary # Diffusion # Diffusion models learn how to remove gaussian noise added to original image. Equation below shows how forward process proceeds. In the forward process, Gaussian noise is gradually added to original image for T times. Strength of the noise is controlled by the term \beta x_t denotes corrupted image at time step t.
-In the reverse process, diffusion model tries to restore original image by estimating conditional distribution ().">
+  <meta property="og:description" content="BinaryDM: Towards Accurate Binarization of Diffusion Model # Authors: Xingyu Zheng, Haotaong Qin, Xudong Ma, Mingyuan Zhang, Haojie Hao, Jiakai Wang, Zixiang Zhao, Jinyang Guo, XianglongLiu Posted by Junhyuk So, Juncheol Shin
+Preliminary # Diffusion # Diffusion models learn how to remove gaussian noise added to original image. Equation below shows how forward process proceeds. During the forward process, Gaussian noise is gradually added to original image for T times.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>14 | Efficient ML Systems</title>
@@ -20,7 +20,7 @@ In the reverse process, diffusion model tries to restore original image by estim
 <link rel="canonical" href="http://localhost:1313/docs/spring24/14_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
 
   
 
@@ -344,6 +344,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
+    <a href="/docs/spring24/14_/" class="active">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -535,24 +553,6 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/14_/" class="active">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
   </ul>
 
         </li>
@@ -610,18 +610,18 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#preliminary">Preliminary</a>
+    <li><a href="#preliminary"><strong>Preliminary</strong></a>
       <ul>
-        <li><a href="#diffusion">Diffusion</a></li>
-        <li><a href="#quantization">Quantization</a></li>
+        <li><a href="#diffusion"><strong>Diffusion</strong></a></li>
+        <li><a href="#quantization"><strong>Quantization</strong></a></li>
       </ul>
     </li>
-    <li><a href="#motivation">Motivation</a></li>
-    <li><a href="#methodology">Methodology</a>
+    <li><a href="#motivation"><strong>Motivation</strong></a></li>
+    <li><a href="#methodology"><strong>Methodology</strong></a>
       <ul>
-        <li><a href="#learnable-multi-basis-binarizer">Learnable Multi-basis binarizer</a></li>
-        <li><a href="#low-rank-representation-mimicking">Low-rank representation mimicking</a></li>
-        <li><a href="#progressive-binarization">Progressive binarization</a></li>
+        <li><a href="#learnable-multi-basis-binarizer"><strong>Learnable Multi-basis binarizer</strong></a></li>
+        <li><a href="#low-rank-representation-mimicking"><strong>Low-rank representation mimicking</strong></a></li>
+        <li><a href="#progressive-binarization"><strong>Progressive binarization</strong></a></li>
       </ul>
     </li>
   </ul>
@@ -640,26 +640,34 @@ https://github.com/alex-shpak/hugo-book
   BinaryDM: Towards Accurate Binarization of Diffusion Model
   <a class="anchor" href="#binarydm-towards-accurate-binarization-of-diffusion-model">#</a>
 </h1>
+<p><em>Authors: Xingyu Zheng, Haotaong Qin, Xudong Ma, Mingyuan Zhang, Haojie Hao, Jiakai Wang, Zixiang Zhao, Jinyang Guo, XianglongLiu</em>
+<em>Posted by Junhyuk So, Juncheol Shin</em></p>
 <h2 id="preliminary">
-  Preliminary
+  <strong>Preliminary</strong>
   <a class="anchor" href="#preliminary">#</a>
 </h2>
 <h3 id="diffusion">
-  Diffusion
+  <strong>Diffusion</strong>
   <a class="anchor" href="#diffusion">#</a>
 </h3>
-<p>Diffusion models learn how to remove gaussian noise added to original image.
-Equation below shows how forward process proceeds. In the forward process, Gaussian noise is gradually added to original image for T times. Strength of the noise is controlled by the term \beta x_t denotes corrupted image at time step t.<br>
-In the reverse process, diffusion model tries to restore original image by estimating conditional distribution (). Reparameterization trick is used to estimate mean and variance of gaussian the distribution</p>
+<p align="center">
+  <img src="./diffusion.png" alt="."> 
+</p>
+Diffusion models learn how to remove gaussian noise added to original image. 
+Equation below shows how forward process proceeds. During the forward process, Gaussian noise is gradually added to original image for T times. Strength of the noise is controlled by the term \beta x_t denotes corrupted image at time step t.  
+In the reverse process, diffusion model tries to restore original image by estimating conditional distribution (). Reparameterization trick is used to estimate mean and variance of gaussian the distribution  
 <h3 id="quantization">
-  Quantization
+  <strong>Quantization</strong>
   <a class="anchor" href="#quantization">#</a>
 </h3>
-<p>Quantization is an optimization technique which restricts data(weights, activations) in low precision. Not only does it reduce the memory footprint, but it also enables accelerated computations given hardware support to low-precision arithmetic.</p>
+<p align="center">
+  <img src="./quantization.png" alt="." width="500" height="300" > 
+</p>
+Quantization is an optimization technique which restricts data(weights, activations) in low precision. Not only does it reduce the memory footprint, but it also enables accelerated computations given hardware support to low-precision arithmetic.  
 <p>Values are quantized and represented as integers as follows:</p>
 <p>Binarization is extreme case of quantization, which only utilizes 1 bit.</p>
 <h2 id="motivation">
-  Motivation
+  <strong>Motivation</strong>
   <a class="anchor" href="#motivation">#</a>
 </h2>
 <p>While diffusion models achieved great success in generation tasks, its iterative nature act as a bottleneck to real-world application. Data must processed through heavy diffusion models for multiple steps and requires huge latency and memory footprint.</p>
@@ -667,11 +675,11 @@ In the reverse process, diffusion model tries to restore original image by estim
 <p>However binary models are hard to binarize in two aspects. One arises from perspective of representation, as binarization is extreme case of quantization which only uses 1bit to represent data. Naive binarization introduces severe degredation in quality of output. Another aspect arises from perspective of optimization. Training becomes unstable with binarized representation and hinders convergence of the model.</p>
 <p>This work tackles binarization of diffusion models by handling aformentioned two aspects. By introducing Learnable Multi-basis Binarizer(LMB) and Low-rank representation mimicking(LRM), BinaryDM is able to achieve 16.0× and 27.1× reductions on FLOPs and size.</p>
 <h2 id="methodology">
-  Methodology
+  <strong>Methodology</strong>
   <a class="anchor" href="#methodology">#</a>
 </h2>
 <h3 id="learnable-multi-basis-binarizer">
-  Learnable Multi-basis binarizer
+  <strong>Learnable Multi-basis binarizer</strong>
   <a class="anchor" href="#learnable-multi-basis-binarizer">#</a>
 </h3>
 <p>Typical binarization of the weight can be described as follows:</p>
@@ -679,8 +687,11 @@ In the reverse process, diffusion model tries to restore original image by estim
 <p>Gradient of learnable scalar values can be computed as follows:</p>
 <p>During the inference, computation for each bases are indepedent to each other and can be parallely computed. Thus, diffusion model can be fully accelerated with LMB.</p>
 <p>It is important to note that LMB is applied at only crucial parts of difusion model. Only modules where features cale is greater than or equal to 1/2 input scale. In other words, some of the first consecutive layers and last consecutive layers are binarized with LMB. The binarized modules close to input or output play important role, as they extract patterns from original data or directly influence the final result.  Figure below shows result of naive binarization and LMB applied to weights.</p>
+<p align="center">
+  <img src="./lmb.png" alt="." width="500" height="300" > 
+</p>
 <h3 id="low-rank-representation-mimicking">
-  Low-rank representation mimicking
+  <strong>Low-rank representation mimicking</strong>
   <a class="anchor" href="#low-rank-representation-mimicking">#</a>
 </h3>
 <p>Binarization of weights makes the training hard and hiders convergence. Since full precision model is available, it is natural to align intermediate representations of binarized diffusion model and original model as additional supervision. However, fine-grained alignment of high-dimensional representation leads to blurry optimization direction and binarization makes the model hard to mimic full precision model.</p>
@@ -689,10 +700,13 @@ In the reverse process, diffusion model tries to restore original image by estim
 <p>LRM loss and total loss can be expressed as follows:</p>
 <p>Since computation of transformation matrix E_i is expensive, it is computed with the first batch of input and fixed during entire traning. As shown in the figure below, LRM stabilize training process, accelerating convergence.</p>
 <h3 id="progressive-binarization">
-  Progressive binarization
+  <strong>Progressive binarization</strong>
   <a class="anchor" href="#progressive-binarization">#</a>
 </h3>
 <p>Despite the enhanced methodology, training process remains slow and unstable. Authors additionally apply progressive binarization strategy to further stabilize convergence. M/2 th time stepping module is quantized in first iteration and m/2-i-th and m/2+i-th modules are quantized in next i-th iteration. As show in the figure, benefit coming from progressive binarization is significant compared to baseline traning process.</p>
+<p align="center">
+  <img src="./progressive.png" alt="." width="500" height="300" > 
+</p>
 </article>
  
       
@@ -702,7 +716,7 @@ In the reverse process, diffusion model tries to restore original image by estim
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/d6c9db2004334482e8a674eabfc631a2e0ee0f31" title='Last modified by ewsn1593 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/5045a60fd8cb9344d53a0a87188ec539e1a4593d" title='Last modified by ewsn1593 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -747,18 +761,18 @@ In the reverse process, diffusion model tries to restore original image by estim
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#preliminary">Preliminary</a>
+    <li><a href="#preliminary"><strong>Preliminary</strong></a>
       <ul>
-        <li><a href="#diffusion">Diffusion</a></li>
-        <li><a href="#quantization">Quantization</a></li>
+        <li><a href="#diffusion"><strong>Diffusion</strong></a></li>
+        <li><a href="#quantization"><strong>Quantization</strong></a></li>
       </ul>
     </li>
-    <li><a href="#motivation">Motivation</a></li>
-    <li><a href="#methodology">Methodology</a>
+    <li><a href="#motivation"><strong>Motivation</strong></a></li>
+    <li><a href="#methodology"><strong>Methodology</strong></a>
       <ul>
-        <li><a href="#learnable-multi-basis-binarizer">Learnable Multi-basis binarizer</a></li>
-        <li><a href="#low-rank-representation-mimicking">Low-rank representation mimicking</a></li>
-        <li><a href="#progressive-binarization">Progressive binarization</a></li>
+        <li><a href="#learnable-multi-basis-binarizer"><strong>Learnable Multi-basis binarizer</strong></a></li>
+        <li><a href="#low-rank-representation-mimicking"><strong>Low-rank representation mimicking</strong></a></li>
+        <li><a href="#progressive-binarization"><strong>Progressive binarization</strong></a></li>
       </ul>
     </li>
   </ul>

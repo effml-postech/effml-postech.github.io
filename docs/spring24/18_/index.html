@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
 Posted by Jungwon Lee, Minsang Seok
-What is Vision Transformer? # Vision Transformers (ViTs) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.
-Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images.">
+What is Vision Transformer? # Vision Transformer (ViT) is an innovative approach to computer vision that leverages the principles of the Transformer architecture, which was originally designed for natural language processing tasks. ViT has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/18_/">
@@ -14,8 +13,7 @@ Vision Transformers (ViT) is an architecture that utilizes self-attention mechan
   <meta property="og:title" content="Efficient ML Systems">
   <meta property="og:description" content="ViTAR: Vision Transformer with Any Resolution # Authors: Qihang Fan, Quanzeng You, Xiaotian Han, Yongfei Liu, Yunzhe Tao, Huaibo Huang, Ran He, Hongxia Yang
 Posted by Jungwon Lee, Minsang Seok
-What is Vision Transformer? # Vision Transformers (ViTs) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.
-Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images.">
+What is Vision Transformer? # Vision Transformer (ViT) is an innovative approach to computer vision that leverages the principles of the Transformer architecture, which was originally designed for natural language processing tasks. ViT has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>18 | Efficient ML Systems</title>
@@ -24,7 +22,7 @@ Vision Transformers (ViT) is an architecture that utilizes self-attention mechan
 <link rel="canonical" href="http://localhost:1313/docs/spring24/18_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.83231fe0f488d1863066fd351c42462dcfb3dfe9e1abae22188925238b5be6ba.js" integrity="sha256-gyMf4PSI0YYwZv01HEJGLc&#43;z3&#43;nhq64iGIklI4tb5ro=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.3895fbb5c048524a1eb29a2b5b4faaf15bdf6cfa32fbf584e485a991db99a6e0.js" integrity="sha256-OJX7tcBIUkoesporW0&#43;q8VvfbPoy&#43;/WE5IWpkduZpuA=" crossorigin="anonymous"></script>
 
   
 
@@ -348,6 +346,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
+    <a href="/docs/spring24/14_/" class="">14</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
     <a href="/docs/spring24/15_/" class="">15</a>
   
 
@@ -539,24 +555,6 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/14_/" class="">14</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
   </ul>
 
         </li>
@@ -614,7 +612,11 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#what-is-vision-transformer">What is Vision Transformer?</a></li>
+    <li><a href="#what-is-vision-transformer">What is Vision Transformer?</a>
+      <ul>
+        <li><a href="#key-components-of-vit">Key Components of ViT</a></li>
+      </ul>
+    </li>
     <li><a href="#challenge-multi-resolution-vit-modeling">Challenge: Multi-Resolution ViT Modeling</a></li>
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
@@ -657,23 +659,56 @@ https://github.com/alex-shpak/hugo-book
   What is Vision Transformer?
   <a class="anchor" href="#what-is-vision-transformer">#</a>
 </h2>
-<p>Vision Transformers (ViTs) has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.</p>
+<p>Vision Transformer (ViT) is an innovative approach to computer vision that leverages the principles of the Transformer architecture, which was originally designed for natural language processing tasks. ViT has recently emerged as a competitive alternative to Convolutional Neural Networks (CNNs) that are currently state-of-the-art in different image recognition computer vision tasks.</p>
 <p align="center">
   <img src="./ViT.png" alt="." width="700" height="400" > 
 </p>
-<p>Vision Transformers (ViT) is an architecture that utilizes self-attention mechanisms to process images. The Vision Transformer Architecture consists of a series of transformer blocks. Each transformer block consists of two sub-layers: a multi-head self-attention layer and a feed-forward layer.</p>
-<p>The self-attention layer calculates attention weights for each pixel in the image based on its relationship with all other pixels, while the feed-forward layer applies a non-linear transformation to the output of the self-attention layer. The multi-head attention extends this mechanism by allowing the model to attend to different parts of the input sequence simultaneously.</p>
-<p>ViT consists of the following steps.</p>
-<ol>
-<li>Split an image into patches (fixed sizes)</li>
-<li>Flatten the image patches</li>
-<li>Create lower-dimensional linear embeddings from these flattened image patches</li>
-<li>Include positional embeddings</li>
-<li>Feed the sequence as an input to a state-of-the-art transformer encoder</li>
-<li>Pre-train the ViT model with image labels, which is then fully supervised on a big dataset.</li>
-<li>Fine-tune the downstream dataset for image classification</li>
-</ol>
-<p>The transformer&rsquo;s encoder has a structure in which L transformer blocks sequentially pass through the Feed Forward, which consists of the Normalization Layer, Multi-head Attention, Normalization Layer, and MLP, as shown on the right of Figure 1.</p>
+<p>Vision Transformer architecture consists of a series of Transformer blocks, each containing a multi-head self-attention layer and a feed-forward layer. This structure allows ViT to capture complex relationships within an image more effectively than traditional convolutional layers.</p>
+<h3 id="key-components-of-vit">
+  Key Components of ViT
+  <a class="anchor" href="#key-components-of-vit">#</a>
+</h3>
+<p>The key coomponents of ViT are described below:</p>
+<h4 id="a-patch-embedding">
+  A. Patch Embedding
+  <a class="anchor" href="#a-patch-embedding">#</a>
+</h4>
+<ul>
+<li>Instead of processing the entire image as a whole, ViT divides the input image into fixed-size patches (e.g., 16x16 pixels).
+Each patch is then flattened into a single vector, essentially treating each patch as a &ldquo;token&rdquo; similar to how words are treated in text processing. These flattened patch vectors are linearly projected to a desired embedding dimension. This projection helps in transforming the patches into a suitable format for the Transformer model.</li>
+</ul>
+<h4 id="b-positional-encoding">
+  B. Positional Encoding
+  <a class="anchor" href="#b-positional-encoding">#</a>
+</h4>
+<ul>
+<li>Since Transformers are permutation-invariant and do not inherently understand the spatial relationships between patches, positional encodings are added to the patch embeddings. These encodings provide information about the position of each patch in the original image.</li>
+</ul>
+<h4 id="c-self-attention">
+  C. Self Attention
+  <a class="anchor" href="#c-self-attention">#</a>
+</h4>
+<ul>
+<li>The self-attention layer calculates attention weights for each pixel in the image based on its relationship with all other pixels.</li>
+</ul>
+<p>$$ Q = XW_Q, K=XW_K, V=XW_V $$</p>
+<p>$$ Attention Score = Q K^T $$</p>
+<p>$$ Attention Output = softmax(\frac{Q \dot K^T}{\sqrt{d_k}}V) $$</p>
+<h4 id="c-multi-head-self-attention-mhsa">
+  C. Multi-Head Self Attention (MHSA)
+  <a class="anchor" href="#c-multi-head-self-attention-mhsa">#</a>
+</h4>
+<ul>
+<li>The multi-head attention extends self-attention mechanism by allowing the model to attend to different parts of the input sequence simultaneously. Each &ldquo;head&rdquo; in the multi-head attention mechanism can capture different features, leading to a richer and more nuanced representation of the image.</li>
+</ul>
+<h4 id="d-feedforward-neural-networks">
+  D. Feedforward Neural Networks:
+  <a class="anchor" href="#d-feedforward-neural-networks">#</a>
+</h4>
+<ul>
+<li>Each self-attention layer is followed by a feedforward neural network that further processes the information.
+These networks consist of fully connected layers and typically include activation functions and normalization.</li>
+</ul>
 <hr>
 <h2 id="challenge-multi-resolution-vit-modeling">
   Challenge: Multi-Resolution ViT Modeling
@@ -812,7 +847,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/183252bc61c290ce4caf6815b42aa7333da026fb" title='Last modified by Lee Jungwon | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/97106e83cec8c277e140fd07ba09807bd2ce3b37" title='Last modified by Lee Jungwon | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
@@ -857,7 +892,11 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#what-is-vision-transformer">What is Vision Transformer?</a></li>
+    <li><a href="#what-is-vision-transformer">What is Vision Transformer?</a>
+      <ul>
+        <li><a href="#key-components-of-vit">Key Components of ViT</a></li>
+      </ul>
+    </li>
     <li><a href="#challenge-multi-resolution-vit-modeling">Challenge: Multi-Resolution ViT Modeling</a></li>
     <li><a href="#vitar-vision-transformer-with-any-resolution-1">ViTAR: Vision Transformer with Any Resolution</a>
       <ul>
