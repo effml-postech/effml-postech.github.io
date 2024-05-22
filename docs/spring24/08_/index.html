@@ -20,7 +20,7 @@ Linear arithmetic composition can diminish the capabilities of the original pre-
 <link rel="canonical" href="http://localhost:1313/docs/spring24/08_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.895537bccff056e685676053a26dfc4fa81b562ccd1b0ca7578ce1a18a86b761.js" integrity="sha256-iVU3vM/wVuaFZ2BTom38T6gbVizNGwynV4zhoYqGt2E=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5164722edbb769a1bf515d808538a32a4b8edff6830623d51f1ea0e271edf599.js" integrity="sha256-UWRyLtu3aaG/UV2AhTijKkuO3/aDBiPVHx6g4nHt9Zk=" crossorigin="anonymous"></script>
 
   
 
@@ -362,24 +362,6 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/spring24/15_/" class="">15</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/docs/spring24/16_/" class="">16</a>
   
 
@@ -553,6 +535,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/15_/" class="">15</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -653,9 +653,9 @@ https://github.com/alex-shpak/hugo-book
 </ol>
 <p>So, we can ask following question:</p>
 <p align="center">
-_How can multiple trained LoRAs be composed dynamically and efficiently, while preserving all their individual characteristics?_
+_How can multiple trained LoRAs be composed dynamically and efficiently, preserving all their individual characteristics, without the need for retraining?_
 </p>
-<p>To address this question, Mixture of LoRA Experts (MoLE) presents a new method for achieving the optimal combination of LoRAs for specific tasks. MoLE considers each LoRA as an expert and determines the weights applied to each LoRA at each layer through a gate function.</p>
+<p>To address this question, Mixture of LoRA Experts (MoLE) presents a new method for achieving the optimal combination of LoRAs for specific tasks. MoLE considers indivisual LoRA as an expert and determines the weights applied to LoRAs at each layer through a gate function.</p>
 <p align="center">
     <img src="./mole.png">
     <br>
@@ -929,7 +929,7 @@ Train 800 iterations for each required composition with batch size 12 and α as 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/6ece010bf2e3bc7de9bf9ed7465011de7e7ce282" title='Last modified by jgryu | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/178e4a04ae2070b808a3a0733cf909deeadd7954" title='Last modified by jgryu | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>

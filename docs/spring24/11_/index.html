@@ -20,7 +20,7 @@ Large Language Models with Inifinite Input Sequence # Currently, Large Language 
 <link rel="canonical" href="http://localhost:1313/docs/spring24/11_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.895537bccff056e685676053a26dfc4fa81b562ccd1b0ca7578ce1a18a86b761.js" integrity="sha256-iVU3vM/wVuaFZ2BTom38T6gbVizNGwynV4zhoYqGt2E=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5164722edbb769a1bf515d808538a32a4b8edff6830623d51f1ea0e271edf599.js" integrity="sha256-UWRyLtu3aaG/UV2AhTijKkuO3/aDBiPVHx6g4nHt9Zk=" crossorigin="anonymous"></script>
 
   
 
@@ -362,24 +362,6 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/spring24/15_/" class="">15</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/docs/spring24/16_/" class="">16</a>
   
 
@@ -553,6 +535,24 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/15_/" class="">15</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -661,10 +661,23 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#background-scaled-dot-product-attention">#</a>
 </h2>
 <p>The <strong>multi-head scaled dot-product attention</strong> (a.k.a. self-attention or MHA) is the main component in transformer architectures’ block.</p>
-<p>To calculate the attention state $A_{dot} ∈ \mathbb R^{N×d_{value}}$ of a single head in the MHA module with an input seqeunce $X ∈ \mathbb R^{N×d_{model}}$, three components, key, query and value are computed as</p>
-<p>$$
-K = XW_K, V = XW_V \ \text{and} \ Q = XW_Q,
-$$</p>
+<p>To calculate the attention state 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \( A_{dot} ∈ \mathbb R^{N×d_{value}}  \)
+</span>
+  of a single head in the MHA module with an input seqeunce  <span>
+  \( $X ∈ \mathbb R^{N×d_{model}}$  \)
+</span>
+ , three components, key, query and value are computed as</p>
+<p align="center">
+    <span>
+  \(K = XW_K, V = XW_V \ \text{and} \ Q = XW_Q,
+  \)
+</span>
+ 
+</p>
 <p>where $W_K ∈ \mathbb R^{d_{model} ×d_{key }}$, $W_V ∈ \mathbb R^{d_{model} ×d_{value}}$ and $W_Q ∈ \mathbb R^{d_{model} ×d_{key}}$ are trainable projection matrices. Then, we can get the attention state as</p>
 <p>$$
 A_{dot} = \text{softmax} \Bigl(  \dfrac {QK^\top}  {\sqrt {d_{model}}}  \Bigr) V.
@@ -732,8 +745,6 @@ $$</p>
 <p align="left" style="color:gray">
 Table 1: Transformer models with segment-level memory are compared. For each model, the memory size and effective context length are defined in terms of their model parameters ($N$: input segment length, $S$: the number of segments, $l$: the number of layers, $H$: the number of attention heads, $c$: Compressive Transformer memory size, $r$: compression ratio, $p$: the number of soft-prompt summary vectors and $m$: summary vector accumulation steps).
 </p>
-<p>Table 1 shows the memory footprint and its context length</p>
-<p>Infini-Transformer</p>
 <p>Table 1 shows the analysis of transformer models combining with segment-level memory.</p>
 <ul>
 <li><strong>Transformer-XL</strong> [4] <strong>uses KV components from the privious segment</strong> with <strong>current components</strong> over each layer. Thus the context window of Transformer-XL is enlarged from $N$ to $N \times L$, and it requires  $(d_{key} + d_{value}) × H × N × l$ memory foot prints.</li>
@@ -745,7 +756,7 @@ Table 1: Transformer models with segment-level memory are compared. For each mod
 Figure from Transformer-XL [4]. Illustration of the vanilla model with a segment length 4.
 </p>
 <ul>
-<li><strong>Compressive Transformer</strong> [5] append <strong>additional cache</strong> to Transformer-XL that <strong>saves the past activations</strong>. It broaden the Transformer-XL’s context window by $c × r × l$.</li>
+<li><strong>Compressive Transformer</strong> [5] append <strong>additional cache</strong> to Transformer-XL that <strong>saves the past activations</strong>. It broaden the Transformer-XL’s context window by $c × r × l$. It keeps a fine-grained memory of past activations, which are then compressed into coarser compressed memories. The below model has three layers, a  sequence length $n_s = 3$, memory size $n_m = 6$, compressed memory size $n_{cm} = 6$. The highlighted memories are compacted, with a compression function $f_c$ per layer, to a single compressed memory — instead of being discarded at the next sequence. In this example, the rate of compression $c = 3$.</li>
 </ul>
 <p align="center">
 <img src=./Untitled%203.png>
@@ -754,17 +765,12 @@ Figure from Transformer-XL [4]. Illustration of the vanilla model with a segment
 Figure from Compressive Transformer [5]. 
 </p>
 <ul>
-<li>
-<p>The Compressive Transformer keeps a fine-grained memory of past activations, which are then compressed into coarser compressed memories. The above model has three layers, a  sequence length $n_s = 3$, memory size $n_m = 6$, compressed memory size $n_{cm} = 6$. The highlighted memories are compacted, with a compression function $f_c$ per layer, to a single compressed memory — instead of being discarded at the next sequence. In this example, the rate of compression $c = 3$.</p>
-</li>
-<li>
-<p><strong>Memorizing Transformers</strong> [6] trys to <strong>gather the every KV components</strong> as the global context for the input segment. To reduce the overhead of storing every KV compoents, Memorizing Transformers adapts the context-weaving only on the last layer. The context window could explore entire input sequence $N \times S$ using KNN retriever.</p>
-</li>
+<li><strong>Memorizing Transformers</strong> [6] trys to <strong>gather the every KV components</strong> as the global context for the input segment. To reduce the overhead of storing every KV compoents, Memorizing Transformers adapts the context-weaving only on the last layer. The context window could explore entire input sequence $N \times S$ using KNN retriever.</li>
 </ul>
 <p align="center">
 <img src=./Untitled%204.png>
 </p>
-<p align="center" style="color:gray">
+<p align="left" style="color:gray">
 Figure from Memorizing Transformers [6]. Memorizing Transformers extend Transformers with access to (key, value) pairs of previously seen subsequences.
 </p>
 <ul>
@@ -857,7 +863,6 @@ Figure 4: Infini-Transformers obtain better Rouge overall scores with more book 
 <li>It use the name Infini-Attention due to its incremental updates, but the authors only test it on 1M tokens. As mentioned earlier, <strong>it is doubtful</strong> that it can perform on <strong>truly infinite data</strong> with minimal information loss.</li>
 <li>We can use memory-based not only for language tasks but for the other tasks. For example, In <strong>transformer models</strong> for <strong>videos</strong> [15], they compute over spatio-temporaly combined 3D input (multiple frames) with transformer model, but this requires huge computation overhead. Instead, we could only use a transformer models with <strong>2D input</strong> that only takes <strong>one frame</strong> with  <strong>the compressive memory</strong> that stores <strong>global context</strong> extracted from the previous frames.</li>
 </ul>
-<p>Despite these concerns, we believe this paper shows promise for achieving the ultimate goal of LLMs: accurate retrieval of infinite context lengths without tuning.  Although it requires some tuning, it is worthwhile because it uses much less memory and computational cost than existing methods. We believe it has significant potential, as the need to process long sequence data is inevitable for actively utilizing LLMs in real-life applications.</p>
 <h1 id="reference">
   Reference
   <a class="anchor" href="#reference">#</a>
@@ -886,7 +891,7 @@ Figure 4: Infini-Transformers obtain better Rouge overall scores with more book 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/d3fd9f8a9185229e945168e525e1bd30fc3d92cd" title='Last modified by YoungHyun197 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/7db16467197ef5f048051cff8bda25f16ec43f48" title='Last modified by YoungHyun197 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>

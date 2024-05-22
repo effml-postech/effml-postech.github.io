@@ -22,7 +22,7 @@ What is Vision Transformer? # Vision Transformer (ViT) is an innovative approach
 <link rel="canonical" href="http://localhost:1313/docs/spring24/18_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.895537bccff056e685676053a26dfc4fa81b562ccd1b0ca7578ce1a18a86b761.js" integrity="sha256-iVU3vM/wVuaFZ2BTom38T6gbVizNGwynV4zhoYqGt2E=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.5164722edbb769a1bf515d808538a32a4b8edff6830623d51f1ea0e271edf599.js" integrity="sha256-UWRyLtu3aaG/UV2AhTijKkuO3/aDBiPVHx6g4nHt9Zk=" crossorigin="anonymous"></script>
 
   
 
@@ -364,24 +364,6 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/spring24/15_/" class="">15</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/docs/spring24/16_/" class="">16</a>
   
 
@@ -545,6 +527,24 @@ https://github.com/alex-shpak/hugo-book
 
   
     <a href="/docs/spring24/25_/" class="">25</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/spring24/15_/" class="">15</a>
   
 
           
@@ -795,7 +795,7 @@ These networks consist of fully connected layers and typically include activatio
 </p>
 <p>The detailed process for ATM is as follows:</p>
 <p>First, ATM divides the tokens of shape <span>
-  \((H\ times W)\)
+  \((H \times W)\)
 </span>
  into a grid of size <span>
   \(G_{th} \times G_{tw}\)
@@ -833,10 +833,10 @@ In the figure, we can see <span>
   \({x_{ij}}\)
 </span>
 , where <span>
-  \(0 \geq i &lt; H/G_{th}\)
+  \(0 \leq i &lt; H/G_{th}\)
 </span>
  and <span>
-  \(0 \geq j &lt; W/G_{tw}\)
+  \(0 \leq j &lt; W/G_{tw}\)
 </span>
 .</p>
 <ul>
@@ -844,9 +844,11 @@ In the figure, we can see <span>
 <li>Cross-Attention: Using this mean token as the Query, and all the grid tokens as Key and Value, it applies cross-attention to merge all tokens in the grid into a single token.</li>
 </ul>
 <span>
-  \[x_{avg} = AvgPool(\{x_{ij}\})
+  \[x_{avg} = AvgPool(\{x_{ij}\})\]
+</span>
 
-GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
+<span>
+  \[GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
 </span>
 
 <p>After passing through GridAttention, the fused token is fed into a standard Feed-Forward Network to complete channel fusion, thereby completing one iteration of merging token. GridAttention and FFN undergo multiple iterations and all iterations share the same weights.</p>
@@ -860,7 +862,7 @@ GridAttn(\{x_{ij}\}) = x_{avg} &#43; Attn(x_{avg}, \{x_{ij}\}, \{x_{ij}\})\]
   \(G_{tw} = G_{w}\)
 </span>
 . (typically set <span>
-  \(Gh = Gw = 14\)
+  \(G_h = G_w = 14\)
 </span>
 , in standard ViT)</p>
 <p>This iteration process effectively reduces the number of tokens even when the resolution of the image is large, and with enough iterations, this size can be reduced effectively. This has the advantage of being computationally efficient because when performing subsequent MHSA calculations, we always use the same size tokens as input, regardless of resolution.</p>
