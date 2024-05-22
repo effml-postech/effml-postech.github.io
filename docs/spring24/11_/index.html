@@ -20,7 +20,7 @@ Large Language Models with Inifinite Input Sequence # Currently, Large Language 
 <link rel="canonical" href="http://localhost:1313/docs/spring24/11_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.5164722edbb769a1bf515d808538a32a4b8edff6830623d51f1ea0e271edf599.js" integrity="sha256-UWRyLtu3aaG/UV2AhTijKkuO3/aDBiPVHx6g4nHt9Zk=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.2db48f22e568885e272a1d146212332973a6517852140e5caf7d6e24c908a895.js" integrity="sha256-LbSPIuVoiF4nKh0UYhIzKXOmUXhSFA5cr31uJMkIqJU=" crossorigin="anonymous"></script>
 
   
 
@@ -362,6 +362,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
+    <a href="/docs/spring24/15_/" class="">15</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
     <a href="/docs/spring24/16_/" class="">16</a>
   
 
@@ -535,24 +553,6 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/docs/spring24/15_/" class="">15</a>
-  
-
-          
-  <ul>
-    
-  </ul>
-
-        </li>
-      
-    
   </ul>
 
         </li>
@@ -678,11 +678,27 @@ https://github.com/alex-shpak/hugo-book
 </span>
  
 </p>
-<p>where $W_K ∈ \mathbb R^{d_{model} ×d_{key }}$, $W_V ∈ \mathbb R^{d_{model} ×d_{value}}$ and $W_Q ∈ \mathbb R^{d_{model} ×d_{key}}$ are trainable projection matrices. Then, we can get the attention state as</p>
-<p>$$
-A_{dot} = \text{softmax} \Bigl(  \dfrac {QK^\top}  {\sqrt {d_{model}}}  \Bigr) V.
-$$</p>
-<p>We could calculate the MHA By parallely computing $H$ number of attention states over an input sequence and then concatenating them.</p>
+<p>where <span>
+  \(W_K ∈ \mathbb R^{d_{model} ×d_{key }}\)
+</span>
+, <span>
+  \(W_V ∈ \mathbb R^{d_{model} ×d_{value}}\)
+</span>
+ and <span>
+  \(W_Q ∈ \mathbb R^{d_{model} ×d_{key}}\)
+</span>
+ are trainable projection matrices. Then, we can get the attention state as</p>
+<p align="center">
+    <span>
+  \(A_{dot} = \text{softmax} \Bigl(  \dfrac {QK^\top}  {\sqrt {d_{model}}}  \Bigr) V.
+  \)
+</span>
+ 
+</p>
+We could calculate the MHA By parallely computing <span>
+  \(H\)
+</span>
+ number of attention states over an input sequence and then concatenating them.
 <h2 id="infini-attention">
   Infini-attention
   <a class="anchor" href="#infini-attention">#</a>
@@ -691,9 +707,24 @@ $$</p>
     <img src=./Untitled.png>
 </p>
 <p align="left" style="color:gray">
-Figure 1: Infini-attention has an additional compressive memory with linear attention for processing infinitely long contexts. $\{KV\}_{s−1}$ and $\{KV\}_s$ are attention key and values for current and previous input segments, respectively and $Q_s$ the attention queries. PE denotes position embeddings. 
+Figure 1: Infini-attention has an additional compressive memory with linear attention for processing infinitely long contexts. <span>
+  \(\{KV\}_{s−1}\)
+</span>
+ and <span>
+  \(\{KV\}_s\)
+</span>
+ are attention key and values for current and previous input segments, respectively and <span>
+  \(Q_s\)
+</span>
+ the attention queries. PE denotes position embeddings. 
 </p>
-<p>As shown Figure 1, Infini-attention computes both <strong>local</strong> and <strong>global context</strong> states and <strong>combine them</strong> for its output. Similar to multi-head attention (MHA), it maintains $H$ number of parallel compressive memory per attention layer ($H$ is the number of attention heads) in addition to the dot-product attention.</p>
+<p>As shown Figure 1, Infini-attention computes both <strong>local</strong> and <strong>global context</strong> states and <strong>combine them</strong> for its output. Similar to multi-head attention (MHA), it maintains <span>
+  \(H\)
+</span>
+ number of parallel compressive memory per attention layer (<span>
+  \(H\)
+</span>
+ is the number of attention heads) in addition to the dot-product attention.</p>
 <h2 id="compressive-memory">
   Compressive Memory
   <a class="anchor" href="#compressive-memory">#</a>
@@ -703,38 +734,118 @@ Figure 1: Infini-attention has an additional compressive memory with linear atte
   Memory Retrieval
   <a class="anchor" href="#memory-retrieval">#</a>
 </h3>
-<p>To <strong>fetch</strong> information <strong>from the memory</strong>, <strong>Infini-attetnion</strong> simply <strong>reuse the query</strong> <strong>($Q$)</strong> <strong>in current state</strong> and <strong>combine with the memory</strong>. Specifically, the attention state from the memory $M_{s−1} ∈ \mathbb R^{d_{key} ×d_{value }}$, $A_{mem} ∈ \mathbb R^{N×d_{value}}$, is computed as follows with query $Q ∈ \mathbb R^{N×d_{key}}$:</p>
-<p>$$
-A_{mem} = \dfrac {σ(Q)M_{s−1}}{σ(Q)z_{s−1}}.
-$$</p>
-<p>$\sigma$ is a nonlinear activation function, and $z_{s−1} ∈ \mathbb R^{d_{key}}$ is a normalization term. The researchers use element-wise ELU+1 and sum over all keys for each described before.</p>
+<p>To <strong>fetch</strong> information <strong>from the memory</strong>, <strong>Infini-attetnion</strong> simply <strong>reuse the query</strong> <strong>(<span>
+  \(Q\)
+</span>
+)</strong> <strong>in current state</strong> and <strong>combine with the memory</strong>. Specifically, the attention state from the memory <span>
+  \(M_{s−1} ∈ \mathbb R^{d_{key} ×d_{value }}\)
+</span>
+, <span>
+  \(A_{mem} ∈ \mathbb R^{N×d_{value}}\)
+</span>
+, is computed as follows with query <span>
+  \(Q ∈ \mathbb R^{N×d_{key}}\)
+</span>
+:</p>
+<p align="center">
+  <span>
+  \(A_{mem} = \dfrac {σ(Q)M_{s−1}}{σ(Q)z_{s−1}}.
+  \)
+</span>
+ 
+</p>
+<p><span>
+  \(\sigma\)
+</span>
+ is a nonlinear activation function, and <span>
+  \(z_{s−1} ∈ \mathbb R^{d_{key}}\)
+</span>
+ is a normalization term. The researchers use element-wise ELU+1 and sum over all keys for each described before.</p>
 <h3 id="memory-update">
   Memory Update
   <a class="anchor" href="#memory-update">#</a>
 </h3>
 <p>After the retrieval of the memory, we should <strong>update the memory</strong> and <strong>normalization part</strong> with <strong>the current key</strong> and <strong>value</strong> as follows:</p>
-<p>$$
-M_s ← M_{s−1} + σ(K)^\top V \ \text{and} \ z_s ← z_{s−1}  + \sum^N_{t=1}σ(K_t).
-$$</p>
-<p>After the update, the <strong>next input segment $S+1$</strong> uses the <strong>updated memory</strong> $M_s$ and <strong>normalization term</strong> $z_s$ recursively. Also, $σ(K)^\top V$ is refered to associative binding operator [3].</p>
-<p>Also, the authors combines the delta rule [2] into Infini-attention. The delta rule takes the difference between the value of new segment ($V$) and the stored value in memory as the associative binding terms instead of simply using $V$ (which is similar as the <em>advantage function</em> in reinforcement learning).</p>
-<p>$$
-M_s ← M_{s−1} + σ(K)^\top (V − \dfrac {σ(K)M_{s−1}} {σ(K)z_{s−1}}).
-$$</p>
-<p>The authors call this method as $Linear+Delta$ and the former method as $Linear$.</p>
+<p align="center">
+  <span>
+  \(M_s ← M_{s−1} &#43; σ(K)^\top V \ \text{and} \ z_s ← z_{s−1}  &#43; \sum^N_{t=1}σ(K_t). 
+  \)
+</span>
+ 
+</p>
+<p>After the update, the <strong>next input segment <span>
+  \(S&#43;1\)
+</span>
+</strong> uses the <strong>updated memory</strong> <span>
+  \(M_s\)
+</span>
+ and <strong>normalization term</strong> <span>
+  \(z_s\)
+</span>
+ recursively. Also, <span>
+  \(σ(K)^\top V\)
+</span>
+ is refered to associative binding operator [3].</p>
+<p>Also, the authors combines the delta rule [2] into Infini-attention. The delta rule takes the difference between the value of new segment (<span>
+  \(V\)
+</span>
+) and the stored value in memory as the associative binding terms instead of simply using <span>
+  \(V\)
+</span>
+ (which is similar as the <em>advantage function</em> in reinforcement learning).</p>
+<p align="center">
+  <span>
+  \(M_s ← M_{s−1} &#43; σ(K)^\top (V − \dfrac {σ(K)M_{s−1}} {σ(K)z_{s−1}}). 
+  \)
+</span>
+ 
+</p>
+<p>The authors call this method as <span>
+  \(Linear&#43;Delta\)
+</span>
+ and the former method as <span>
+  \(Linear\)
+</span>
+.</p>
 <h3 id="long-term-context-injection">
   Long-term Context Injection
   <a class="anchor" href="#long-term-context-injection">#</a>
 </h3>
-<p>It is important to have <strong>a balance</strong> in <strong>the local attention $A_{dot}$</strong> and <strong>the global context</strong> $A_{mem}$. The researchers add a scalar $\beta$ which is the gating component of the weighted sum over the above attention states:</p>
-<p>$$
-A = sigmoid(β) ⊙ A_{mem} + (1 − sigmoid(β)) ⊙ A_{dot}.
-$$</p>
-<p>Finally, to get the MHA output of an attention layer $O ∈ \mathbb R^{N×d_{model }}$, we concatenate the $H$ parallel attention state and then project them to the output dimension:</p>
-<p>$$
-O = [A^1; . . . A^H ]W_O
-$$</p>
-<p>where $W_O ∈ \mathbb R^{H×d_{value} ×d_{model}}$ is the projection weights.</p>
+<p>It is important to have <strong>a balance</strong> in <strong>the local attention <span>
+  \(A_{dot}\)
+</span>
+</strong> and <strong>the global context</strong> <span>
+  \(A_{mem}\)
+</span>
+. The researchers add a scalar <span>
+  \(\beta\)
+</span>
+ which is the gating component of the weighted sum over the above attention states:</p>
+<p align="center">
+  <span>
+  \(A = sigmoid(β) ⊙ A_{mem} &#43; (1 − sigmoid(β)) ⊙ A_{dot}. 
+  \)
+</span>
+ 
+</p>
+<p>Finally, to get the MHA output of an attention layer <span>
+  \(O ∈ \mathbb R^{N×d_{model }}\)
+</span>
+, we concatenate the <span>
+  \(H\)
+</span>
+ parallel attention state and then project them to the output dimension:</p>
+<p align="center">
+  <span>
+  \(O = [A^1; . . . A^H ]W_O
+  \)
+</span>
+ 
+</p>
+<p>where <span>
+  \(W_O ∈ \mathbb R^{H×d_{value} ×d_{model}}\)
+</span>
+ is the projection weights.</p>
 <h2 id="comparsion-with-other-transformers-with-context-memory">
   Comparsion with Other Transformers with Context Memory
   <a class="anchor" href="#comparsion-with-other-transformers-with-context-memory">#</a>
@@ -743,11 +854,44 @@ $$</p>
     <img src=./Untitled%201.png>
 </p>
 <p align="left" style="color:gray">
-Table 1: Transformer models with segment-level memory are compared. For each model, the memory size and effective context length are defined in terms of their model parameters ($N$: input segment length, $S$: the number of segments, $l$: the number of layers, $H$: the number of attention heads, $c$: Compressive Transformer memory size, $r$: compression ratio, $p$: the number of soft-prompt summary vectors and $m$: summary vector accumulation steps).
+Table 1: Transformer models with segment-level memory are compared. For each model, the memory size and effective context length are defined in terms of their model parameters (<span>
+  \(N\)
+</span>
+: input segment length, <span>
+  \(S\)
+</span>
+: the number of segments, <span>
+  \(l\)
+</span>
+: the number of layers, <span>
+  \(H\)
+</span>
+: the number of attention heads, <span>
+  \(c\)
+</span>
+: Compressive Transformer memory size, <span>
+  \(r\)
+</span>
+: compression ratio, <span>
+  \(p\)
+</span>
+: the number of soft-prompt summary vectors and <span>
+  \(m\)
+</span>
+: summary vector accumulation steps).
 </p>
 <p>Table 1 shows the analysis of transformer models combining with segment-level memory.</p>
 <ul>
-<li><strong>Transformer-XL</strong> [4] <strong>uses KV components from the privious segment</strong> with <strong>current components</strong> over each layer. Thus the context window of Transformer-XL is enlarged from $N$ to $N \times L$, and it requires  $(d_{key} + d_{value}) × H × N × l$ memory foot prints.</li>
+<li><strong>Transformer-XL</strong> [4] <strong>uses KV components from the privious segment</strong> with <strong>current components</strong> over each layer. Thus the context window of Transformer-XL is enlarged from <span>
+  \(N\)
+</span>
+ to <span>
+  \(N \times L\)
+</span>
+, and it requires  <span>
+  \((d_{key} &#43; d_{value}) × H × N × l\)
+</span>
+ memory foot prints.</li>
 </ul>
 <p align="center">
 <img src=./Untitled%202.png>
@@ -756,7 +900,25 @@ Table 1: Transformer models with segment-level memory are compared. For each mod
 Figure from Transformer-XL [4]. Illustration of the vanilla model with a segment length 4.
 </p>
 <ul>
-<li><strong>Compressive Transformer</strong> [5] append <strong>additional cache</strong> to Transformer-XL that <strong>saves the past activations</strong>. It broaden the Transformer-XL’s context window by $c × r × l$. It keeps a fine-grained memory of past activations, which are then compressed into coarser compressed memories. The below model has three layers, a  sequence length $n_s = 3$, memory size $n_m = 6$, compressed memory size $n_{cm} = 6$. The highlighted memories are compacted, with a compression function $f_c$ per layer, to a single compressed memory — instead of being discarded at the next sequence. In this example, the rate of compression $c = 3$.</li>
+<li><strong>Compressive Transformer</strong> [5] append <strong>additional cache</strong> to Transformer-XL that <strong>saves the past activations</strong>. It broaden the Transformer-XL’s context window by <span>
+  \(c × r × l\)
+</span>
+. It keeps a fine-grained memory of past activations, which are then compressed into coarser compressed memories. The below model has three layers, a  sequence length <span>
+  \(n_s = 3\)
+</span>
+, memory size <span>
+  \(n_m = 6\)
+</span>
+, compressed memory size <span>
+  \(n_{cm} = 6\)
+</span>
+. The highlighted memories are compacted, with a compression function <span>
+  \(f_c\)
+</span>
+ per layer, to a single compressed memory — instead of being discarded at the next sequence. In this example, the rate of compression <span>
+  \(c = 3\)
+</span>
+.</li>
 </ul>
 <p align="center">
 <img src=./Untitled%203.png>
@@ -765,7 +927,10 @@ Figure from Transformer-XL [4]. Illustration of the vanilla model with a segment
 Figure from Compressive Transformer [5]. 
 </p>
 <ul>
-<li><strong>Memorizing Transformers</strong> [6] trys to <strong>gather the every KV components</strong> as the global context for the input segment. To reduce the overhead of storing every KV compoents, Memorizing Transformers adapts the context-weaving only on the last layer. The context window could explore entire input sequence $N \times S$ using KNN retriever.</li>
+<li><strong>Memorizing Transformers</strong> [6] trys to <strong>gather the every KV components</strong> as the global context for the input segment. To reduce the overhead of storing every KV compoents, Memorizing Transformers adapts the context-weaving only on the last layer. The context window could explore entire input sequence <span>
+  \(N \times S\)
+</span>
+ using KNN retriever.</li>
 </ul>
 <p align="center">
 <img src=./Untitled%204.png>
@@ -794,7 +959,19 @@ Figure from AutoCompressors [8]. AutoCompressors process long documents by recur
 <p align="left" style="color:gray">
 Figure 2.  Infini-Transformer (top) has an entire context history whereas Transformer-XL (bottom) discards old contexts since it caches the KV states for the last segment only.
 </p>
-<p>Compare to the above context-based transformer models, <strong>Infini-Transformer</strong> could <strong>catch the entire context</strong> $N\times S$ with <strong>the fixed memory size</strong> $d_{key} × d_{value} + d_{key}$ that only stores $M_s$ and $z_s$ over the every attention heads and layers.</p>
+<p>Compare to the above context-based transformer models, <strong>Infini-Transformer</strong> could <strong>catch the entire context</strong> <span>
+  \(N\times S\)
+</span>
+ with <strong>the fixed memory size</strong> <span>
+  \(d_{key} × d_{value} &#43; d_{key}\)
+</span>
+ that only stores <span>
+  \(M_s\)
+</span>
+ and <span>
+  \(z_s\)
+</span>
+ over the every attention heads and layers.</p>
 <h1 id="experiments">
   Experiments
   <a class="anchor" href="#experiments">#</a>
@@ -818,7 +995,10 @@ Table 2: Long-context language modeling results are compared in terms of average
 <p align="center" style="color:gray">
 Figure 3. Gating score visualization.
 </p>
-<p>Figure 3 illlustrates the gating value ($sigmoid(\beta)$) of each heads and layers of the pretrained Infini-Transformer. The speciallized head means that the gating scores are close to 0 or 1 which only pass the local attention outputs or context attention output from the memory. The mixer head, of which the gating scores is near 0.5, combines the both information.</p>
+<p>Figure 3 illlustrates the gating value (<span>
+  \(sigmoid(\beta)\)
+</span>
+) of each heads and layers of the pretrained Infini-Transformer. The speciallized head means that the gating scores are close to 0 or 1 which only pass the local attention outputs or context attention output from the memory. The mixer head, of which the gating scores is near 0.5, combines the both information.</p>
 <h3 id="1m-passkey-retrieval-benchmark">
   1M passkey retrieval benchmark
   <a class="anchor" href="#1m-passkey-retrieval-benchmark">#</a>
@@ -891,7 +1071,7 @@ Figure 4: Infini-Transformers obtain better Rouge overall scores with more book 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/7db16467197ef5f048051cff8bda25f16ec43f48" title='Last modified by YoungHyun197 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/46035a59e97b3cdf8c29a6150cf6c93247602198" title='Last modified by effml-postech | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 22, 2024</span>
     </a>
