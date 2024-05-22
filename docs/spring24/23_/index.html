@@ -938,6 +938,27 @@ bGPT's performance was evaluated in the following two key areas:
 
 - **Data Conversion**: This experiment evaluates whether bGPT can learn the process of converting ABC music notation into MIDI format. The task tests how bGPT models complex algorithms and their ability to convert actual music files.
 - **CPU State Modeling**: CPU state modeling assesses how bGPT predicts and updates the state of a CPU based on a given set of machine instructions. This is particularly useful for understanding and predicting hardware operations. -->
+<h4 id="experimental-setup-1">
+  Experimental Setup
+  <a class="anchor" href="#experimental-setup-1">#</a>
+</h4>
+<ul>
+<li><strong>Data Conversion</strong>: Convering between ABC notation and MIDI format</li>
+<li><strong>CPU State Modeling</strong>: Predicting the state of CPUs after executing a sequence of machine instructions</li>
+</ul>
+<p>Both tasks utilize data scales ranging from <span>
+  \(10^3\)
+</span>
+ (bGPT3), <span>
+  \(10^4\)
+</span>
+ (bGPT4), <span>
+  \(10^5\)
+</span>
+ (bGPT5), to <span>
+  \(10^6\)
+</span>
+ (bGPT6).</p>
 <h4 id="results-and-analysis-1">
   Results and Analysis
   <a class="anchor" href="#results-and-analysis-1">#</a>
@@ -950,7 +971,7 @@ bGPT's performance was evaluated in the following two key areas:
 <li><strong>Data Conversion Performance</strong>: bGPT performed the conversion between MIDI and ABC notation with high accuracy. Notably, it also showed high accuracy in converting MIDI back to ABC notation, indicating that bGPT successfully learned the inherent structures and patterns of the data.</li>
 <li><strong>CPU State Modeling Performance</strong>: bGPT accurately predicted the resulting state of CPUs from an initial state across a variety of CPU instructions. It achieved over 99% accuracy even with complex instruction sequences, demonstrating bGPT&rsquo;s detailed understanding of the internal workings of hardware.</li>
 </ul>
-<hr>
+<p>For both tasks, bGPT&rsquo;s performance is significantly influenced by data volume. As the data scale increases, bGPT&rsquo;s performance improves, indicating its scalability and ability to model complex algorithms and hardware operations.</p>
 <h2 id="conclusion-and-future-work">
   Conclusion and Future Work
   <a class="anchor" href="#conclusion-and-future-work">#</a>
