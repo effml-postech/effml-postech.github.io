@@ -716,7 +716,7 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
 <li><em><strong>Reference tuning-based composition</strong></em> tackles the above limitations of linear arithmetic method by introducing gradient fusion and controllable sampling, but is requires retaining when incorporating different LoRAs or creating new masks, which results non-trivial computational costs.</li>
 </ul>
 <p align="center">
-    <img src=./lora_comp.png> 
+    <img src=./lora_comp.png width="40%"> 
     <br>
     <em>(Left) Linear arithmetic composition. (Right) Reference tuning-based composition</em>
 </p>
@@ -726,7 +726,7 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
 </h3>
 <p>MoE is an effective method that allows scaling up the number of parameters while maintaining the computational cost of the model.</p>
 <p align="center">
-    <img src=./moe.png> 
+    <img src=./moe.png width="40%"> 
     <br>
     <em>Illustration of a Swith Transformer block.</em>
 </p>
@@ -759,8 +759,8 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
 <li>Direct linear arithmetic composition reduced the generative power of the model, while normalized linear arithmetic composition retained the generative power of the model but lost its LORA character.</li>
 </ol>
 <p align="center">
-    <img src=./motiv1_1.png align="center" height="150">
-    <img src=./motiv1_2.png align="center" height="150">
+    <img src=./motiv1_1.png align="center" width="40%">
+    <img src=./motiv1_2.png align="center" width="40%">
     <br>
     <em>(Left) Result of linear arithmetic composision and, (Right) nomalized linear arithmetic composision.</em>
 </p>
@@ -774,8 +774,8 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
 <li>Each layer of the trained LoRA represented a unique characteristic, which cumulatively defined the overall properties of the LoRA.</li>
 </ol>
 <p align="center">
-    <img src=./motiv2_1.png align="center" height=150>
-    <img src=./motiv2_2.png align="center" height=150">
+    <img src=./motiv2_1.png align="center" width="40%">
+    <img src=./motiv2_2.png align="center" width="40%">
     <br>
     <em>(Right) Observed that different layers of LoRA encode distinct features, such as dog coat color and facial features. (Left) When evaluated on a subset of datasets, there were significant differences in performance across the different layers of LoRA.) </em>
 </p>
@@ -785,7 +785,7 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
   <a class="anchor" href="#method">#</a>
 </h3>
 <p align="center">
-    <img src=./Method1.png align="center" width="70%">
+    <img src=./Method1.png align="center" width="40%">
     <br>
     <em>Illustration of proposed MOLE. MOLE employs a learnable gating function that utilizes the outputs of multiple LoRAs at each layer to determine composition weights.</em>
 </p>
@@ -825,7 +825,7 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
 </h3>
 <p>The training loss function used in MoLE is as follows:</p>
 <p align="centor">
-    <img src=./training5.png width="200">
+    <img src=./training5.png width="40%">
 </p>
 <span>
   \[$$\mathcal{L} = \mathcal{L}_{D} &#43; \alpha \mathcal{L}_{balance}$$\]
@@ -834,7 +834,7 @@ _How can multiple trained LoRAs be composed dynamically and efficiently, preserv
 <p>Alpha is a coefficient for weight balancing.</p>
 <p><strong>Gating Balacing Loss</strong></p>
 <p align="center">
-    <img src=./training1.png width="400">
+    <img src=./training1.png width="40%">
 </p>
 As shown in Figure 5 (a), the average entropy of the distribution probabilities from the gating functions gradually decreases as training progresses. In Figure 5 (b), we can see a gating probability of 64% for LoRA β among the three LoRAs, indicating that the gating function tends to converge to a state where it assigns large weights to well-performing LoRAs in the early stages. This can result in a significantly larger impact from a few specific LoRAs compared to others, potentially leading to biased outcomes. <br/>
 <br/>
@@ -842,7 +842,7 @@ To avoid this, the author created a gating balancing loss.<br/>
 The gating balancing loss helps prevent bias by ensuring that the loss value decreases as the model becomes less biased. <br/>
 <br/>
 <p align="centor">
-    <img src=./training2.png width="200">
+    <img src=./training2.png width="40%">
 </p>
 <details>
     <summary>See related Symbols</summary>
@@ -854,11 +854,11 @@ The gating balancing loss helps prevent bias by ensuring that the loss value dec
 <br/>
 In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
 <p align="centor">
-    <img src=./training3.png width="300">
+    <img src=./training3.png width="40%">
 </p>
 <p>In NLP, Using a loss in FLAN-T5(Chung et al,2022)</p>
 <p align="centor">
-    <img src=./training4.png width="200">
+    <img src=./training4.png width="40%">
 </p>
 <h2 id="results">
   Results
@@ -890,7 +890,7 @@ In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
 </ul>
 <p><strong>Results</strong></p>
 <p align="center">
-    <img src=./result1.png width="500">
+    <img src=./result1.png width="40%">
 </p>
 <p>It demonstrates better performance compared to other models and shows outstanding results in other tasks as well.</p>
 <p align="center">
@@ -918,8 +918,8 @@ In V&amp;L, Using a loss in CLIP(Radford et al,20221b) <br/></p>
 </ul>
 <p><strong>Results</strong></p>
 <p align="center">
-    <img src=./result7.png align="center" width="48%">
-    <img src=./result8.png align="center" width="48%">
+    <img src=./result7.png align="center" width="40%">
+    <img src=./result8.png align="center" width="40%">
     <figcaption align="center">
 </p>
 <p>It can be observed that MoLE demonstrates better performance in most tasks.</p>
