@@ -22,7 +22,7 @@ Background # What is model editing? # Fig 1. Concept of model editing. The rapid
 <link rel="canonical" href="http://localhost:1313/docs/spring24/01_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.56d9534326453b231190a634b66617c8ed5ae5c2b45e5356ff1c56d2098f8f28.js" integrity="sha256-VtlTQyZFOyMRkKY0tmYXyO1a5cK0XlNW/xxW0gmPjyg=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
 
   
 
@@ -707,7 +707,10 @@ https://github.com/alex-shpak/hugo-book
 </span>
  
 </p>
-<p>For MEMIT model editing. it optimizes same objectives with ROME, but performance memorization using a least-square constraint, which allows for a closed-form solution. It has similar form with ROME method, but it multiplies \lambda term, which is hyperparameter, to preservation term. Also, it combines memorization term for minimize target</p>
+<p>For MEMIT model editing. it optimizes same objectives with ROME, but performance memorization using a least-square constraint, which allows for a closed-form solution. It has similar form with ROME method, but it multiplies <span>
+  \(\lambda\)
+</span>
+ term, which is hyperparameter, to preservation term. Also, it combines memorization term for minimize target</p>
 <p align="center">
   <span>
   \(\argmin_{\hat{W}} \lambda\left\| \hat{W} K_0 - W_0 K_0 \right\| &#43; \left\| \hat{W} K_E - V_E \right\|\\Preservation\_term=\lambda\left\| \hat{W} K_0 - W_0 K_0 \right\| \\ Memorization\_term=\hat{W} K_E - V_E 
@@ -885,6 +888,7 @@ The similar trend between two editing techniques reflect the similarity in their
   References
   <a class="anchor" href="#references">#</a>
 </h2>
+<p>Implementation code: <a href="https://github.com/scalable-model-editing/unified-model-editing">Link</a>.</p>
 <p>Yunzhi Yao, Peng Wang, Bozhong Tian, Siyuan Cheng, Zhoubo Li, Shumin Deng, Huajun Chen, Ningyu Zhang. 2023. <a href="https://arxiv.org/pdf/2305.13172">Editing large language models: Problems, methods, and opportunities</a>. arXiv preprint arXiv:2305.13172.</p>
 <p>Anton Sinitsin, Vsevolod Plokhotnyuk, Dmitriy Pyrkin, Sergei Popov, Artem Babenko. 2020. <a href="https://arxiv.org/pdf/2004.00345">Editable neural networks</a>. arXiv preprint arXiv:2004.00345.</p>
 <p>Kevin Meng, David Bau, Alex Andonian, and Yonatan Belinkov. 2022a. <a href="https://arxiv.org/pdf/2202.05262">Locating and editing factual associations in gpt</a>. Advances in Neural Information Processing Systems, 35:17359–17372.</p>
@@ -899,9 +903,9 @@ The similar trend between two editing techniques reflect the similarity in their
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/78a0a72d8ee295240e701b2388bb6646564acf3c" title='Last modified by jgh1020 | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/648b03b7300cc86f971bf521002c2c81a33f7c7e" title='Last modified by jhyun213 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 21, 2024</span>
+      <span>May 22, 2024</span>
     </a>
   </div>
 

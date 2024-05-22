@@ -20,7 +20,7 @@ Main Contributions # Universal Inverted Bottleneck (UIB) seach block - Unifies t
 <link rel="canonical" href="http://localhost:1313/docs/spring24/09_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.56d9534326453b231190a634b66617c8ed5ae5c2b45e5356ff1c56d2098f8f28.js" integrity="sha256-VtlTQyZFOyMRkKY0tmYXyO1a5cK0XlNW/xxW0gmPjyg=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
 
   
 
@@ -612,14 +612,13 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#mobilenetv4---universal-models-for-the-mobile-ecosystem">MobileNetV4 - Universal Models for the Mobile Ecosystem</a></li>
     <li><a href="#main-contributions">Main Contributions</a></li>
+    <li><a href="#preliminaries---roofline-model-and-hardware-efficiency">Preliminaries - Roofline Model and Hardware Efficiency</a></li>
     <li><a href="#hardware-independent-pareto-efficiency">Hardware-Independent Pareto Efficiency</a></li>
     <li><a href="#universal-inverted-bottlenecks-uib">Universal Inverted Bottlenecks (UIB)</a></li>
     <li><a href="#mobile-mqa">Mobile MQA</a></li>
-    <li><a href="#design-of-mobilenetv4">Design of MobileNetV4</a></li>
+    <li><a href="#refined-nas-for-enhanced-architectures">Refined NAS for Enhanced Architectures</a></li>
     <li><a href="#results">Results</a></li>
-    <li><a href="#enhanced-distillation-recipe">Enhanced Distillation Recipe</a></li>
     <li><a href="#conclusion">Conclusion</a></li>
-    <li><a href="#example--using-katex-for-math-equation">Example : Using KaTeX for math equation</a></li>
   </ul>
 </nav>
 
@@ -648,6 +647,41 @@ https://github.com/alex-shpak/hugo-book
 <li>Achieves Pareto optimal acorss various devices such as CPUs, DSPs, GPUs, and TPUs</li>
 <li>Novel distillation technique to boost accuracy. Achieves 87% accuracy on ImageNet-1k and 39x smaller model size</li>
 </ol>
+<h2 id="preliminaries---roofline-model-and-hardware-efficiency">
+  Preliminaries - Roofline Model and Hardware Efficiency
+  <a class="anchor" href="#preliminaries---roofline-model-and-hardware-efficiency">#</a>
+</h2>
+<p>Algorithm running on hardware is composed of two parts - memory access and computation. The computation time is determined by the computation requirement and hardware performance.
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \[runtime_computation = {Number of Operatins}/{FLOPS}\]
+</span>
+
+Algorithm runtime can be limited by the memory access bottleneck or communication overhead
+<span>
+  \[runtime_communication = {Number of IO Bytes}/{Bandwidth}\]
+</span>
+
+Hardware performance is determined by the upper bound of the computation time or memory access latency
+<span>
+  \[performance = max(runtime_computation, runtime_communication)\]
+</span>
+
+Below Fig. 1(a) and Fig. 1(b) illustrates the roofline model and its characteristics</p>
+<p align="center">
+    <img src='./Fig0a.png' width="900">
+</p>
+<p align="center">
+    Fig. 1 (a) Roofline Model
+</p>
+<p align="center">
+    <img src='./Fig0b.png' width="900">
+</p>
+<p align="center">
+    Fig. 1 (b) Roofline Model with Ceiling
+</p>
 <h2 id="hardware-independent-pareto-efficiency">
   Hardware-Independent Pareto Efficiency
   <a class="anchor" href="#hardware-independent-pareto-efficiency">#</a>
@@ -674,7 +708,7 @@ This research focuses on efficiency on various hardware targets such as DSPs, CP
     <img src='./Fig4.png' width="900">
 </p>
 <p align="center">
-    Fig. 4. Univesal Inverted Bottleneck (UIB) blocks
+    Fig. 4. Universal Inverted Bottleneck (UIB) blocks
 </p>
 <p>The main advantage of UIB is its adaptability and flexibility, that mitigates seach complexity. Optional Depthwise (DW) convolution blocks are inserted before the expansion layer, and between the expansion and projection layer. In the NAS procedure, common components such as the pointwise expansion and projection are shared and DWs are added as search options. UIB has four possible instantiations as follows.</p>
 <ul>
@@ -688,15 +722,18 @@ This research focuses on efficiency on various hardware targets such as DSPs, CP
   <a class="anchor" href="#mobile-mqa">#</a>
 </h2>
 <p align="center">
-    <img src='./Table1.png' width="900">
+    <img src='./Table1.png' width="500">
 </p>
 <p align="center">
     Table 1. Efficiency Gains by MQA
 </p>
-<h2 id="design-of-mobilenetv4">
-  Design of MobileNetV4
-  <a class="anchor" href="#design-of-mobilenetv4">#</a>
+<p>This paper considers the Operational Intensity (OI), which is the ratio of arithmetic operations to memory access, to enhance efficiency of vision models on mobile accelerators. Here, Multi-Query Attention (MQA) is proposed instead od Multi-Head Self Attention (MHSA), which is simplified by utilization of shared keys and values across all heads. This sharing of keys and values reduces memory access hence improving OI, especially when the batch size is small. Large language models does not have significant accuracy drop in this MQA case. Table 1 shows that by adding MHSA and MQA, the performace accuracy has increased whereas the inference latency for MQA is approximately x39 lower than that of MHSA. Hence, MQA can accelerate better in the mobile environment, with negligible performance degradation.</p>
+<p>The Spatial Reduction Attention (SRA) is applied, hence incorporating asymmetric spatial down-sampling, to downscale keys and values, and not queries. In hybrid models, there is a certain correlation between spatially adjacent tokens, hence necessitating spatial mixing convolution filters.</p>
+<h2 id="refined-nas-for-enhanced-architectures">
+  Refined NAS for Enhanced Architectures
+  <a class="anchor" href="#refined-nas-for-enhanced-architectures">#</a>
 </h2>
+<p>As shown above, the insitantiation of UIB blocks are in the neural architecture search process. TuNAS was adopted for the paper&rsquo;s search strategy. The paper uses a two-stage search operation, the coarse-grained search and fine-grained serach to address the variance in parameter counts between UIB&rsquo;s depthwise layers and other search options. The course-grained search process involves determining optimal filter sizes with fixed parameters. The fine-grained stage searches for the UIB&rsquo;s layer configuration.</p>
 <h2 id="results">
   Results
   <a class="anchor" href="#results">#</a>
@@ -707,38 +744,24 @@ This research focuses on efficiency on various hardware targets such as DSPs, CP
 <p align="center">
     Table 5. Classification results on ImageNet-1k
 </p>
-<h2 id="enhanced-distillation-recipe">
-  Enhanced Distillation Recipe
-  <a class="anchor" href="#enhanced-distillation-recipe">#</a>
-</h2>
+<p align="center">
+    <img src='./Table6.png' width="500">
+</p>
+<p align="center">
+    Table 6. Object Detection results on the COCO validation set
+</p>
+<p>Results on the classification performance on ImageNet-1k dataset show that the MobileNetV4 achieves the highest performance and smallest latency compareed to other models on various mobile platforms such as CPUs and DSPs of mobile phones. While other models have closely competitive latency with the MobileNetV4 model, their latency is much higher.</p>
+<p>The effectiveness of MobileNetV4 as backbone networks are tested on the COCO object detection experiment. The number of MACs were set to be similiar, and the Retina framework was used as the object detector. As the same as classification, MobileNetV4 achieves highest performance compared to other mobile-target modles, with the lowest CPU latency. Hence, the ability of MobileNetV4 for mobile devices can be shown.</p>
 <h2 id="conclusion">
   Conclusion
   <a class="anchor" href="#conclusion">#</a>
 </h2>
-<p>This paper propose a compression framework that leverages text information mainly by text-adaptive encoding and training with joint image-text loss. By doing so, they avoid decoding based on text-guided generative models&mdash;known for high generative diversity&mdash;and effectively utilize the semantic information of text at a global level.</p>
-
-
-
-
-
-<img src="./overall_architecture.png" alt="." width="600" height="600">
-<h2 id="example--using-katex-for-math-equation">
-  Example : Using KaTeX for math equation
-  <a class="anchor" href="#example--using-katex-for-math-equation">#</a>
-</h2>
-<p>KaTeX shortcode let you render math typesetting in markdown document. See <a href="https://katex.org/">KaTeX</a></p>
-<p>Here is some inline example: 
-<link rel="stylesheet" href="/katex/katex.min.css" />
-<script defer src="/katex/katex.min.js"></script>
-<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \(\pi(x)\)
-</span>
-, rendered in the same line. And below is <code>display</code> example, having <code>display: block</code>
-<span>
-  \[f(x) = \int_{-\infty}^\infty\hat f(\xi)\,e^{2 \pi i \xi x}\,d\xi\]
-</span>
-
-Text continues here!!!</p>
+<ul>
+<li>This paper proposes the MobileNet V4 series, a universal high-efficiency model that operates efficiently across a wide range of mobile environments.</li>
+<li>By introducing a new Universal Inverted Bottleneck and Mobile MQA layer and applying an enhanced NAS recipe, MobileNet V4 achieves near Pareto-optimal performance on various hardware, including mobile CPUs, GPUs, DSPs, and dedicated accelerators.</li>
+<li>Additionally, using the latest distillation techniques, it demonstrates cutting-edge performance in mobile computer vision by achieving 87% ImageNet-1K accuracy with a latency of 3.8ms on the Pixel 8 EdgeTPU.</li>
+<li>The paper also presents a theoretical framework and analysis for understanding the model&rsquo;s universality across heterogeneous devices, providing guidance for future design.</li>
+</ul>
 </article>
  
       
@@ -748,9 +771,9 @@ Text continues here!!!</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/da90428444034b6b22e3a6d017607321c43cb2e1" title='Last modified by effml-postech | May 14, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/b3a6aa6fa559ef9d76ddd26250bf2c3478f609f2" title='Last modified by adrs97 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 14, 2024</span>
+      <span>May 22, 2024</span>
     </a>
   </div>
 
@@ -795,14 +818,13 @@ Text continues here!!!</p>
   <ul>
     <li><a href="#mobilenetv4---universal-models-for-the-mobile-ecosystem">MobileNetV4 - Universal Models for the Mobile Ecosystem</a></li>
     <li><a href="#main-contributions">Main Contributions</a></li>
+    <li><a href="#preliminaries---roofline-model-and-hardware-efficiency">Preliminaries - Roofline Model and Hardware Efficiency</a></li>
     <li><a href="#hardware-independent-pareto-efficiency">Hardware-Independent Pareto Efficiency</a></li>
     <li><a href="#universal-inverted-bottlenecks-uib">Universal Inverted Bottlenecks (UIB)</a></li>
     <li><a href="#mobile-mqa">Mobile MQA</a></li>
-    <li><a href="#design-of-mobilenetv4">Design of MobileNetV4</a></li>
+    <li><a href="#refined-nas-for-enhanced-architectures">Refined NAS for Enhanced Architectures</a></li>
     <li><a href="#results">Results</a></li>
-    <li><a href="#enhanced-distillation-recipe">Enhanced Distillation Recipe</a></li>
     <li><a href="#conclusion">Conclusion</a></li>
-    <li><a href="#example--using-katex-for-math-equation">Example : Using KaTeX for math equation</a></li>
   </ul>
 </nav>
 

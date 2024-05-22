@@ -22,7 +22,7 @@ Authors: Payel Das (IBM AI Research), Subhajit Chaudhury (IBM AI Research) et.al
 <link rel="canonical" href="http://localhost:1313/docs/spring24/22_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.56d9534326453b231190a634b66617c8ed5ae5c2b45e5356ff1c56d2098f8f28.js" integrity="sha256-VtlTQyZFOyMRkKY0tmYXyO1a5cK0XlNW/xxW0gmPjyg=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.574259d88cd3931159cfa6ffaa60f1d2300566eb9d296df2d1e36d820f896465.js" integrity="sha256-V0JZ2IzTkxFZz6b/qmDx0jAFZuudKW3y0eNtgg&#43;JZGU=" crossorigin="anonymous"></script>
 
   
 
@@ -804,15 +804,15 @@ Recursive Search-Based Solution for Long Context Generalization: A simple recurs
     Fig8. Basic memory operations [8]
 </p>
 <p>On top of that, sequential writing and forgetting is conducted as follows.</p>
-<p>First, given an initial set of encodings <strong>Z</strong>$<em>{0}$ and writing weights <strong>W</strong>$</em>{0}$, memory matrix and key covariance matrix are initialized as below.</p>
+<p>First, given an initial set of encodings <strong>$Z_{0}$</strong> and writing weights <strong>$W_{0}$</strong>, memory matrix and key covariance matrix are initialized as below.</p>
 <p align="center">
     <img src='initialize.png' width="300">
 </p>
-Next, memory **M**$_{i-1}$ is sequentially updated by adding a new set of encodings **Z**$_{i}$ or forgetting a previously written set of encodings **Z**$_{i}$. This process is conducted as below. 
+<p>Next, memory <strong>$M_{i-1}$</strong> is sequentially updated by adding a new set of encodings <strong>$Z_{i}$</strong> or forgetting a previously written set of encodings <strong>$Z_{i}$</strong>. This process is conducted as below.</p>
 <p align="center">
     <img src='update.png' width="300">
 </p>
-For instance, \alpha$_{i}$ is 1 for writing, -1 for forgetting.
+<p>For instance, $\alpha_{i}$ is 1 for writing, -1 for forgetting.</p>
 <h2 id="5-results">
   5. Results
   <a class="anchor" href="#5-results">#</a>
@@ -928,9 +928,9 @@ processing in the latent space, Larimar is also efficient is terms of number of 
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/21bcfa13d3737bc93d69a856f3ed0f3c03d3f246" title='Last modified by skjang238 | May 21, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/9b7af4377acdd56e1be95a63e68be33f8d9cc1e5" title='Last modified by skjang238 | May 22, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 21, 2024</span>
+      <span>May 22, 2024</span>
     </a>
   </div>
 
