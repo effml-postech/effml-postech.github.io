@@ -3,13 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" # ">
+<meta name="description" content="XC-CACHE: Cross-Attending to Cached Context for Efficient LLM Inference # Submitted on 23 Apr 2024 by João Monteiro1, Étienne Marcotte1,, Pierre-André Noël1,, Valentina Zantedeschi1,*, David Vázquez1, Nicolas Chapados1, 2, Christopher Pal1, 2, Perouz Taslakian11, ServiceNow Research.
+In-context learning, ICL typically uses prompting to condition the generation of decoder-only language models based on reference information. However, just-in-time processing of context is inefficient due to the quadratic cost of self-attention operations, making caching desirable.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/06_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" # ">
+  <meta property="og:description" content="XC-CACHE: Cross-Attending to Cached Context for Efficient LLM Inference # Submitted on 23 Apr 2024 by João Monteiro1, Étienne Marcotte1,, Pierre-André Noël1,, Valentina Zantedeschi1,*, David Vázquez1, Nicolas Chapados1, 2, Christopher Pal1, 2, Perouz Taslakian11, ServiceNow Research.
+In-context learning, ICL typically uses prompting to condition the generation of decoder-only language models based on reference information. However, just-in-time processing of context is inefficient due to the quadratic cost of self-attention operations, making caching desirable.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>06 | Efficient ML Systems</title>
@@ -18,7 +20,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/06_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.268a47946a95787174dd9a9766ec6e695f29d1d2555e28446e888abc97d8c054.js" integrity="sha256-JopHlGqVeHF03ZqXZuxuaV8p0dJVXihEboiKvJfYwFQ=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.af197d9d29d888c2e34c92194c94bf3d4b7988ad8214a25d790d7f1995afa08e.js" integrity="sha256-rxl9nSnYiMLjTJIZTJS/PUt5iK2CFKJdeQ1/GZWvoI4=" crossorigin="anonymous"></script>
 
   
 
@@ -606,7 +608,12 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#caching-representations-and-xc-caching"><strong>Caching Representations and XC-CACHING</strong></a></li>
+    <li><a href="#low-memory-usage-high-precision-xc-caching">Low memory usage, High precision XC-CACHING</a></li>
+  </ul>
+</nav>
 
 
 
@@ -617,10 +624,34 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
+  <article class="markdown book-article"><h1 id="xc-cache-cross-attending-to-cached-context-for-efficient-llm-inference">
+  XC-CACHE: Cross-Attending to Cached Context for Efficient LLM Inference
+  <a class="anchor" href="#xc-cache-cross-attending-to-cached-context-for-efficient-llm-inference">#</a>
 </h1>
+<p><em>Submitted on 23 Apr 2024 by</em> João Monteiro1, Étienne Marcotte1,<em>, Pierre-André Noël1,</em>, Valentina Zantedeschi1,*, David Vázquez1, Nicolas Chapados1, 2, Christopher Pal1, 2, Perouz Taslakian11, ServiceNow Research.</p>
+<p><a href="https://www.notion.so/In-context-learning-ICL-817a5a05df7945149e6efbf8972f645c?pvs=21">In-context learning, ICL</a>  typically uses prompting to condition the generation of decoder-only language models based on reference information. However, just-in-time processing of context is inefficient due to the quadratic cost of self-attention operations, making <strong><a href="https://www.notion.so/7708a6d8eeaf4a7082e9da6b4b90950d?pvs=21">caching</a></strong> desirable. Yet, caching <a href="https://www.notion.so/e10d87b5902d4dfb94edbbecc2582efe?pvs=21">transformer</a> states can demand nearly as much space as the model parameters themselves, posing a challenge when the appropriate context is not known in advance.</p>
+<p>This paper addresses these challenges by introducing models that use <strong>cross-attention</strong>, inspired by the encoder-decoder architecture, to condition generation on reference text without a prompt. The approach leverages pre-trained decoder-only models and trains only a small number of added layers. The authors use Question-Answering (QA) as a testbed to evaluate these models&rsquo; ability to perform conditional generation.</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/ecaf2b8d-d654-4cb1-bdb0-0aa6aa6ea46d/aee2a0ac-0dff-4ec3-a990-297af09450ac/Untitled.png" alt="Untitled" /></p>
+<p>These four approaches highlight various strategies for efficient context processing in large language models.</p>
+<p>(a) depicts a scenario where a user’s query must be interpreted within a given context to generate an answer. In this case, the query and answer are small (light), but the context is large (heavy). This results in a time complexity of O(|context|²) for the <a href="https://www.notion.so/LLM-e5c86372d9404c97ba24cb1491243a84?pvs=21">LLM</a>.</p>
+<p>(b) explains <a href="https://arxiv.org/abs/2005.14165"><em><strong>In-Context Learning (ICL)</strong></em></a> and <a href="https://arxiv.org/abs/2005.11401">***Retrieval-Augmented Generation (RAG)</a>***  which use the query to look up the context from a finite corpus, but still remain inefficient with large contexts.</p>
+<p>(c) can be preprocessed into a cache, enabling fast inference on a given query. This <a href="https://arxiv.org/abs/1706.03762"><em><strong>approach</strong></em></a> has a time complexity of O(|context|(|query| + |answer|)).</p>
+<p>(d) is the method that the author proposed named <strong>XC-CACHE</strong>. It is implemented in two ways that leverage pre-trained decoder-only models and add a separate encoder to process the context: one approach uses the frozen decoder as an encoder (called XC-LLAMA), and the other uses a small bidirectional encoder (called XC-LLAMAENC).</p>
+<h2 id="caching-representations-and-xc-caching">
+  <strong>Caching Representations and XC-CACHING</strong>
+  <a class="anchor" href="#caching-representations-and-xc-caching">#</a>
+</h2>
+<p><a href="https://en.wikipedia.org/wiki/Cache_%28computing%29"><strong>Cache</strong></a> is typically a form of memory that allows for fast access, storing data that is frequently used or needed repeatedly. <a href="https://www.notion.so/7708a6d8eeaf4a7082e9da6b4b90950d?pvs=21">**<em>The main purpose</em></a>** of a cache is to improve processing speed and enhance the overall efficiency of the system. There are <a href="https://www.notion.so/e10d87b5902d4dfb94edbbecc2582efe?pvs=21"><em><strong>three types of elements</strong></em></a> called ‘key’, ‘value’, ‘query’ which can approaches to Caching.</p>
+<p>KV(Key-Value) Caching ******is to store the (past) key and value states generated while processing context.  As an example, for <a href="https://arxiv.org/abs/2307.09288"><em><strong>LLAMA 2-7B</strong></em></a> using 16 bits precision shows that the smaller per-token cache teh sizes are more desirable. JIT(Just-In-Time Key-Value Caching)-KV Caching is an alternative approach involves storing the (past) hidden states of the model in the cache. At inference time, once these hidden states are loaded on GPU, we can recover the full keys and values in O(|context|). These two KV and JIT-KV Caching model both entail two types of costs while yielding identical results: the size of the cache and the operations required during inference. So <strong>XC-Caching</strong> is presented as an effective way to improve inference speed while significantly reducing memory usage.</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/ecaf2b8d-d654-4cb1-bdb0-0aa6aa6ea46d/4e810569-e761-4ed0-a754-ee658a9fb77e/Untitled.png" alt="Untitled" /></p>
+<p>(a) The architecture uses a small bidirectional encoder and multiple self-attention and cross-attention layers to process the context and prompt.
+(b) The architecture uses only a decoder, mainly training the cross-attention layers to process the context and prompt.</p>
+<h2 id="low-memory-usage-high-precision-xc-caching">
+  Low memory usage, High precision XC-CACHING
+  <a class="anchor" href="#low-memory-usage-high-precision-xc-caching">#</a>
+</h2>
+<p>QA is ideal for testing the methods as it requires efficient external information retrieval and incorporation during generation. They focus on training for question-answering using datasets with context, query, and answer triplets. They build a training dataset by standardizing and combining the training partitions of five publicly available and diverse datasets: <a href="https://aclanthology.org/Q19-1026/">***NATURAL QUESTIONS</a>*** (NQ), <a href="https://arxiv.org/abs/1809.09600"><em><strong>HOTPOTQA</strong></em></a>, <a href="https://aclanthology.org/2022.tacl-1.27/"><em><strong>TOPIOCQA</strong></em></a>, <a href="https://arxiv.org/abs/1611.09268"><em><strong>MS MARCO</strong></em></a>, and <a href="https://aclanthology.org/P18-2124/"><em><strong>SQUAD-V2</strong></em></a>. Each example in the resulting dataset contains a query (natural-language question), an answer (expected output), and one or more contexts (e.g., knowledge base articles), with at least one context containing the answer, referred to as the reference context.</p>
+<p>In addition to training on the primary QA tasks, they optimize their models on context repetition tasks, named <a href="https://www.v7labs.com/blog/multi-task-learning-guide">multitask</a> training strategy.</p>
 </article>
  
       
@@ -630,9 +661,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/da90428444034b6b22e3a6d017607321c43cb2e1" title='Last modified by effml-postech | May 14, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/ef6d45924f83b3a6017296e457d75f3d085c52c2" title='Last modified by sangilmian | May 24, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 14, 2024</span>
+      <span>May 24, 2024</span>
     </a>
   </div>
 
@@ -673,7 +704,12 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#caching-representations-and-xc-caching"><strong>Caching Representations and XC-CACHING</strong></a></li>
+    <li><a href="#low-memory-usage-high-precision-xc-caching">Low memory usage, High precision XC-CACHING</a></li>
+  </ul>
+</nav>
 
 
  

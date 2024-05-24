@@ -3,13 +3,13 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="VeRA: Vector-based Random Matrix Adaptation [1] # EECE695E_2024_Spring_Blog for Efficient Machine Learning Class w/ Sejin Park and Kyumin Cho Introduction to LoRA (Low Rank Adaptation) [2] family of PEFT (Parameter Efficient Finetuning) # Large language Models or LLMs consists of at least billions of parameters. This makes it extremely expensive to run inference on the model or train and finetune it. For example, the weights of GPT-3 175B can take up to 350GB when stored in FP16 precision (2 bytes per FP16 x 175B=350GB) when used in inference.">
+<meta name="description" content="VeRA: Vector-based Random Matrix Adaptation [1] # EECE695E_2024_Spring_Blog for Efficient Machine Learning Class w/ Sejin Park and Kyumin Cho Introduction to LoRA (Low Rank Adaptation) [2] family of PEFT (Parameter Efficient Finetuning) # Large language Models or LLMs consists of at least billions of parameters. This makes it extremely expensive to run inference on the model or train and finetune it. For example, the weights of GPT-3 175B can take up to 350GB when stored in FP16 precision (2 bytes per FP16 x 175B=350GB) typically used in inference.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/07_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content="VeRA: Vector-based Random Matrix Adaptation [1] # EECE695E_2024_Spring_Blog for Efficient Machine Learning Class w/ Sejin Park and Kyumin Cho Introduction to LoRA (Low Rank Adaptation) [2] family of PEFT (Parameter Efficient Finetuning) # Large language Models or LLMs consists of at least billions of parameters. This makes it extremely expensive to run inference on the model or train and finetune it. For example, the weights of GPT-3 175B can take up to 350GB when stored in FP16 precision (2 bytes per FP16 x 175B=350GB) when used in inference.">
+  <meta property="og:description" content="VeRA: Vector-based Random Matrix Adaptation [1] # EECE695E_2024_Spring_Blog for Efficient Machine Learning Class w/ Sejin Park and Kyumin Cho Introduction to LoRA (Low Rank Adaptation) [2] family of PEFT (Parameter Efficient Finetuning) # Large language Models or LLMs consists of at least billions of parameters. This makes it extremely expensive to run inference on the model or train and finetune it. For example, the weights of GPT-3 175B can take up to 350GB when stored in FP16 precision (2 bytes per FP16 x 175B=350GB) typically used in inference.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>07 | Efficient ML Systems</title>
@@ -18,7 +18,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/07_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.268a47946a95787174dd9a9766ec6e695f29d1d2555e28446e888abc97d8c054.js" integrity="sha256-JopHlGqVeHF03ZqXZuxuaV8p0dJVXihEboiKvJfYwFQ=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.af197d9d29d888c2e34c92194c94bf3d4b7988ad8214a25d790d7f1995afa08e.js" integrity="sha256-rxl9nSnYiMLjTJIZTJS/PUt5iK2CFKJdeQ1/GZWvoI4=" crossorigin="anonymous"></script>
 
   
 
@@ -611,9 +611,14 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#introduction-to-lora-low-rank-adaptation-2ref2-family-of-peft-parameter-efficient-finetuning">Introduction to LoRA (Low Rank Adaptation) <a href="#ref2">[2]</a> family of PEFT (Parameter Efficient Finetuning)</a>
       <ul>
         <li><a href="#memory-usage-breakdown-for-training-fp32-adamw-3ref3">Memory Usage Breakdown for Training (FP32 AdamW) <a href="#ref3">[3]</a></a></li>
+        <li><a href="#detailed-formulation-of-lora">Detailed Formulation of LoRA</a></li>
       </ul>
     </li>
-    <li><a href="#how-vera-works">How VeRA works</a></li>
+    <li><a href="#how-vera-works">How VeRA works</a>
+      <ul>
+        <li><a href="#detailed-formulation-of-vera">Detailed Formulation of VeRA</a></li>
+      </ul>
+    </li>
     <li><a href="#performance">Performance</a>
       <ul>
         <li><a href="#roberta-base-glue-benchmarks">RoBERTa Base GLUE benchmarks</a></li>
@@ -630,8 +635,8 @@ https://github.com/alex-shpak/hugo-book
       <ul>
         <li><a href="#behavior-of-vera-compared-to-lora">Behavior of VeRA compared to LoRA</a></li>
         <li><a href="#nas-neural-architecture-search-to-vera">NAS (Neural Architecture Search) to VeRA</a></li>
-        <li><a href="#better-initialization-settings">Better initialization settings</a></li>
-        <li><a href="#universal-basis-matrices-for-vera">Universal basis matrices for VeRA</a></li>
+        <li><a href="#better-initialization-settings">Better Initialization Settings</a></li>
+        <li><a href="#universal-basis-matrices-for-vera">Universal Basis Matrices for VeRA</a></li>
       </ul>
     </li>
     <li><a href="#references">References</a></li>
@@ -658,7 +663,7 @@ https://github.com/alex-shpak/hugo-book
   Introduction to LoRA (Low Rank Adaptation) <a href="#ref2">[2]</a> family of PEFT (Parameter Efficient Finetuning)
   <a class="anchor" href="#introduction-to-lora-low-rank-adaptation-2ref2-family-of-peft-parameter-efficient-finetuning">#</a>
 </h2>
-<p>Large language Models or LLMs consists of at least billions of parameters. This makes it extremely expensive to run inference on the model or train and finetune it. For example, the weights of GPT-3 175B can take up to 350GB when stored in FP16 precision (2 bytes per FP16 x 175B=350GB) when used in inference. Training requires storing additional parameters such as the optimizer states and gradients in GPU VRAM in higher precision (FP32). Assuming FP32 training with AdamW optimizer, storing the model weights requires 4 bytes for each parameter in FP32, 8 bytes per parameter to for the optimizer AdamW (where two states, first moment and second moment in FP32, are maintained for each parameter), and 4 bytes per parameter to store the gradient in FP32. This adds up to 16 bytes of storage space needed for each model parameter required for training. <a href="#ref3">[3]</a> This shows that each trainable parameter adds a lot of overhead due to different types of data like optimizer state and gradients that needs to be stored.</p>
+<p>Large language Models or LLMs consists of at least billions of parameters. This makes it extremely expensive to run inference on the model or train and finetune it. For example, the weights of GPT-3 175B can take up to 350GB when stored in FP16 precision (2 bytes per FP16 x 175B=350GB) typically used in inference. Training requires storing additional parameters such as the optimizer states and gradients in GPU VRAM in higher precision (FP32). Assuming FP32 training with AdamW optimizer the amount of bytes that need to be stored for each model parameter is as follows, 4 bytes to store the model weight parameter itself in FP32, 8 bytes per parameter for the optimizer AdamW (where two states, first moment and second moment in FP32, are maintained for each parameter), and 4 bytes per parameter to store the gradient in FP32. This adds up to 16 bytes of storage space needed for each model parameter required for training. <a href="#ref3">[3]</a> This shows that each trainable parameter adds a lot of overhead due to different types of data like optimizer state and gradients that needs to be stored.</p>
 <h3 id="memory-usage-breakdown-for-training-fp32-adamw-3ref3">
   Memory Usage Breakdown for Training (FP32 AdamW) <a href="#ref3">[3]</a>
   <a class="anchor" href="#memory-usage-breakdown-for-training-fp32-adamw-3ref3">#</a>
@@ -709,9 +714,9 @@ https://github.com/alex-shpak/hugo-book
 </tr>
 </tbody>
 </table>
-<p>This means that a full finetune of a small model such as Llama-3 8B can take 128GB (16 bytes x 8B = 128GB) just to store the parameters. This calculation excludes the forward activations as well as the training batch data which mean often higher amount of VRAM capacity is often needed. This makes even training relatively small models impossible on a single GPU as datacenter-class GPUs such as A100 or H100 max out at 80GB and especially difficult for consumer level GPUs such as the RTX 4090 which only has 24GB.</p>
-<p>Not only does the weights needs to be stored on the GPU VRAM during VRAM, each finetune version of the model needs to store the entire copy of the model. This means even if mass-storage devices like HDDs are used, it becomes prohibitively impossible to store multiple custom finetune version of the data itself.</p>
-<p>Therefore, parameter efficient finetuning or PEFT methods have been developed that is able to finetune and specialize LLMs by only using small amount of parameters, this not only reduces the number of GPUs required to train the model itself, it cuts down on the permanent storage capacity required to store multiple versions of it. The most popular of these approaches is low rank adaptation or LoRA. As its name suggests, this technique uses low-rank matrices to represent large matrices in LLMs. The hidden dimension size in LLMs gets very large with size with GPT-3 175B having a hidden dimension (d) of 12,288. By multiplying two matrices with extremely low rank (as low as 1 or 2), it is possible to represent a large matrix. By encoding changes to the original weight in this large matrix new versions of the model can be stored with a very small memory footprint. In the case of GPT-3 175B, the authors of the paper reported reduction as large as 10,000x (from 350GB to 35MB), with rank size of 4 and when being only applied 
+<p>This means that a full finetune of a small model such as Llama-3 8B can take 128GB (16 bytes x 8B = 128GB) just to store the minimum amount of data needed for training. This calculation excludes the forward activations as well as the training batch data which mean often higher amount of VRAM capacity is often needed. This makes even training relatively small models impossible on a single GPU as datacenter-class GPUs such as A100 or H100 max out at 80GB of VRAM, and especially difficult for consumer-level GPUs such as the RTX 4090 which only has 24GB.</p>
+<p>Not only does the weights needs to be stored on the GPU VRAM during VRAM, each finetune version of the model needs to store the entire copy of the model. This means even if affordable mass-storage devices like Hard disk drives or HDDs are used, it becomes prohibitively expensive to store multiple custom finetune version of the model.</p>
+<p>Therefore, parameter efficient finetuning or PEFT methods have been developed that is able to finetune LLMs by only using small amount of parameters, this not only reduces the number of GPUs required to train the model itself, it also cuts down on the permanent storage capacity required to store each custom model versions. The most popular of these approaches is low rank adaptation or LoRA. As its name suggests, this technique uses low-rank matrices to represent large matrices in LLMs. The hidden dimension size in LLMs gets very large with size with GPT-3 175B having a hidden dimension (d) of 12,288. By multiplying two matrices with extremely low rank (as low as 1 or 2), it is possible to represent a large matrix. By encoding changes to the original weight in this large matrix, new versions of the model can be stored with a very small memory footprint. In the case of GPT-3 175B, the authors of the paper reported reduction as large as 10,000x (from 350GB to 35MB), with rank size of 4 and when being only applied to 
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
@@ -720,8 +725,12 @@ https://github.com/alex-shpak/hugo-book
  and <span>
   \(W_V\)
 </span>
- projection matrices. This low rank reduction of changes is based on the assumption that the change in weights during finetuning has a low intrinsic rank, based on previous studies <a href="#ref7">[7]</a> <a href="#ref8">[8]</a> that claim that learned over-parameterized models reside in the low intrinsic dimension.</p>
-<p>Since only the differences to the original model are tracked in training, original model parameters can be frozen and only the small low-rank matrices need to be trained. Gradients or optimizer states don&rsquo;t are not required for the original model, only for the small low-rank matrices, so this greatly reduces the GPU VRAM requirement. Also, when servicing large variations of custom finetune models, only a single copy of the large model needs to be stored and each version only needs to store the small low-rank matrices that represents the difference between the original weights. This makes servicing large number of variations feasible and makes switching model versions easy as only the small LoRA weights need to be loaded and merged without loading the entire model itself.</p>
+ projection matrices. This low-rank representation of changes to the model is based on the assumption that the change in weights during finetuning has a low intrinsic rank, based on previous studies <a href="#ref7">[7]</a> <a href="#ref8">[8]</a> that claim that learned over-parameterized models reside in the low intrinsic dimension.</p>
+<p>Since only the differences to the original model are tracked in training, original model parameters can be frozen and only the small low-rank matrices need to be trained. Gradients or optimizer states are not required for the original model parameters, only for the small low-rank matrices, so this greatly reduces the GPU VRAM requirement. Also, when servicing large number of custom finetune models, only a single copy of the large model needs to be stored and to store each custom version only the small low-rank matrices that represents the difference between the original weights need to be stored. This makes servicing large number of variations feasible and makes switching model versions easy as only the small LoRA weights need to be loaded and merged without loading the entire model itself.</p>
+<h3 id="detailed-formulation-of-lora">
+  Detailed Formulation of LoRA
+  <a class="anchor" href="#detailed-formulation-of-lora">#</a>
+</h3>
 <p>Let the pre-trained weight matrix be <span>
   \(W_o \in \mathbb{R}^{d \times k}\)
 </span>
@@ -741,7 +750,7 @@ where <span>
   \(\text{rank } r \ll \min(d, k)\\)
 </span>
 , and <span>
-  \(\\Delta W = BA\)
+  \(\Delta W = BA\)
 </span>
 .</p>
 <p>The original forward pass is:</p>
@@ -773,7 +782,7 @@ where <span>
 , or <span>
   \(W_O\)
 </span>
-, query, key, value, and output projection matrices of attention as opposed to Feed Forward Networks (FFN) matrices as hidden size of FFNs tend to be much larger then projection matrices of attentions. The most common practice seems to be injecting LoRA into query and value though exact implementation can vary widely.</p>
+, query, key, value, and output projection matrices of attention as opposed to feed forward networks (FFN) weight matrices as hidden size of FFNs tend to be much larger than projection matrices of attention. The most common practice seems to be injecting LoRA into query and value though exact implementation can vary widely.</p>
 <p>During training <span>
   \(B\)
 </span>
@@ -793,8 +802,8 @@ where <span>
   How VeRA works
   <a class="anchor" href="#how-vera-works">#</a>
 </h2>
-<p>Even with parameter efficient nature of LoRA it still requires a non-trivial amount of storage for each version. If a custom version was wanted for each vendor or consumer the storage requirement can easily add up. Even for a PEFT technique like LoRA, a finetune version of GPT-3 175B with a low rank of 4 applied to only query and value projections needed several dozen megabytes in storage. If a custom version was to be stored for each users, a million users would amount to dozens of terabytes of storage. This limits the scalability of LoRA for personalization and demands an even more parameter efficient PEFT technique than LoRA which is where VeRA comes in.</p>
-<p>VeRA tries to take advantageof random matrices and projection to reduce the number of unique parameters needed for each finetune. The idea is to take a pair of randomly initialized matrices and attach a pair of scaling vectors that reparametrize it. The randomly initialized matrices remain frozen while the scaling vectors are trainable. If we use the same seed when generating the random matrices through a PRNG (pseudorandom number generator). We do not need to store the random matrices and only need to store the smaller scaling vectors. This greatly reduces the storage requirement of VeRA and allows larger ranks without drastically increasing the storage requirement.</p>
+<p>Even with parameter efficient nature of LoRA it still requires a non-trivial amount of storage for each version. If a custom version was wanted for each vendor or consumer the storage requirement can easily add up. Even for a PEFT technique like LoRA, a finetune version of GPT-3 175B with a low rank of 4 applied to only query and value projections need several dozen megabytes of storage. If a custom version were to be stored for each user, a million users would amount to dozens of terabytes of storage. This limits the scalability of LoRA for personalization and demands an even more parameter efficient PEFT technique than LoRA. This is where VeRA comes in.</p>
+<p>VeRA tries to take advantage of random matrice projection to reduce the number of unique parameters needed for each finetune. The idea is to take a pair of randomly initialized matrices and attach a pair of scaling vectors that reparametrize it. The randomly initialized matrices remain frozen while the scaling vectors are trainable. In a sense the random matrices form a basis that can scaled by separate vectors. If we use the same seed when generating the random matrices through a PRNG (pseudorandom number generator). We do not need to store the random matrices and only need to store the smaller scaling vectors. This greatly reduces the storage requirement of VeRA and allows larger ranks to be used without drastically increasing the storage requirement.</p>
 <p>This table taken from <a href="#ref1">[1]</a> shows the relative storage efficiency of VeRA compared to LoRA, when only applied to the query and key projection layers.</p>
 <table>
 <thead>
@@ -810,7 +819,7 @@ where <span>
 <tbody>
 <tr>
 <td><span>
-  \(\{RoBERTa}_{\text{base}}\)
+  \({RoBERTa}_{\text{base}}\)
 </span>
 </td>
 <td>1</td>
@@ -821,7 +830,7 @@ where <span>
 </tr>
 <tr>
 <td><span>
-  \(\{RoBERTa}_{\text{base}}\)
+  \({RoBERTa}_{\text{base}}\)
 </span>
 </td>
 <td>16</td>
@@ -832,7 +841,7 @@ where <span>
 </tr>
 <tr>
 <td><span>
-  \(\{RoBERTa}_{\text{base}}\)
+  \({RoBERTa}_{\text{base}}\)
 </span>
 </td>
 <td>256</td>
@@ -843,7 +852,7 @@ where <span>
 </tr>
 <tr>
 <td><span>
-  \(\{RoBERTa}_{\text{large}}\)
+  \({RoBERTa}_{\text{large}}\)
 </span>
 </td>
 <td>1</td>
@@ -854,7 +863,7 @@ where <span>
 </tr>
 <tr>
 <td><span>
-  \(\{RoBERTa}_{\text{large}}\)
+  \({RoBERTa}_{\text{large}}\)
 </span>
 </td>
 <td>16</td>
@@ -865,7 +874,7 @@ where <span>
 </tr>
 <tr>
 <td><span>
-  \(\{RoBERTa}_{\text{large}}\)
+  \({RoBERTa}_{\text{large}}\)
 </span>
 </td>
 <td>256</td>
@@ -900,6 +909,10 @@ where <span>
 </tr>
 </tbody>
 </table>
+<h3 id="detailed-formulation-of-vera">
+  Detailed Formulation of VeRA
+  <a class="anchor" href="#detailed-formulation-of-vera">#</a>
+</h3>
 <p>Let the pre-trained weight matrix be <span>
   \(W_o \in \mathbb{R}^{d \times k}\)
 </span>
@@ -917,10 +930,10 @@ where <span>
   \(A \in \mathbb{R}^{r \times k}\)
 </span>
 , <span>
-  \(\text{rank } r \ll \min(d, k)\\)
+  \(\text{rank } r \ll \min(d, k)\)
 </span>
 , and <span>
-  \(\\Delta W = BA\)
+  \(\Delta W = BA\)
 </span>
 .</p>
 <p>The original forward pass is:</p>
@@ -969,14 +982,20 @@ where <span>
   \(\Lambda_d \in \mathbb{R}^{r \times r}\)
 </span>
  in the equations.</p>
-<p>Unlike in LoRA, the B and A matrices do not need to be low-rank as their values does not need to be stored, they can always be reproduced with a fixed random seed. Only the small <span>
+<p>Unlike in LoRA, the <span>
+  \(B\)
+</span>
+ and <span>
+  \(A\)
+</span>
+ matrices do not need to be low-rank as their values does not need to be stored, they can always be reproduced with a fixed random seed. Only the small <span>
   \(b\)
 </span>
  and <span>
   \(d\)
 </span>
- vectors need to be updated.
-During training vector <span>
+ vectors need to be updated during training.
+When training first starts, vector <span>
   \(b\)
 </span>
  is set as 0 to keep <span>
@@ -986,7 +1005,7 @@ During training vector <span>
   \(d\)
 </span>
  is initialized using Kaiming initialization.</p>
-<p>More precisely the number of trainable parameters with VeRA scales as <span>
+<p>From this it can be observed that the trainable parameters with VeRA scales as <span>
   \(L_\text{tuned} \times (d_\text{model} &#43; r)\)
 </span>
 , whereas LoRA scales as <span>
@@ -1001,7 +1020,7 @@ During training vector <span>
 </span>
  represents the dimension of the layers.)</p>
 <p>This means that LoRA memory size dramatically with the increase of rank, VeRA can increase the rank without incurring much memory footprint.</p>
-<p>This can be shown in the following figure comparing LoRA (left) and VeRA (right).</p>
+<p>Difference between the two techniques can be seen from the figure below, LoRA (left) and VeRA (right).</p>
 <p align="center">
   <img src="./vera_methods_20240522_page_1.png" alt="LoRA vs VeRA Figure (Source: VeRA Paper Figure 1)" width="750"> 
 </p>
@@ -1227,7 +1246,7 @@ During training vector <span>
 <p align="center">
   <img src="./dora_meda_20240522_page_1.png" alt="DoRA Overview Figure (Source: DoRA Paper Figure 1)" width="600"> 
 </p>
-<p>DoRA (Weight-Decomposed Low-Rank Adaptation) <a href="#ref4">[4]</a> is a modification on LoRA where the original weight is decomposed to magnitude and direction components to be finetuned with LoRA being used to finetune the direction component. The paper observes that when the weight matrix is decomposed to two separate components, magnitude and direction, LoRA tends to exhibit a proportional relationship between changes of direction and magnitude whereas full finetuning tends to be more varied with a slight negative relationship. <a href="#ref4">[4]</a> suggests that this show&rsquo;s LoRA&rsquo;s inability to decouple the changes in the magnitude and the direction.</p>
+<p>DoRA (Weight-Decomposed Low-Rank Adaptation) <a href="#ref4">[4]</a> is a modification on LoRA where the original weight is decomposed to magnitude and direction components. The magnitude component is scaled with a trainable vector and the direction component is finetuned through the use of LoRA. The paper observes that when the weight matrix is decomposed to two separate components, magnitude and direction, LoRA tends to exhibit a proportional relationship between changes of direction and magnitude whereas full finetuning tends to be more varied with an overall slight negative relationship. <a href="#ref4">[4]</a> suggests that this demonstrates LoRA&rsquo;s inability to decouple the changes in the magnitude and the direction.</p>
 <p>This relationship is shown in the following diagram.</p>
 <p align="center">
   <img src="./dora_ft_vs_lora_vs_MADoRA_pattern_20240522_page_1.png" alt="Magnitude and Direction Change Figure (Source: DoRA Paper Figure 6)" width="800"> 
@@ -1313,6 +1332,7 @@ During training vector <span>
 <li>How performance of VeRA fares compared to LoRA and full finetuning on target domain task performance.</li>
 <li>Does VeRA exhibit the same regularization characteristic as LoRA by forgetting less of the source domain?</li>
 <li>Does sample-efficiency suffers compared to LoRA and full finetuning?</li>
+<li>Is the low rank responsible for the relative lack of performance of LoRA compared to full finetune?</li>
 </ul>
 <h3 id="nas-neural-architecture-search-to-vera">
   NAS (Neural Architecture Search) to VeRA
@@ -1322,7 +1342,7 @@ During training vector <span>
 <p>This relatively wider search space makes VeRA attractive for NAS compared to LoRA. A systematic approach towards determining which layer to target, which rank to use, and which initial value to use for each application and modality could be an interesting research topic.</p>
 <p>This research could also give us a glimpse into how each type of model responds to PEFT tuning. Whereas the original LoRA dealt in relatively limited domains such as encoder-type LLMs, instruction tuning, or image classification. Today, LoRA family of PEFT has been expanded to continued pretraining of LLMs, finetuning diffusion models, customization of LLMs, et cetera. The relative low-overhead and wider search space of VeRA could be useful as a tool for exploring the optimal configuration of LoRA-type PEFT and how each domains works differently.</p>
 <h3 id="better-initialization-settings">
-  Better initialization settings
+  Better Initialization Settings
   <a class="anchor" href="#better-initialization-settings">#</a>
 </h3>
 <p>The initialization scheme used in VeRA is relatively simple. The original VeRA paper does present some exploration and ablation studies of initialization schemes. The authors claim that using both <span>
@@ -1335,7 +1355,7 @@ During training vector <span>
   \(d\)
 </span>
  vector with <span>
-  \(d_init\)
+  \(d_\text{init}\)
 </span>
  set to <span>
   \(10^{-1}\)
@@ -1347,14 +1367,14 @@ During training vector <span>
 <p>But, the types of initializations and number of parameters explored are limited and focus on relatively old model (RoBERTa) and coarse GLUE-based benchmarks such as RTE, MRPC, CoLA, and STS-B tasks. Additional experiments on more relevant LLM tasks such as instruction finetuning or continued pretraining could be more insightful as well as more diverse modalities(vision, sound, et cetera). For example, LoRAs have become a popular in diffusion models such as Stable Diffusion <a href="#ref9">[9]</a> as a way of generating custom images. It would be meaningful to explore the behavior and the best settings for VeRA in these type of applications and tasks.</p>
 <p>Also, the fact that the rank can be scaled freely in VeRA with not much overhead was underexplored in the original paper. By varying and expanding the rank size to be much greater than what is feasible with LoRA it seems possible that VeRA could have higher rank compared to LoRA possibly leading to different behaviors. Varying the rank and the initializations of VeRA and comparing the SVD decomposition of VeRA, LoRA, and full finetuning seems like an underexplored topic. How different configurations of VeRA can change the behavior of the weight perturbations or how it relates to performance could be important for exploring how the weight features changes with finetuning. For example, <a href="#ref5">[5]</a> claims that on full finetuning on code and math the model does not learn low-rank perturbations unlike the original assumptions behind LoRA. Considering that VeRA is able to expand to much higher rank, SVD analysis of VeRA when trained on complex tasks like code and math could yield interesting results.</p>
 <h3 id="universal-basis-matrices-for-vera">
-  Universal basis matrices for VeRA
+  Universal Basis Matrices for VeRA
   <a class="anchor" href="#universal-basis-matrices-for-vera">#</a>
 </h3>
 <p align="center">
   <img src="./platonic_rep_less_space_v3_20240522_page_1.png" alt="Platonic Representation Hypothesis Figure (Source: Platonic Representation Hypothesis Paper Figure 1)" width="600"> 
 </p>
 <p>The Platonic Representation Hypothesis <a href="#ref6">[6]</a> claims that representations in AI models are converging across multiple domains. The hypothesis claims that representation learning algorithms attempts to find vector embeddings that statistically model reality through various measurements and projections. The vector embeddings are all derived from reality and becomes more aligned as models become trained on more data and for more tasks. In the paper, authors claim that model alighment increases with performance and even models trained with different modalities (language and vision) tends to converge as performance increases.</p>
-<p>If large fundamental models share a common representation, it is possible that there could be an ideal way to represent the randomized matrix basis on which VeRA operates well in. Currently the random <span>
+<p>If large fundamental models share a common representation, it is possible that there could be an ideal way to represent the basis matrices, normally randomly generated, with which VeRA operates well. Currently the random <span>
   \(A\)
 </span>
  and <span>
@@ -1368,7 +1388,7 @@ During training vector <span>
 </span>
 ) for VeRA better.</p>
 <p>Research could attempt to isolate such basis matrices through statistical analysis of various SoTA (state of the art) models and compare against random Gaussian generated matrices. Initially the study could focus on models across a single modality such as vision and expand search for multi-modal models. This could not only lead to a more practical method of generating better performing basis matrices but also validate the Platonic representation hypothesis.</p>
-<p>One stumbling block of applying VeRA to this hypothesis is that the hypothesis largely discusses representation while VeRA is about modifying the model weights. However, LoReFT (low-rank linear subspace ReFT) <a href="#ref10">[10]</a> defines a methodology of finetuning a model by modifying its representations/activations, denoted as h. Using the formula:</p>
+<p>One potential stumbling block of applying VeRA to this hypothesis is that the hypothesis largely discusses representation while VeRA is about modifying the model weights. However, LoReFT (low-rank linear subspace ReFT) <a href="#ref10">[10]</a> defines a methodology of finetuning a model by modifying its representations/activations, denoted as h. Using the formula:</p>
 <p><span>
   \(\text{LoREFT}(h) = h &#43; R^{T} (W h &#43; b - R h)\)
 </span>
@@ -1379,7 +1399,13 @@ During training vector <span>
   \(W \in \mathbb{R}^{r \times d}\)
 </span>
  are low rank matrices.</p>
-<p>Considering that LoReFT also uses a low-rank matrix to represent trainable changes, VeRA&rsquo;s methodology of using a randomly generated matrices with small vectors seems applicable. This expands the possibility that the hypothesis could be applicable for a LoREFT + VeRA hybrid as well.</p>
+<p>Considering that LoReFT also uses low-rank matrices to represent trainable changes, VeRA&rsquo;s methodology of using a randomly generated matrices scaled by small trainable vectors seems applicable. This expands the possibility that the hypothesis could be applicable for a LoREFT + VeRA hybrid as well. Where a &ldquo;Platonic Representation&rdquo; could translate to a &ldquo;universal&rdquo; low-rank <span>
+  \(R\)
+</span>
+ or <span>
+  \(W\)
+</span>
+ matrices that can be scaled by smaller vector in the style of VeRA.</p>
 <h2 id="references">
   References
   <a class="anchor" href="#references">#</a>
@@ -1404,9 +1430,9 @@ During training vector <span>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/e479fc81943b85c6b6d731fac064d327eb34ee7c" title='Last modified by effml-postech | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/1a829fa9f90dc3a77f9411912e6da373ac53c41c" title='Last modified by kmcho2019 | May 24, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 22, 2024</span>
+      <span>May 24, 2024</span>
     </a>
   </div>
 
@@ -1452,9 +1478,14 @@ During training vector <span>
     <li><a href="#introduction-to-lora-low-rank-adaptation-2ref2-family-of-peft-parameter-efficient-finetuning">Introduction to LoRA (Low Rank Adaptation) <a href="#ref2">[2]</a> family of PEFT (Parameter Efficient Finetuning)</a>
       <ul>
         <li><a href="#memory-usage-breakdown-for-training-fp32-adamw-3ref3">Memory Usage Breakdown for Training (FP32 AdamW) <a href="#ref3">[3]</a></a></li>
+        <li><a href="#detailed-formulation-of-lora">Detailed Formulation of LoRA</a></li>
       </ul>
     </li>
-    <li><a href="#how-vera-works">How VeRA works</a></li>
+    <li><a href="#how-vera-works">How VeRA works</a>
+      <ul>
+        <li><a href="#detailed-formulation-of-vera">Detailed Formulation of VeRA</a></li>
+      </ul>
+    </li>
     <li><a href="#performance">Performance</a>
       <ul>
         <li><a href="#roberta-base-glue-benchmarks">RoBERTa Base GLUE benchmarks</a></li>
@@ -1471,8 +1502,8 @@ During training vector <span>
       <ul>
         <li><a href="#behavior-of-vera-compared-to-lora">Behavior of VeRA compared to LoRA</a></li>
         <li><a href="#nas-neural-architecture-search-to-vera">NAS (Neural Architecture Search) to VeRA</a></li>
-        <li><a href="#better-initialization-settings">Better initialization settings</a></li>
-        <li><a href="#universal-basis-matrices-for-vera">Universal basis matrices for VeRA</a></li>
+        <li><a href="#better-initialization-settings">Better Initialization Settings</a></li>
+        <li><a href="#universal-basis-matrices-for-vera">Universal Basis Matrices for VeRA</a></li>
       </ul>
     </li>
     <li><a href="#references">References</a></li>

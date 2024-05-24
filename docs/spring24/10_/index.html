@@ -22,7 +22,7 @@ Reviewer: Hyunho Kook
 <link rel="canonical" href="http://localhost:1313/docs/spring24/10_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.268a47946a95787174dd9a9766ec6e695f29d1d2555e28446e888abc97d8c054.js" integrity="sha256-JopHlGqVeHF03ZqXZuxuaV8p0dJVXihEboiKvJfYwFQ=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.af197d9d29d888c2e34c92194c94bf3d4b7988ad8214a25d790d7f1995afa08e.js" integrity="sha256-rxl9nSnYiMLjTJIZTJS/PUt5iK2CFKJdeQ1/GZWvoI4=" crossorigin="anonymous"></script>
 
   
 
@@ -689,9 +689,11 @@ https://github.com/alex-shpak/hugo-book
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <script defer src="/katex/katex.min.js"></script>
 <script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
-  \(u_t^{(j)} &amp;= \beta_j x_{t,j} \\
+  \(\begin{align*}
+u_t^{(j)} &amp;= \beta_j x_{t,j} \\
 h_t^{(j)} &amp;= \alpha_j \odot u_t^{(j)} &#43; (1 - \alpha_j \odot \delta_j) \odot h_{t-1}^{(j)} \\
-y_{t,j} &amp;= \eta_j^T h_t^{(j)}\)
+y_{t,j} &amp;= \eta_j^T h_t^{(j)}
+\end{align*}\)
 </span>
 
 <p>This exponential moving average (EMA) serves as the foundation for the subsequent attention mechanism.</p>
@@ -707,8 +709,10 @@ y_{t,j} &amp;= \eta_j^T h_t^{(j)}\)
 </span>
 :</p>
 <span>
-  \(X&#39; &amp;= EMA(X) \in \mathbb{R}^{n \times d} \\
-Z &amp;= \phi_{silu}(X&#39;W_z &#43; b_z) \in \mathbb{R}^{n \times z}\)
+  \(\begin{align*}
+X&#39; &amp;= EMA(X) \in \mathbb{R}^{n \times d} \\
+Z &amp;= \phi_{silu}(X&#39;W_z &#43; b_z) \in \mathbb{R}^{n \times z}
+\end{align*}\)
 </span>
 
 <p>Using the shared representation <span>
@@ -719,9 +723,11 @@ Z &amp;= \phi_{silu}(X&#39;W_z &#43; b_z) \in \mathbb{R}^{n \times z}\)
 </span>
  is used to calculate the values:</p>
 <span>
-  \(Q &amp;= \kappa_q \odot Z &#43; \mu_q \in \mathbb{R}^{n \times z}\\
+  \(\begin{align*}
+Q &amp;= \kappa_q \odot Z &#43; \mu_q \in \mathbb{R}^{n \times z}\\
 K &amp;= \kappa_k \odot Z &#43; \mu_k \in \mathbb{R}^{n \times z}\\
-V &amp;= \phi_{silu}(XW_v &#43; b_v) \in \mathbb{R}^{n \times v}\)
+V &amp;= \phi_{silu}(XW_v &#43; b_v) \in \mathbb{R}^{n \times v}
+\end{align*}\)
 </span>
 
 <h3 id="2c-attention-output-calculation">
@@ -755,10 +761,12 @@ V &amp;= \phi_{silu}(XW_v &#43; b_v) \in \mathbb{R}^{n \times v}\)
 </span>
 . This is achieved through the following equations:</p>
 <span>
-  \(\gamma &amp;= \phi_{silu}(X&#39;W_\gamma &#43; b_\gamma) \in \mathbb{R}^{n \times v} \\
+  \(\begin{align*}
+\gamma &amp;= \phi_{silu}(X&#39;W_\gamma &#43; b_\gamma) \in \mathbb{R}^{n \times v} \\
 \varphi &amp;= \phi_{sigmoid}(X&#39;W_\varphi &#43; b_\varphi) \in \mathbb{R}^{n \times d} \\ 
 \hat{H} &amp;= \phi_{silu}(X&#39;W_h &#43; (\gamma \odot O)U_h &#43; b_h) \in \mathbb{R}^{n \times d} \\
-Y &amp;= \varphi \odot \hat{H} &#43; (1 - \varphi) \odot X \in \mathbb{R}^{n \times d}\)
+Y &amp;= \varphi \odot \hat{H} &#43; (1 - \varphi) \odot X \in \mathbb{R}^{n \times d}
+\end{align*}\)
 </span>
 
 <h3 id="2e-chunk-wise-attention-for-linear-time-complexity">
@@ -790,8 +798,10 @@ Y &amp;= \varphi \odot \hat{H} &#43; (1 - \varphi) \odot X \in \mathbb{R}^{n \ti
 </h3>
 <p>To improve EMA (Exponential Moving Average) capability when working over the complex number system, the authors propose CEMA (Complex Exponential Moving Average), which extends the idea of EMA to the complex plane. The key equations for CEMA are:</p>
 <span>
-  \(h_t^{(j)} &amp;= \alpha_j(\cos \theta_j &#43; i \sin \theta_j) \odot u_t^{(j)} &#43; (1 - \alpha_j \odot \delta_j)(\cos \theta_j &#43; i \sin \theta_j) \odot h_{t-1}^{(j)} \\
-y_{t,j} &amp;= \mathcal{Re}(\eta_j^T h_t^{(j)})\)
+  \(\begin{align*}
+h_t^{(j)} &amp;= \alpha_j(\cos \theta_j &#43; i \sin \theta_j) \odot u_t^{(j)} &#43; (1 - \alpha_j \odot \delta_j)(\cos \theta_j &#43; i \sin \theta_j) \odot h_{t-1}^{(j)} \\
+y_{t,j} &amp;= \mathcal{Re}(\eta_j^T h_t^{(j)})
+\end{align*}\)
 </span>
 
 <p>Here, <span>
@@ -850,11 +860,13 @@ y_{t,j} &amp;= \mathcal{Re}(\eta_j^T h_t^{(j)})\)
 </span>
  since the values are already normalized while improving the stability of the attention mechanism.</p>
 <span>
-  \(X&#39; &amp;= \mathcal{CEMA}(X) &amp;&amp; \in \mathbb{R}^{n \times d} \\
+  \(\begin{align*}
+X&#39; &amp;= \mathcal{CEMA}(X) &amp;&amp; \in \mathbb{R}^{n \times d} \\
 Z &amp;= X&#39;W_z &#43; b_z, \quad Z&#39; = \frac{Z}{|Z|} &amp;&amp; \in \mathbb{R}^{n \times z} \\
 Q &amp;= \kappa_q \odot Z&#39; &#43; \mu_q &amp;&amp; \in \mathbb{R}^{n \times z} \\
 K &amp;= \kappa_k \odot Z&#39; &#43; \mu_k &amp;&amp; \in \mathbb{R}^{n \times z} \\
-O &amp;= f_{\text{softmax}}\left(QK^T\right)V &amp;&amp; \in \mathbb{R}^{n \times v}\)
+O &amp;= f_{\text{softmax}}\left(QK^T\right)V &amp;&amp; \in \mathbb{R}^{n \times v}
+\end{align*}\)
 </span>
 
 <h3 id="3d-2-hop-residual-connection">
@@ -960,9 +972,9 @@ O &amp;= f_{\text{softmax}}\left(QK^T\right)V &amp;&amp; \in \mathbb{R}^{n \time
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/faca1f36b9c692023fc5bd32cef6d2b51b53fae3" title='Last modified by kookhh0827 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/523a542a953a9e37fca5b3c63380cee2c7a1a2e4" title='Last modified by kookhh0827 | May 23, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 22, 2024</span>
+      <span>May 23, 2024</span>
     </a>
   </div>
 
