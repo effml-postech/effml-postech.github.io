@@ -20,7 +20,7 @@ In-context learning, ICL typically uses prompting to condition the generation of
 <link rel="canonical" href="http://localhost:1313/docs/spring24/06_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.af197d9d29d888c2e34c92194c94bf3d4b7988ad8214a25d790d7f1995afa08e.js" integrity="sha256-rxl9nSnYiMLjTJIZTJS/PUt5iK2CFKJdeQ1/GZWvoI4=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.19047dfa29663a6878455c545bcb4afbbab899bcc70e677aaf0cfc5bb0392959.js" integrity="sha256-GQR9&#43;ilmOmh4RVxUW8tK&#43;7q4mbzHDmd6rwz8W7A5KVk=" crossorigin="anonymous"></script>
 
   
 
@@ -631,7 +631,12 @@ https://github.com/alex-shpak/hugo-book
 <p><em>Submitted on 23 Apr 2024 by</em> João Monteiro1, Étienne Marcotte1,<em>, Pierre-André Noël1,</em>, Valentina Zantedeschi1,*, David Vázquez1, Nicolas Chapados1, 2, Christopher Pal1, 2, Perouz Taslakian11, ServiceNow Research.</p>
 <p><a href="https://www.notion.so/In-context-learning-ICL-817a5a05df7945149e6efbf8972f645c?pvs=21">In-context learning, ICL</a>  typically uses prompting to condition the generation of decoder-only language models based on reference information. However, just-in-time processing of context is inefficient due to the quadratic cost of self-attention operations, making <strong><a href="https://www.notion.so/7708a6d8eeaf4a7082e9da6b4b90950d?pvs=21">caching</a></strong> desirable. Yet, caching <a href="https://www.notion.so/e10d87b5902d4dfb94edbbecc2582efe?pvs=21">transformer</a> states can demand nearly as much space as the model parameters themselves, posing a challenge when the appropriate context is not known in advance.</p>
 <p>This paper addresses these challenges by introducing models that use <strong>cross-attention</strong>, inspired by the encoder-decoder architecture, to condition generation on reference text without a prompt. The approach leverages pre-trained decoder-only models and trains only a small number of added layers. The authors use Question-Answering (QA) as a testbed to evaluate these models&rsquo; ability to perform conditional generation.</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/ecaf2b8d-d654-4cb1-bdb0-0aa6aa6ea46d/aee2a0ac-0dff-4ec3-a990-297af09450ac/Untitled.png" alt="Untitled" /></p>
+<p align="center">
+    <img src='./approach.png' width="650">
+</p>
+<p align="center">
+    Fig. 1. Contrast between autoregressive decoding and speculative decoding.
+</p>
 <p>These four approaches highlight various strategies for efficient context processing in large language models.</p>
 <p>(a) depicts a scenario where a user’s query must be interpreted within a given context to generate an answer. In this case, the query and answer are small (light), but the context is large (heavy). This results in a time complexity of O(|context|²) for the <a href="https://www.notion.so/LLM-e5c86372d9404c97ba24cb1491243a84?pvs=21">LLM</a>.</p>
 <p>(b) explains <a href="https://arxiv.org/abs/2005.14165"><em><strong>In-Context Learning (ICL)</strong></em></a> and <a href="https://arxiv.org/abs/2005.11401">***Retrieval-Augmented Generation (RAG)</a>***  which use the query to look up the context from a finite corpus, but still remain inefficient with large contexts.</p>
@@ -661,7 +666,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/ef6d45924f83b3a6017296e457d75f3d085c52c2" title='Last modified by sangilmian | May 24, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/99f44fe16cb3768f7ce30db8b5d861a81adc4a4f" title='Last modified by sangilmian | May 24, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 24, 2024</span>
     </a>
