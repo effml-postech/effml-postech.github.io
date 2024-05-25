@@ -3,13 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" # ">
+<meta name="description" content="LISA: Layerwise Importance Sampling for Memory-Efficient Large Language Model Fine-Tuning # Posted by: Sungbin Shin and Dongyeop Lee
+The incredible versatility of large language models (LLM) on a wide variety of tasks has attracted many to leverage its power to perform specific tasks of interest (i.e., downstream task) via a process called fine-tuning, which consists of re-training the whole pretrained network on a new set of data. However, its intensive computation and memory cost have led to the development of efficient techniques, particularly Parameter-Efficient Fine-Tuning (PEFT) approaches such as adapters, prompt weights, and, arguably one of the most widely used approaches, LoRA.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/19_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" # ">
+  <meta property="og:description" content="LISA: Layerwise Importance Sampling for Memory-Efficient Large Language Model Fine-Tuning # Posted by: Sungbin Shin and Dongyeop Lee
+The incredible versatility of large language models (LLM) on a wide variety of tasks has attracted many to leverage its power to perform specific tasks of interest (i.e., downstream task) via a process called fine-tuning, which consists of re-training the whole pretrained network on a new set of data. However, its intensive computation and memory cost have led to the development of efficient techniques, particularly Parameter-Efficient Fine-Tuning (PEFT) approaches such as adapters, prompt weights, and, arguably one of the most widely used approaches, LoRA.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>19 | Efficient ML Systems</title>
@@ -18,7 +20,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/19_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.19047dfa29663a6878455c545bcb4afbbab899bcc70e677aaf0cfc5bb0392959.js" integrity="sha256-GQR9&#43;ilmOmh4RVxUW8tK&#43;7q4mbzHDmd6rwz8W7A5KVk=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.0f57e94bc0c8098ee323e2a76a1bd56be5109b0347f202135049ff3246b6b4a3.js" integrity="sha256-D1fpS8DICY7jI&#43;KnahvVa&#43;UQmwNH8gITUEn/Mka2tKM=" crossorigin="anonymous"></script>
 
   
 
@@ -606,7 +608,31 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#background">Background</a>
+      <ul>
+        <li><a href="#parameter-efficient-fine-tuning">Parameter-Efficient Fine-Tuning</a></li>
+        <li><a href="#low-rank-adaptation-lora">Low-Rank Adaptation (LoRA)</a></li>
+        <li><a href="#large-scale-optimization-algorithms">Large-scale Optimization Algorithms</a></li>
+      </ul>
+    </li>
+    <li><a href="#method">Method</a>
+      <ul>
+        <li><a href="#motivation-training-pattern-of-lora">Motivation: training pattern of LoRA</a></li>
+        <li><a href="#layerwise-importance-sampled-adamw-lisa">Layerwise Importance Sampled AdamW (LISA)</a></li>
+      </ul>
+    </li>
+    <li><a href="#experiments">Experiments</a>
+      <ul>
+        <li><a href="#efficiency">Efficiency</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#ablation-study-on-hyperparameter">Ablation study on hyperparameter</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
 
 
 
@@ -617,10 +643,185 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
+  <article class="markdown book-article"><h1 id="lisa-layerwise-importance-sampling-for-memory-efficient-large-language-model-fine-tuning">
+  LISA: Layerwise Importance Sampling for Memory-Efficient Large Language Model Fine-Tuning
+  <a class="anchor" href="#lisa-layerwise-importance-sampling-for-memory-efficient-large-language-model-fine-tuning">#</a>
 </h1>
+<p>Posted by: Sungbin Shin and Dongyeop Lee</p>
+<p>The incredible versatility of large language models (LLM) on a wide variety of tasks has attracted many to leverage its power to perform specific tasks of interest (i.e., downstream task) via a process called fine-tuning, which consists of re-training the whole pretrained network on a new set of data.
+However, its intensive computation and memory cost have led to the development of efficient techniques, particularly Parameter-Efficient Fine-Tuning (PEFT) approaches such as adapters, prompt weights, and, arguably one of the most widely used approaches, LoRA.</p>
+<p>However, LoRA&rsquo;s performance has yet reach the level of full fine-tuning in all settings.
+To overcome this shortcoming, this work investigates into the training statistics of LoRA in each layer to discover that the distribution of layerwise weight norms of LoRA is uncommonly skewed, suggesting varying levels of importance of each layer.</p>
+<p>This naturally brings forth their <strong>L</strong>ayerwise <strong>I</strong>mportance <strong>S</strong>ampled <strong>A</strong>dam (<strong>LISA</strong>), which suggests selectively updating only the essential layers of the LLM sampled based on their importance and leaving others untouched.
+This allows for the performance of traditional full-parameter fine-tuning with the parameter count of LoRA, indicating a large potential of LISA as a promising alternative to LoRA.</p>
+<h2 id="background">
+  Background
+  <a class="anchor" href="#background">#</a>
+</h2>
+<h3 id="parameter-efficient-fine-tuning">
+  Parameter-Efficient Fine-Tuning
+  <a class="anchor" href="#parameter-efficient-fine-tuning">#</a>
+</h3>
+<p>Parameter-efficient fine-tuning (PEFT) methods adapt pre-trained models by fine-tuning only a subset of their parameters. These methods fall into three categories:</p>
+<ul>
+<li>
+<p>Prompt Learning Methods: Focus on optimizing the input token or embedding while keeping the model parameters frozen. This approach generally has the lowest training cost.</p>
+</li>
+<li>
+<p>Adapter Methods: Introduce an auxiliary module with fewer parameters than the original model. Only the adapter module is updated during training.</p>
+</li>
+<li>
+<p>Selective Methods: These methods, closely related to LISA (Layerwise Importance Sampled AdamW), focus on fine-tuning a fraction of the model&rsquo;s parameters without adding extra modules. They include techniques like AutoFreeze, FreezeOut, and SmartFRZ, which improve training efficiency by selectively freezing layers based on importance, but these strategies are often complex and not widely adopted for large language models due to compatibility issues with modern memory reduction techniques.</p>
+</li>
+</ul>
+<h3 id="low-rank-adaptation-lora">
+  Low-Rank Adaptation (LoRA)
+  <a class="anchor" href="#low-rank-adaptation-lora">#</a>
+</h3>
+<p><img src="./lora.png" alt="LoRA" /></p>
+<p>Low-Rank Adaptation (LoRA) is a technique commonly used for training large language models (LLMs) efficiently.
+It reduces the number of trainable parameters by employing low-rank matrices, which significantly lessens computational and memory costs.
+This method is particularly compatible with models featuring linear layers, allowing seamless integration without altering the model architecture.
+LoRA can also be combined with other techniques like quantization and Mixture of Experts to further enhance performance and efficiency.</p>
+<h3 id="large-scale-optimization-algorithms">
+  Large-scale Optimization Algorithms
+  <a class="anchor" href="#large-scale-optimization-algorithms">#</a>
+</h3>
+<p>Efforts to optimize large language models (LLMs) focus on improving efficiency through various methods. Layerwise optimization, pioneered by Hinton and furthered by Bengio, has shown benefits in sequential layer pre-training. Techniques like LARS and LAMB improve generalization in large batch settings. Common optimization methods include Adam and AdamW. Recent approaches like MeZO and Sophia aim to reduce training costs and speed up processes but face challenges such as complexity and performance drops. GaLore attempts memory-efficient training via low-rank gradient projection. Despite these advances, LoRA-variant methods combined with AdamW remain dominant for fine-tuning large LLMs, though there&rsquo;s room for improvement.</p>
+<h2 id="method">
+  Method
+  <a class="anchor" href="#method">#</a>
+</h2>
+<h3 id="motivation-training-pattern-of-lora">
+  Motivation: training pattern of LoRA
+  <a class="anchor" href="#motivation-training-pattern-of-lora">#</a>
+</h3>
+<p>To take a closer look at the effectiveness of LoRA, we measure the weight norm over different layers during fine-tuning.
+Specifically, the value for 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \( \ell \)
+</span>
+-th layer is calculated as the mean over <span>
+  \( T \)
+</span>
+ iterations, i.e.,
+<span>
+  \[  w^{(\ell)} \triangleq \texttt{mean-weight-norm}(\ell) = \frac{1}{T} \sum_{t=1}^{T} \|\theta^{(\ell)}_t\|_2,\]
+</span>
+
+where <span>
+  \( \theta^{(\ell)}_t \)
+</span>
+ is the parameter of <span>
+  \( \ell \)
+</span>
+-th layer at <span>
+  \( t \)
+</span>
+-th iteration during fine-tuning.</p>
+<p><img src="./weightnorm.png" alt="weightnorm" /></p>
+<p>The results of the weight norm over different layers for GPT2 and LLaMA-2-7B models are presented above.
+Here, the red and blue lines each correspond to the results of full fine-tuning and LoRA fine-tuning.
+We observe the following intriguing phenomenons.</p>
+<ul>
+<li>For LoRA fine-tuning, weight norm has a skewed distribution; the values are significantly large for embedding layers and the final LM head whereas those for intermediate layers are much smaller.</li>
+<li>For full fine-tuning, the results are very different from LoRA; the values are more uniformly distributed.</li>
+</ul>
+<p>Overall, the results imply that <em>LoRA treats layerwise importance in a very different way compared to full fine-tuning</em>.</p>
+<h3 id="layerwise-importance-sampled-adamw-lisa">
+  Layerwise Importance Sampled AdamW (LISA)
+  <a class="anchor" href="#layerwise-importance-sampled-adamw-lisa">#</a>
+</h3>
+<p>LISA aims to follow the training pattern of LoRA while avoiding its limitation of limited expressiveness due to low-rank nature.
+Specifically, LISA borrows the idea from importance sampling and only updates a subset of layers at each iteration to simulate the training pattern of LoRA.
+Since the weight norm of LoRA is significantly larger for the first and last layers compared to the intermediate ones, the sampling probability for each layer is determined as <span>
+  \(  \{p_\ell\}_{\ell=1}^{N_L} = \{1.0, \gamma/N_L, \gamma/N_L, \dots, \gamma/N_L, 1.0\}  \)
+</span>
+, where <span>
+  \( N_L \)
+</span>
+ is the total number of layers and <span>
+  \( \gamma \)
+</span>
+ is the hyperparameter to control the number of layers to update at each iteration.
+In other words, the first and last layers are always updated while each intermediate layer is updated with probability <span>
+  \( \gamma/N_L \)
+</span>
+.</p>
+<p><img src="./algorithm.png" alt="weightnorm" /></p>
+<p>The algorithm pseudocode is presented above.
+For each round, it samples the layers to update and fine-tune the models with AdamW for <span>
+  \( K \)
+</span>
+ iterations.</p>
+<h2 id="experiments">
+  Experiments
+  <a class="anchor" href="#experiments">#</a>
+</h2>
+<h3 id="efficiency">
+  Efficiency
+  <a class="anchor" href="#efficiency">#</a>
+</h3>
+<p>Since LISA only updates a subset of parameters at each iteration, it is expected to consume less memory compared to full fine-tuning.
+We precisely measure the memory cost for different versions of LISA compared to full fine-tuning and LoRA.</p>
+<p><img src="./peakmemory.png" alt="weightnorm" /></p>
+<p>The above table presents the peak GPU memory consumption for full fine-tuning, LoRA, and LISA.
+Here, LoRA is experimented with different ranks and LISA is experimented with different versions of E+H (updating embedding and head layer), E+H+2L (updating E, H, and two intermediate layers), and E+H+4L (updating E, H, and four intermediate layers).
+As we can see, LISA consumes much less memory compared to full fine-tuning and even less memory than LoRA; for LLaMA-2-70B model, LISA with E+H+2L requires 75B memory while LoRA with rank 128 requires 79GB memory.</p>
+<p><img src="./memory.png" alt="weightnorm" /></p>
+<p>More detailed analysis regarding the memory consumption is as above.
+In particular, LISA consumes much less activation memory compared to LoRA as it does not require additional parameters to update unlike LoRA which introduces a new set of parameters.</p>
+<p><img src="./time.png" alt="weightnorm" /></p>
+<p>Also, LISA can even accelerate the training speed; as seen in the above figure, LISA demonstrates near 2.9 times and 1.5 times speedups when compared to full fine-tuning and LoRA respectively.
+Overall, LISA is more efficient than full fine-tuning and LoRA in terms of both memory and training time.</p>
+<h3 id="performance">
+  Performance
+  <a class="anchor" href="#performance">#</a>
+</h3>
+<p>In the previous experiments, we have observed that LISA significantly reduces the memory consumption and training time compared to full fine-tuning and LoRA.
+Does LISA achieve efficiency without significant performance degradation compared to full fine-tuning?
+Surprisingly, we find that LISA actually demonstrates better results than full fine-tuning.</p>
+<p><img src="./result-moderate.png" alt="weightnorm" /></p>
+<p>First, we measure the performance for moderate-size language models having several billions of parameters.
+As you can observe in the above table, LISA outperforms LoRA and even full fine-tuning (FT) by a large margin.</p>
+<p><img src="./result-large.png" alt="weightnorm" /></p>
+<p>To further investigate the performance of LISA on large-scale models, we additionally test the method on LLaMA-2-70B having 70B parameters.
+As shown in the above table, LISA outperforms LoRA for all tasks and even surpasses full fine-tuning on most tasks.</p>
+<h3 id="ablation-study-on-hyperparameter">
+  Ablation study on hyperparameter
+  <a class="anchor" href="#ablation-study-on-hyperparameter">#</a>
+</h3>
+<p>LISA has two hyperparameters: <span>
+  \( \gamma \)
+</span>
+ for determining the number of layers to update at each iteration, and <span>
+  \( K \)
+</span>
+ for determining how many iterations to perform with the sampled layers (i.e., sampling frequency).</p>
+<p><img src="./hyperparam.png" alt="weightnorm" /></p>
+<p>The effects of two hyperparameters are presented in the above table.
+First, it is observed that larger <span>
+  \( \gamma \)
+</span>
+ lead to increased performance, which is quite expected since more number of layers are updated at each iteration.
+However, this also leads to the increased memory consumption, i.e., there exists a trade-off between performance and efficiency.
+Second, larger <span>
+  \( K \)
+</span>
+ leads to increased performance by more frequently changing the layers to update.
+However, too larger value can lead to inferior performance (see the result when <span>
+  \( K =122\)
+</span>
+ ).</p>
+<h2 id="conclusion">
+  Conclusion
+  <a class="anchor" href="#conclusion">#</a>
+</h2>
+<p>This paper propose Layerwise Importance Sampled AdamW (LISA), an optimization algorithm that randomly freezes layers of LLM based on a given probability.
+Inspired from observations of LoRA’s skewed weight norm distribution, a simple and memory-efficient freezing paradigm is introduced for LLM training, which achieves significant performance improvements over LoRA on downstream fine-tuning tasks with various models, including LLaMA-2-70B.
+Further experiments on domain-specific training also demonstrate its effectiveness, showing LISA’s huge potential as a promising alternative to LoRA for LLM training.</p>
 </article>
  
       
@@ -630,9 +831,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/0947bc5271fafa666a5b1d8cea6a555fa66e3cb5" title='Last modified by effml-postech | May 14, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/caf60ad586aca3ad166cad7d01aca3f77a6b0358" title='Last modified by Dongyeop Lee | May 25, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 14, 2024</span>
+      <span>May 25, 2024</span>
     </a>
   </div>
 
@@ -673,7 +874,31 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#background">Background</a>
+      <ul>
+        <li><a href="#parameter-efficient-fine-tuning">Parameter-Efficient Fine-Tuning</a></li>
+        <li><a href="#low-rank-adaptation-lora">Low-Rank Adaptation (LoRA)</a></li>
+        <li><a href="#large-scale-optimization-algorithms">Large-scale Optimization Algorithms</a></li>
+      </ul>
+    </li>
+    <li><a href="#method">Method</a>
+      <ul>
+        <li><a href="#motivation-training-pattern-of-lora">Motivation: training pattern of LoRA</a></li>
+        <li><a href="#layerwise-importance-sampled-adamw-lisa">Layerwise Importance Sampled AdamW (LISA)</a></li>
+      </ul>
+    </li>
+    <li><a href="#experiments">Experiments</a>
+      <ul>
+        <li><a href="#efficiency">Efficiency</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#ablation-study-on-hyperparameter">Ablation study on hyperparameter</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
 
 
  
