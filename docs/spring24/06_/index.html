@@ -20,7 +20,7 @@ Background Knowledge # In-context Learning(ICL) # In-context Learning (ICL) is a
 <link rel="canonical" href="http://localhost:1313/docs/spring24/06_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.b429bbacedffbdeb423d890ba77877021bd5f93cb0330af356cbb2a479862198.js" integrity="sha256-tCm7rO3/vetCPYkLp3h3AhvV&#43;TywMwrzVsuypHmGIZg=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.69d539257fd7dad2bc289dd230cf62a9dc850368a661706e7ea773611e9e96b7.js" integrity="sha256-adU5JX/X2tK8KJ3SMM9iqdyFA2imYXBufqdzYR6elrc=" crossorigin="anonymous"></script>
 
   
 
@@ -629,9 +629,9 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#results">Results</a>
       <ul>
         <li><a href="#compare-with-other-methods">Compare with other methods</a></li>
+        <li><a href="#expanded-evaluation-of-context-conditioning-methods">Expanded Evaluation of Context Conditioning Methods</a></li>
       </ul>
     </li>
-    <li><a href="#expanded-evaluation-of-context-conditioning-methods">Expanded Evaluation of Context Conditioning Methods</a></li>
     <li><a href="#conclusion">Conclusion</a></li>
     <li><a href="#related-works">Related works</a>
       <ul>
@@ -753,8 +753,8 @@ V: Concealed states of encoder cells at all time points</p>
     <br>
     <i>Fig. 5 Self-attention mechanism showing the similarity between words</i>
 </p>
-**Get Q, K, V vectors**
-As described above, the self-attention operates based on the word vector of the input sentence. However, in practice, in order to perform the self-attention, a process of obtaining the Q-vector, the K-vector, and the V-vector from the word vectors which are the initial inputs of the encoder is required. In this case, the Q-vector, the K-vector, and the V-vector have a lower dimension, unlike the dimension of the initial input, and in transformer, each 512-dimensional word vector is converted into a 64-dimensional Q-vector, the K-vector, and the V-vector from the initial input.
+<p><strong>Get Q, K, V vectors</strong>
+As described above, the self-attention operates based on the word vector of the input sentence. However, in practice, in order to perform the self-attention, a process of obtaining the Q-vector, the K-vector, and the V-vector from the word vectors which are the initial inputs of the encoder is required. In this case, the Q-vector, the K-vector, and the V-vector have a lower dimension, unlike the dimension of the initial input, and in transformer, each 512-dimensional word vector is converted into a 64-dimensional Q-vector, the K-vector, and the V-vector from the initial input.</p>
 <p>The above value of 64 is determined by another hyperparameter of transformer, num_heads. In transformer, the value of num_heads is set to 8, and thus it is necessary to convert the value into a Q vector, K vector, and V vector in 512/8=64 dimensions.</p>
 <p align="center">
     <img src='./word_example.png' width="450">
@@ -774,7 +774,7 @@ As described above, the self-attention operates based on the word vector of the 
 </p>
 <p>These four approaches highlight various strategies for efficient context processing in large language models.</p>
 <p>(a) depicts a scenario where a user’s query must be interpreted within a given context to generate an answer. In this case, the query and answer are small (light), but the context is large (heavy). This results in a time complexity of O(|context|²) for the LLM.</p>
-<p>(b) explains <a href="https://arxiv.org/abs/2005.14165"><em><strong>In-Context Learning (ICL)</strong></em></a> and <a href="https://arxiv.org/abs/2005.11401">***Retrieval-Augmented Generation (RAG)</a>***  which use the query to look up the context from a finite corpus, but still remain inefficient with large contexts.</p>
+<p>(b) explains <a href="https://arxiv.org/abs/2005.14165"><em><strong>In-Context Learning (ICL)</strong></em></a> and <a href="https://arxiv.org/abs/2005.11401"><em><strong>Retrieval-Augmented Generation (RAG)</strong></em></a>  which use the query to look up the context from a finite corpus, but still remain inefficient with large contexts.</p>
 <p>(c) can be preprocessed into a cache, enabling fast inference on a given query. This <a href="https://arxiv.org/abs/1706.03762"><em><strong>approach</strong></em></a> has a time complexity of O(|context|(|query| + |answer|)).</p>
 <p>(d) is the method that the author proposed named <strong>XC-CACHE</strong>. It is implemented in two ways that leverage pre-trained decoder-only models and add a separate encoder to process the context: one approach uses the frozen decoder as an encoder (called XC-LLAMA), and the other uses a small bidirectional encoder (called XC-LLAMAENC).</p>
 <h2 id="methods">
@@ -786,7 +786,7 @@ As described above, the self-attention operates based on the word vector of the 
   <a class="anchor" href="#caching-representations-and-xc-caching">#</a>
 </h3>
 <p><a href="https://en.wikipedia.org/wiki/Cache_%28computing%29"><strong>Cache</strong></a> is typically a form of memory that allows for fast access, storing data that is frequently used or needed repeatedly. The main purpose of a cache is to improve processing speed and enhance the overall efficiency of the system. There are three types of elements called ‘key’, ‘value’, ‘query’ which can approaches to Caching.</p>
-<p>KV(Key-Value) Caching ******is to store the (past) key and value states generated while processing context.  As an example, for <a href="https://arxiv.org/abs/2307.09288"><em><strong>LLAMA 2-7B</strong></em></a> using 16 bits precision shows that the smaller per-token cache teh sizes are more desirable. JIT(Just-In-Time Key-Value Caching)-KV Caching is an alternative approach involves storing the (past) hidden states of the model in the cache. At inference time, once these hidden states are loaded on GPU, we can recover the full keys and values in O(|context|). These two KV and JIT-KV Caching model both entail two types of costs while yielding identical results: the size of the cache and the operations required during inference. So <strong>XC-Caching</strong> is presented as an effective way to improve inference speed while significantly reducing memory usage.</p>
+<p>KV(Key-Value) Caching is to store the (past) key and value states generated while processing context.  As an example, for <a href="https://arxiv.org/abs/2307.09288"><em><strong>LLAMA 2-7B</strong></em></a> using 16 bits precision shows that the smaller per-token cache teh sizes are more desirable. JIT(Just-In-Time Key-Value Caching)-KV Caching is an alternative approach involves storing the (past) hidden states of the model in the cache. At inference time, once these hidden states are loaded on GPU, we can recover the full keys and values in O(|context|). These two KV and JIT-KV Caching model both entail two types of costs while yielding identical results: the size of the cache and the operations required during inference. So <strong>XC-Caching</strong> is presented as an effective way to improve inference speed while significantly reducing memory usage.</p>
 <p align="center">
     <img src='./architectures.png' width="650">
     <br>
@@ -799,7 +799,7 @@ As described above, the self-attention operates based on the word vector of the 
   Low memory usage, High precision XC-CACHING
   <a class="anchor" href="#low-memory-usage-high-precision-xc-caching">#</a>
 </h3>
-<p>QA is ideal for testing the methods as it requires efficient external information retrieval and incorporation during generation. They focus on training for question-answering using datasets with context, query, and answer triplets. They build a training dataset by standardizing and combining the training partitions of five publicly available and diverse datasets: <a href="https://aclanthology.org/Q19-1026/">***NATURAL QUESTIONS</a>*** (NQ), <a href="https://arxiv.org/abs/1809.09600"><em><strong>HOTPOTQA</strong></em></a>, <a href="https://aclanthology.org/2022.tacl-1.27/"><em><strong>TOPIOCQA</strong></em></a>, <a href="https://arxiv.org/abs/1611.09268"><em><strong>MS MARCO</strong></em></a>, and <a href="https://aclanthology.org/P18-2124/"><em><strong>SQUAD-V2</strong></em></a>. Each example in the resulting dataset contains a query (natural-language question), an answer (expected output), and one or more contexts (e.g., knowledge base articles), with at least one context containing the answer, referred to as the reference context.</p>
+<p>QA is ideal for testing the methods as it requires efficient external information retrieval and incorporation during generation. They focus on training for question-answering using datasets with context, query, and answer triplets. They build a training dataset by standardizing and combining the training partitions of five publicly available and diverse datasets: <a href="https://aclanthology.org/Q19-1026/"><em><strong>NATURAL QUESTIONS</strong></em></a> (NQ), <a href="https://arxiv.org/abs/1809.09600"><em><strong>HOTPOTQA</strong></em></a>, <a href="https://aclanthology.org/2022.tacl-1.27/"><em><strong>TOPIOCQA</strong></em></a>, <a href="https://arxiv.org/abs/1611.09268"><em><strong>MS MARCO</strong></em></a>, and <a href="https://aclanthology.org/P18-2124/"><em><strong>SQUAD-V2</strong></em></a>. Each example in the resulting dataset contains a query (natural-language question), an answer (expected output), and one or more contexts (e.g., knowledge base articles), with at least one context containing the answer, referred to as the reference context.</p>
 <p>In addition to training on the primary QA tasks, they optimize their models on context repetition tasks, named multitask training strategy. They use the pre-trained <a href="https://arxiv.org/abs/2307.09288">LLAMA 2</a> to create variations of XC-LLAMA. For XC-LLAMAENC, a version with a dedicated encoder, they fine-tune the <a href="https://arxiv.org/abs/2004.05150">LONGFORMER</a>, increasing its input length to 6,000 tokens. They add one cross-attention layer every few self-attention layers, specifically using a 5-6 configuration. Training is done with the <a href="https://arxiv.org/abs/1711.05101">ADAMW optimizer</a>, a batch size of 256, for 40,000 steps (4 epochs), with a linear learning rate scheduler.</p>
 <p>They compare their models to ICL methods for generating context-based answers, noting that the contexts often have a low signal-to-noise ratio. They use metrics like F1 SCORE, RECALL, METEOR, and ROUGEL, with a focus on F1 and also evaluate BERTSCORE between predictions and ground-truth answers.</p>
 <h2 id="results">
@@ -817,10 +817,10 @@ As described above, the self-attention operates based on the word vector of the 
 </p>
 <p>They compare their method to existing conditional generation approaches. The main baseline is ICL, using context as part of the prompt, with results for LLAMA 2-CHAT and GPT-3.5-TURBO. FiD, a state-of-the-art T5-based QA model, is also included for comparison.</p>
 <p>Results (Table 1) show that cross-attending to contexts (XC-LLAMA or XC-LLAMAENC) significantly improves performance compared to prompting (LLAMA 2-CHAT). This approach is more broadly applicable and practical as it avoids the high variance induced by prompting. Even when using the decoder as an encoder, cross-attention to contexts outperforms ICL, suggesting that trained cross-attention layers compensate for sub-optimal encoder representations.</p>
-<h2 id="expanded-evaluation-of-context-conditioning-methods">
+<h3 id="expanded-evaluation-of-context-conditioning-methods">
   Expanded Evaluation of Context Conditioning Methods
   <a class="anchor" href="#expanded-evaluation-of-context-conditioning-methods">#</a>
-</h2>
+</h3>
 <p>The previous section&rsquo;s results show that adding and fine-tuning dedicated parameters for context-conditioning improves performance over prompting. Based on this, they expand their evaluation to consider alternative approaches using a small number of additional parameters for conditioning generation on reference contexts. They focus on both prediction performance and computational efficiency, assessing how well different models can pre-process and cache context representations.</p>
 <p>They fine-tune LORA adapters applied to the same LLAMA 2 decoder used for XC-LLAMA. This fine-tuning significantly improves QA accuracy over ICL baselines but requires storing all KV states throughout every layer, leading to high costs. In contrast, encoder models only need to cache the hidden states of their last layer, reducing space requirements.</p>
 <p align="center">
@@ -853,7 +853,7 @@ As described above, the self-attention operates based on the word vector of the 
     <br>
     <i>Fig 8. GRITLM architecture and format</i>
 </p>
-GRIT converts a pretrained causal decoder into a bi-directional encoder,yielding sentence-level embeddings while maintaining its ability to perform autoregressive generation of text. However, unlike the models they consider, this conversion requires fine-tuning all model parameters instead of additional ones. Parameterefficient approaches to turn decoders into encoders were also proposed.
+<p><a href="https://arxiv.org/abs/2402.09906"><em><strong>GRIT</strong></em></a> converts a pretrained causal decoder into a bi-directional encoder,yielding sentence-level embeddings while maintaining its ability to perform autoregressive generation of text. However, unlike the models they consider, this conversion requires fine-tuning all model parameters instead of additional ones. Parameterefficient approaches to turn decoders into encoders were also proposed.</p>
 <h2 id="discussion-future-research-directions">
   <strong>Discussion: Future Research Directions</strong>
   <a class="anchor" href="#discussion-future-research-directions">#</a>
@@ -887,7 +887,7 @@ Developing models that can dynamically adjust their context based on the specifi
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/845cd3e7f5310d2673da442c62f7fa095ef225de" title='Last modified by hyundong Kim | May 25, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/571e86f4a37172e0b9245d0cc1fe7f83c5d50c8c" title='Last modified by hyundong Kim | May 25, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
       <span>May 25, 2024</span>
     </a>
@@ -951,9 +951,9 @@ Developing models that can dynamically adjust their context based on the specifi
     <li><a href="#results">Results</a>
       <ul>
         <li><a href="#compare-with-other-methods">Compare with other methods</a></li>
+        <li><a href="#expanded-evaluation-of-context-conditioning-methods">Expanded Evaluation of Context Conditioning Methods</a></li>
       </ul>
     </li>
-    <li><a href="#expanded-evaluation-of-context-conditioning-methods">Expanded Evaluation of Context Conditioning Methods</a></li>
     <li><a href="#conclusion">Conclusion</a></li>
     <li><a href="#related-works">Related works</a>
       <ul>

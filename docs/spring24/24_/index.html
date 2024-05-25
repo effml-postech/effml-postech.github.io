@@ -3,13 +3,15 @@
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" # ">
+<meta name="description" content="LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression # LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression Zhuoshi Pan1, Qianhui Wu2, Huiqiang Jiang2, Menglin Xia2, Xufang Luo2, Jue Zhang2, Qingwei Lin2, Victor Rühle2, Yuqing Yang2, Chin-Yew Lin2, H. Vicky Zhao1, Lili Qiu2, and Dongmei Zhang2 1Tsinghua University, 2Microsoft Corporation This blog post is written by Seungjoo Shin, and Sua Choi
+Summary # This paper introduces a novel approach, LLMLingua-2, for task-agnostic prompt compression to enhance the generalizability and efficiency of LLMs.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/spring24/24_/">
   <meta property="og:site_name" content="Efficient ML Systems">
   <meta property="og:title" content="Efficient ML Systems">
-  <meta property="og:description" content=" # ">
+  <meta property="og:description" content="LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression # LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression Zhuoshi Pan1, Qianhui Wu2, Huiqiang Jiang2, Menglin Xia2, Xufang Luo2, Jue Zhang2, Qingwei Lin2, Victor Rühle2, Yuqing Yang2, Chin-Yew Lin2, H. Vicky Zhao1, Lili Qiu2, and Dongmei Zhang2 1Tsinghua University, 2Microsoft Corporation This blog post is written by Seungjoo Shin, and Sua Choi
+Summary # This paper introduces a novel approach, LLMLingua-2, for task-agnostic prompt compression to enhance the generalizability and efficiency of LLMs.">
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
 <title>24 | Efficient ML Systems</title>
@@ -18,7 +20,7 @@
 <link rel="canonical" href="http://localhost:1313/docs/spring24/24_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.b429bbacedffbdeb423d890ba77877021bd5f93cb0330af356cbb2a479862198.js" integrity="sha256-tCm7rO3/vetCPYkLp3h3AhvV&#43;TywMwrzVsuypHmGIZg=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.69d539257fd7dad2bc289dd230cf62a9dc850368a661706e7ea773611e9e96b7.js" integrity="sha256-adU5JX/X2tK8KJ3SMM9iqdyFA2imYXBufqdzYR6elrc=" crossorigin="anonymous"></script>
 
   
 
@@ -606,7 +608,41 @@ https://github.com/alex-shpak/hugo-book
   <aside class="hidden clearfix">
     
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#1-introduction">1. Introduction</a>
+      <ul>
+        <li><a href="#what-is-prompt-compression">What is Prompt Compression?</a></li>
+        <li><a href="#key-challenges">Key Challenges</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-dataset-construction">2. Dataset Construction</a>
+      <ul>
+        <li><a href="#data-distillation">Data Distillation</a></li>
+        <li><a href="#data-annotation">Data Annotation</a></li>
+        <li><a href="#quality-control">Quality Control</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-compressor">3. Compressor</a>
+      <ul>
+        <li><a href="#token-classification-model">Token Classification Model</a></li>
+        <li><a href="#compression-strategy">Compression Strategy</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-experiments">4. Experiments</a>
+      <ul>
+        <li><a href="#experimental-setup">Experimental Setup</a></li>
+        <li><a href="#results-on-in-domain-benchmark">Results on In-Domain Benchmark</a></li>
+        <li><a href="#results-on-out-of-domain-benchmarks">Results on Out-of-Domain Benchmarks</a></li>
+        <li><a href="#mistral-7b-as-the-target-llm">Mistral-7B as the Target LLM</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-conclusion">5. Conclusion</a></li>
+    <li><a href="#6-discussion">6. Discussion</a></li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
+</nav>
 
 
 
@@ -617,10 +653,297 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
+  <article class="markdown book-article"><h1 id="llmlingua-2-data-distillation-for-efficient-and-faithful-task-agnostic-prompt-compression">
+  LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression
+  <a class="anchor" href="#llmlingua-2-data-distillation-for-efficient-and-faithful-task-agnostic-prompt-compression">#</a>
 </h1>
+<blockquote>
+<p><a href="https://arxiv.org/abs/2403.12968"><strong>LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic Prompt Compression</strong></a> <br>
+Zhuoshi Pan<sup>1</sup>, Qianhui Wu<sup>2</sup>, Huiqiang Jiang<sup>2</sup>, Menglin Xia<sup>2</sup>, Xufang Luo<sup>2</sup>, Jue Zhang<sup>2</sup>, Qingwei Lin<sup>2</sup>, Victor Rühle<sup>2</sup>, Yuqing Yang<sup>2</sup>, Chin-Yew Lin<sup>2</sup>,
+H. Vicky Zhao1, Lili Qiu<sup>2</sup>, and Dongmei Zhang<sup>2</sup> <br>
+<sup>1</sup>Tsinghua University, <sup>2</sup>Microsoft Corporation <br>
+This blog post is written by Seungjoo Shin, and Sua Choi</p>
+</blockquote>
+<p><img src="./fig1.png" alt="overview" /></p>
+<h2 id="summary">
+  Summary
+  <a class="anchor" href="#summary">#</a>
+</h2>
+<p>This paper introduces a novel approach, <em>LLMLingua-2</em>, for task-agnostic prompt compression to enhance the <strong>generalizability</strong> and <strong>efficiency</strong> of LLMs. It highlights the limitations of existing methods that rely on information entropy and proposes a data distillation procedure to create a more effective compression algorithm. This approach ensures essential information is preserved, leading to significant performance improvements and reduced computational overhead.</p>
+<h2 id="1-introduction">
+  1. Introduction
+  <a class="anchor" href="#1-introduction">#</a>
+</h2>
+<h3 id="what-is-prompt-compression">
+  What is Prompt Compression?
+  <a class="anchor" href="#what-is-prompt-compression">#</a>
+</h3>
+<p>A straightforward solution to <em>shorten the original prompts without losing essential information</em>.</p>
+<ul>
+<li>
+<p><strong>Task-aware Prompt Compression</strong></p>
+<ul>
+<li>Prompt compression methods that aim to generate compressed prompts tailored to the specific task or query.</li>
+</ul>
+<p>→ Lack of <u>efficiency</u> and <u>generalizability</u> due to the dependency on task-specific features.</p>
+</li>
+<li>
+<p><strong>Task-agnostic Prompt Compression</strong></p>
+<ul>
+<li>Prompt compression methods for <strong>better generalizability and efficiency</strong> with the underlying assumption that <em>natural language contains <strong>redundancy</strong> <a href="#reference">[1]</a> that may be useful for human understanding but might not be necessary for LLMs</em>.</li>
+<li>Compress prompts by <strong>removing tokens</strong> <a href="#reference">[2]</a> or <strong>lexical units</strong> <a href="#reference">[3]</a> according to their information entropy obtained from a causal small language model (SLM), regardless of the downstream task or question information.</li>
+</ul>
+<p>→ Typically adopt information entropy-based metrics which are <u>empirical</u>.</p>
+<p>→ Only leverage <u>unidirectional</u> context, which may fail to capture all essential information needed for prompt compression within the context.</p>
+</li>
+</ul>
+<h3 id="key-challenges">
+  Key Challenges
+  <a class="anchor" href="#key-challenges">#</a>
+</h3>
+<ol>
+<li>
+<p><strong>Dataset Alignment</strong>: How can we identify or build a suitable dataset to align the Small Language Model (SLM) towards effective prompt compression?</p>
+<p>→ An extractive text compression dataset that retains essential information (Sec. <a href="#2-dataset-construction">2</a>).</p>
+</li>
+<li>
+<p><strong>Compression Algorithm Design</strong>: How can we design a compression algorithm that effectively leverages the full bidirectional context for better performance?</p>
+<p>→ Prompt compression as a binary token classification problem using Transformer encoder (Sec. <a href="#3-compressor">3</a>).</p>
+</li>
+</ol>
+<h2 id="2-dataset-construction">
+  2. Dataset Construction
+  <a class="anchor" href="#2-dataset-construction">#</a>
+</h2>
+<h3 id="data-distillation">
+  Data Distillation
+  <a class="anchor" href="#data-distillation">#</a>
+</h3>
+<p>Extracting knowledge from an LLM (GPT-4) to compress texts without <u>losing crucial information</u> or <u>introducing hallucinated content</u>.</p>
+<p>Goal: To prompt GPT-4 to generate compressed texts from original texts that meet the following criteria:</p>
+<ol>
+<li>
+<p><strong>Token reduction</strong>: Compressed prompts should be short in length to reduce cost and speed up inference.</p>
+</li>
+<li>
+<p><strong>Informativeness</strong>: Essential information should be retained.</p>
+</li>
+<li>
+<p><strong>Faithfulness</strong>: Compressed prompts should remain faithful and avoid introducing hallucinated content to ensure accuracy when prompting LLMs in downstream tasks.</p>
+</li>
+</ol>
+<h4 id="instruction-design">
+  Instruction Design
+  <a class="anchor" href="#instruction-design">#</a>
+</h4>
+<ul>
+<li>Remove the compression ratio restriction &amp; Prompt to compress the origin text as short as possible</li>
+</ul>
+<h4 id="chunk-wise-compression">
+  Chunk-Wise Compression
+  <a class="anchor" href="#chunk-wise-compression">#</a>
+</h4>
+<ul>
+<li>Segment each long context into <strong>multiple chunks</strong>, each containing no more than 512 tokens and ending with a period.</li>
+</ul>
+<img src="./fig9.png" width="100%" height="100%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<h4 id="compared-to-instructions-of-llmlingua-2">
+  Compared to Instructions of LLMLingua [2]
+  <a class="anchor" href="#compared-to-instructions-of-llmlingua-2">#</a>
+</h4>
+<img src="./fig10.png" width="100%" height="100%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<h3 id="data-annotation">
+  Data Annotation
+  <a class="anchor" href="#data-annotation">#</a>
+</h3>
+<p>Assigning <em>binary</em> labels to each word (or token) in the original text to indicate whether it should be <u>preserved</u> or <u>discarded</u> after compression, leveraging the distilled knowledge from the LLM.</p>
+<h4 id="challenges-in-data-annotation">
+  Challenges in Data Annotation
+  <a class="anchor" href="#challenges-in-data-annotation">#</a>
+</h4>
+<p>LLMLingua-2 addresses challenges of ambiguity, variation, and reordering as:</p>
+<img src="./fig5.png" width="60%" height="60%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<ol>
+<li>
+<p><strong><span style="color:red">Ambiguity</span></strong>: a word in the compressed texts may appear multiple times in the original content.</p>
+</li>
+<li>
+<p><strong><span style="background-color:yellow">Variation</span></strong>: GPT-4 may modify the original words in tense, plural form, etc. during compression.</p>
+</li>
+<li>
+<p><strong><span style="color:blue">Reordering</span></strong>: The order of words may be changed after compression.</p>
+</li>
+</ol>
+<h4 id="overall-procedure-of-the-annotation-algorithm">
+  Overall Procedure of the Annotation Algorithm:
+  <a class="anchor" href="#overall-procedure-of-the-annotation-algorithm">#</a>
+</h4>
+<img src="./alg1.png" width="40%" height="40%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<h3 id="quality-control">
+  Quality Control
+  <a class="anchor" href="#quality-control">#</a>
+</h3>
+<p>Introducing metrics to filter low-quality samples, ensuring high-quality dataset construction.</p>
+<h4 id="notations">
+  Notations:
+  <a class="anchor" href="#notations">#</a>
+</h4>
+<ul>
+<li>$\mathbb{S}_{comp}$: the set of words in the compressed text.</li>
+<li>$\mathbb{S}_{ori}$: the set of words in the original text.</li>
+<li>| · |: the cardinality of a set.</li>
+<li>$l(·)$: the annotation function.
+<ul>
+<li><em>e.g.</em>, $l(w) = True$ signifies that word $w \in \mathbb{S}<em>{ori}$ corresponds to a word in $\mathbb{S}</em>{comp}$.</li>
+</ul>
+</li>
+</ul>
+<h4 id="variation-rate-vr">
+  Variation Rate (VR)
+  <a class="anchor" href="#variation-rate-vr">#</a>
+</h4>
+<ul>
+<li>
+<p>A metric to evaluate the quality of the compressed texts generated from data distillation.</p>
+<p><strong>Variation Rate (VR)</strong> is defined as:
+$$
+\begin{equation}
+VR = \frac{1}{|\mathbb{S}<em>{comp}|} \displaystyle\sum</em>{w \in \mathbb{S}<em>{comp}} \mathbb{I}(w \notin \mathbb{S}</em>{ori}).
+\end{equation}
+$$</p>
+</li>
+<li>
+<p>LLMLingua-2 <strong>excludes</strong> the examples with the <u>top 5% highest variation rates</u>.</p>
+</li>
+</ul>
+<h4 id="alignment-gap-ag">
+  Alignment Gap (AG)
+  <a class="anchor" href="#alignment-gap-ag">#</a>
+</h4>
+<ul>
+<li>
+<p>A metric to evaluate the quality of the automatically annotated labels.</p>
+<p><strong>Alignment Gap (AG)</strong> is defined as:
+$$
+\begin{equation}
+AG = \frac  {1}{|\mathbb{S}<em>{ori}|} \displaystyle\sum</em>{w \in \mathbb{S}<em>{comp}} \mathbb{I}(w \in \mathbb{S}</em>{ori}) - \frac{1}{|\mathbb{S}<em>{ori}|} \displaystyle\sum</em>{w \in \mathbb{S}_{ori}} \mathbb{I}(l(w) = True).
+\end{equation}
+$$</p>
+</li>
+<li>
+<p>LLMLingua-2 <strong>discards</strong> examples of <u>the highest 10% alignment gap</u>.</p>
+</li>
+</ul>
+<h2 id="3-compressor">
+  3. Compressor
+  <a class="anchor" href="#3-compressor">#</a>
+</h2>
+<p>They formulate prompt compression as a <strong>binary token classification problem</strong> (<em>i.e.</em>, preserve or discard) to guarantee the faithfulness of the compressed prompt to the original content, and meantime ensure the low latency of the compression model itself.</p>
+<h3 id="token-classification-model">
+  Token Classification Model
+  <a class="anchor" href="#token-classification-model">#</a>
+</h3>
+<h4 id="architecture">
+  Architecture
+  <a class="anchor" href="#architecture">#</a>
+</h4>
+<p>They utilize a <strong>Transformer encoder</strong> (Devlin et al., 2019) as the feature encoder $f_\theta$ and add a linear classification layer on top.
+Given an original prompt consisting of $N$ words $\boldsymbol{x} = {x_i}<em>{i=1}^{N}$, this can be formulated as:
+$$
+\begin{gather}
+\boldsymbol{h} = f</em>{\theta}(\boldsymbol{x}), \
+p(x_i,\Theta) = \mathrm{softmax}(Wh_i +b),
+\end{gather}
+$$
+where $\boldsymbol{h}={h_i}_{i=1}^{N}$ denotes feature vectors for all words, $p(x_i, \Theta) \in \mathbb{R}^2$ denotes the probability distribution of labels ${\mathtt{preserve}, \mathtt{discard}}$ for the $i$-th word $x_i$, and $\Theta = {\theta, W, b}$ represent all the trainable parameters.</p>
+<h4 id="training">
+  Training
+  <a class="anchor" href="#training">#</a>
+</h4>
+<p>Let $\boldsymbol{y} = {y_i}_{i=1}^{N}$ denote the corresponding labels for all words in $\boldsymbol{x}$, then they employ cross entropy loss to train the model. The loss function $\mathcal{L}$ <em>w.r.t.</em> $\boldsymbol{x}$ is:</p>
+<p>$$
+\begin{equation}
+\mathcal{L}(\Theta) = \frac{1}{N} \displaystyle\sum_{i=1}^{N}\mathrm{CrossEntropy}(y_i, p(x_i, \Theta)).
+\end{equation}
+$$</p>
+<h3 id="compression-strategy">
+  Compression Strategy
+  <a class="anchor" href="#compression-strategy">#</a>
+</h3>
+<p>Compressing the original prompt $\boldsymbol{x} = {x_i}_{i=1}^N$ with a target compression ratio $1/\tau$, where $\tau$ is defined as the quotient of the number of words in the compressed prompt and the number of words in the original prompt $\boldsymbol{x}$.</p>
+<ol>
+<li>
+<p>They derive the target number of tokens to be preserved in the compressed prompt $\tilde {\boldsymbol{x}} : \tilde{N} = \tau N$.</p>
+</li>
+<li>
+<p>Next, they use the token classification model to predict the probability $p_i$ of each word $x_i$ being labeled as $\mathtt{preserve}$.</p>
+</li>
+<li>
+<p>Finally, they retain the top $\tilde{N}$ words in the original prompt $\boldsymbol{x}$ with the highest $p_i$ and maintain their original order to form the compressed prompt $\tilde{\boldsymbol{x}}$.</p>
+</li>
+</ol>
+<h2 id="4-experiments">
+  4. Experiments
+  <a class="anchor" href="#4-experiments">#</a>
+</h2>
+<h3 id="experimental-setup">
+  Experimental Setup
+  <a class="anchor" href="#experimental-setup">#</a>
+</h3>
+<ul>
+<li>Dataset: MeetingBank <a href="#reference">[4]</a></li>
+<li>Evaluation:
+<ul>
+<li>In-domain: Summarization (MeetingBank <a href="#reference">[4]</a>), QA (MeetingBank <a href="#reference">[4]</a> QA)</li>
+<li>Out-of-domain: Long-context scenarios (LongBench <a href="#reference">[5]</a>, Zero-SCROLLS <a href="#reference">[6]</a>), Reasoning &amp; in-context learning (GSM8K <a href="#reference">[7]</a>, Big Bench Hard (BBH) <a href="#reference">[8]</a>)</li>
+</ul>
+</li>
+<li>Backbone: xlm-roberta-large (LLMLingua-2) <a href="#reference">[9]</a>, multilingual-BERT (LLMLingua-2-small) <a href="#reference">[10]</a></li>
+</ul>
+<h3 id="results-on-in-domain-benchmark">
+  Results on In-Domain Benchmark
+  <a class="anchor" href="#results-on-in-domain-benchmark">#</a>
+</h3>
+<p>Demonstrates significant performance gains on MeetingBank for both summarization and QA tasks.</p>
+<img src="./table1.png" width="60%" height="60%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<h3 id="results-on-out-of-domain-benchmarks">
+  Results on Out-of-Domain Benchmarks
+  <a class="anchor" href="#results-on-out-of-domain-benchmarks">#</a>
+</h3>
+<p>Shows robust generalization across various benchmarks, including LongBench, ZeroScrolls, GSM8K, and BBH.</p>
+<img src="./table2.png" width="60%" height="60%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<img src="./table3.png" width="60%" height="60%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<h3 id="mistral-7b-as-the-target-llm">
+  Mistral-7B as the Target LLM
+  <a class="anchor" href="#mistral-7b-as-the-target-llm">#</a>
+</h3>
+<p>Demonstrates good generalization ability across target LLMs.</p>
+<img src="./table4.png" width="60%" height="60%" style="margin-left: auto; margin-right: auto; display: block;"/>
+<h2 id="5-conclusion">
+  5. Conclusion
+  <a class="anchor" href="#5-conclusion">#</a>
+</h2>
+<p>The LLMLingua-2 model provides an efficient, task-agnostic solution for prompt compression, significantly reducing computational overhead while maintaining the integrity and usefulness of the compressed prompts.</p>
+<h2 id="6-discussion">
+  6. Discussion
+  <a class="anchor" href="#6-discussion">#</a>
+</h2>
+<p>The compressed dataset was constructed only on the training samples from a single benchmark (MeetingBank <a href="#reference">[4]</a>).
+In this sense, one of the probable research directions would be generalizing the proposed compression approch in terms of scale or target domain (task).</p>
+<h2 id="reference">
+  Reference
+  <a class="anchor" href="#reference">#</a>
+</h2>
+<p>[1] Claude E Shannon. 1951. Prediction and entropy of printed english. Bell system technical journal, 30(1):50–64.</p>
+<p>[2] Huiqiang Jiang, Qianhui Wu, Chin-Yew Lin, Yuqing Yang, and Lili Qiu. 2023a. <a href="https://doi.org/10.18653/v1/2023.emnlp-main.825">LLMLingua: Compressing prompts for accelerated inference of large language models</a>. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing, pages 13358–13376, Singapore. Association for Computational Linguistics.</p>
+<p>[3] Yucheng Li, Bo Dong, Frank Guerin, and Chenghua Lin. 2023. <a href="https://doi.org/10.18653/v1/2023.emnlp-main.391">Compressing context to enhance inference efficiency of large language models</a>. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing, pages 6342–6353, Singapore. Association for Computational Linguistics.</p>
+<p>[4] Yebowen Hu, Tim Ganter, Hanieh Deilamsalehy, Franck Dernoncourt, Hassan Foroosh, and Fei Liu. 2023. <a href="https://arxiv.org/abs/2305.17529">Meetingbank: A benchmark dataset for meeting summarization</a>. ArXiv preprint, abs/2305.17529.</p>
+<p>[5] Yushi Bai, Xin Lv, Jiajie Zhang, Hongchang Lyu, Jiankai Tang, Zhidian Huang, Zhengxiao Du, Xiao Liu, Aohan Zeng, Lei Hou, et al. 2023. <a href="https://arxiv.org/abs/2308.14508">Longbench: A bilingual, multitask benchmark for long context understanding</a>. ArXiv preprint, abs/2308.14508.</p>
+<p>[6] Uri Shaham, Maor Ivgi, Avia Efrat, Jonathan Berant, and Omer Levy. 2023. <a href="https://arxiv.org/abs/2305.14196">Zeroscrolls: A zero-shot benchmark for long text understanding</a>. ArXiv preprint, abs/2305.14196.</p>
+<p>[7] Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, et al. 2021. <a href="https://arxiv.org/abs/2110.14168">Training verifiers to solve math word problems</a>. ArXiv preprint, abs/2110.14168.</p>
+<p>[8] BIG bench authors. 2023. <a href="https://openreview.net/forum?id=uyTL5Bvosj">Beyond the imitation game: Quantifying and extrapolating the capabilities of language models</a>. Transactions on Machine Learning Research.</p>
+<p>[9] Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Francisco Guzmán, Edouard Grave, Myle Ott, Luke Zettlemoyer, and Veselin Stoyanov. 2020. <a href="https://doi.org/10.18653/v1/2020.acl-main.747">Unsupervised cross-lingual representation learning at scale</a>. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pages 8440–8451, Online. Association for Computational Linguistics.</p>
+<p>[10] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. <a href="https://doi.org/10.18653/v1/N19-1423">BERT: Pre-training of deep bidirectional transformers for language understanding</a>. In Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers), pages 4171–4186, Minneapolis, Minnesota. Association for Computational Linguistics.</p>
 </article>
  
       
@@ -630,9 +953,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/0947bc5271fafa666a5b1d8cea6a555fa66e3cb5" title='Last modified by effml-postech | May 14, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/6d8bd2a611a4851071c417cff6d5597f4c73a27a" title='Last modified by suah1126 | May 25, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 14, 2024</span>
+      <span>May 25, 2024</span>
     </a>
   </div>
 
@@ -673,7 +996,41 @@ https://github.com/alex-shpak/hugo-book
       <div class="book-toc-content">
         
   
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#1-introduction">1. Introduction</a>
+      <ul>
+        <li><a href="#what-is-prompt-compression">What is Prompt Compression?</a></li>
+        <li><a href="#key-challenges">Key Challenges</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-dataset-construction">2. Dataset Construction</a>
+      <ul>
+        <li><a href="#data-distillation">Data Distillation</a></li>
+        <li><a href="#data-annotation">Data Annotation</a></li>
+        <li><a href="#quality-control">Quality Control</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-compressor">3. Compressor</a>
+      <ul>
+        <li><a href="#token-classification-model">Token Classification Model</a></li>
+        <li><a href="#compression-strategy">Compression Strategy</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-experiments">4. Experiments</a>
+      <ul>
+        <li><a href="#experimental-setup">Experimental Setup</a></li>
+        <li><a href="#results-on-in-domain-benchmark">Results on In-Domain Benchmark</a></li>
+        <li><a href="#results-on-out-of-domain-benchmarks">Results on Out-of-Domain Benchmarks</a></li>
+        <li><a href="#mistral-7b-as-the-target-llm">Mistral-7B as the Target LLM</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-conclusion">5. Conclusion</a></li>
+    <li><a href="#6-discussion">6. Discussion</a></li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
+</nav>
 
 
  
