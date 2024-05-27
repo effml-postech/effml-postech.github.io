@@ -22,7 +22,7 @@ Background # What is model editing? # Fig 1. Concept of model editing. The rapid
 <link rel="canonical" href="http://localhost:1313/docs/spring24/01_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.69d539257fd7dad2bc289dd230cf62a9dc850368a661706e7ea773611e9e96b7.js" integrity="sha256-adU5JX/X2tK8KJ3SMM9iqdyFA2imYXBufqdzYR6elrc=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.4a691cc797b715a80e21a2b605e5ac5cce9cd5c81f6aa58b04b3886e2f42ffd7.js" integrity="sha256-Smkcx5e3FagOIaK2BeWsXM6c1cgfaqWLBLOIbi9C/9c=" crossorigin="anonymous"></script>
 
   
 
@@ -710,7 +710,7 @@ https://github.com/alex-shpak/hugo-book
 <p>For MEMIT model editing. it optimizes same objectives with ROME, but performance memorization using a least-square constraint, which allows for a closed-form solution. It has similar form with ROME method, but it multiplies <span>
   \(\lambda\)
 </span>
- term, which is hyperparameter, to preservation term. Also, it combines memorization term for minimize target</p>
+ term, which is hyperparameter, to preservation term. Also, it combines memorization term for minimize target.</p>
 <p align="center">
   <span>
   \(\argmin_{\hat{W}} \lambda\left\| \hat{W} K_0 - W_0 K_0 \right\| &#43; \left\| \hat{W} K_E - V_E \right\|\\Preservation\_term=\lambda\left\| \hat{W} K_0 - W_0 K_0 \right\| \\ Memorization\_term=\hat{W} K_E - V_E 
@@ -752,11 +752,11 @@ https://github.com/alex-shpak/hugo-book
   How model editing performance is estimated?
   <a class="anchor" href="#how-model-editing-performance-is-estimated">#</a>
 </h3>
-<p>Model performance is estimated with 4 main scores, and these scores are bsed on how model editing works with expressions of correct facts in <span>
-  \((s,r,o^{c})\)
+<p>Model performance is estimated with 4 main scores, and these scores are based on how model editing works with expressions of new facts in <span>
+  \((s,r,o^n)\)
 </span>
- and false facts in <span>
-  \((s,r,o^{*})\)
+ and old facts in <span>
+  \((s,r,o^{o})\)
 </span>
 .</p>
 <h4 id="__efficacy-score-es__">
@@ -764,28 +764,31 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#__efficacy-score-es__">#</a>
 </h4>
 <p><strong>ES</strong> measures if the new fact, which we want to edit, is <strong>successfully edited</strong> to model. It is measured by percentage where <span>
-  \(\mathbb{P}[o^*] &gt; \mathbb{P}[o^{c}]\)
+  \(\mathbb{P}[o^n] &gt; \mathbb{P}[o^{o}]\)
 </span>
 , which means the portion of correct edition result from predictions.</p>
 <h4 id="__paraphrase-score-ps__">
   <strong>Paraphrase Score (PS)</strong>
   <a class="anchor" href="#__paraphrase-score-ps__">#</a>
 </h4>
-<p><strong>PS</strong> measures model&rsquo;s ability to <strong>generalize</strong> following an edit. It is measured by where P(new fact) &gt; P(old fact) under paraphrases of the query prompt.</p>
+<p><strong>PS</strong> measures model&rsquo;s ability to <strong>generalize</strong> following an edit. It is measured by where <span>
+  \(\mathbb{P}[o^n] &gt; \mathbb{P}[o^{o}]\)
+</span>
+ under paraphrases of the query prompt.</p>
 <h4 id="__neighborhood-score-ns__">
   <strong>Neighborhood Score (NS)</strong>
   <a class="anchor" href="#__neighborhood-score-ns__">#</a>
 </h4>
-<p><strong>NS</strong> represents the <strong>specificity</strong> of model editing. To measure <strong>NS</strong>, we collect a set of nearby subjects <span>
+<p><strong>NS</strong> represents the <strong>specificity</strong> of model editing, which means it measures the impact of an edit on adjacent stored facts within the model. To measure <strong>NS</strong>, we collect a set of nearby subjects <span>
   \(s_n\)
 </span>
  for which <span>
-  \((s_n,r,o^{c})\)
+  \((s_n,r,o^{n})\)
 </span>
  holds true. Then we test <span>
-  \(\mathbb{P}[o^*] &gt; \mathbb{P}[o^{c}]\)
+  \(\mathbb{P}[o^o] &gt; \mathbb{P}[o^{n}]\)
 </span>
-, reporting the success fraction asn <strong>NS</strong>.</p>
+.</p>
 <h4 id="__composite-score-s__">
   <strong>Composite Score (S)</strong>
   <a class="anchor" href="#__composite-score-s__">#</a>
@@ -819,7 +822,7 @@ https://github.com/alex-shpak/hugo-book
 <p align="center">
   Fig 4. Post-edit performance of various metrics on Llama2-7b for MEMIT on various layers.
 </p>
-<p>Evaluation results showed that layer 1 for Llama-3 outperformed on numerous metrics. Furthermore this trend was also shown in previous version, Llama-2, as seen in Figure 6. Here, MEMIT and ROME have very similar performance for model editing across layer of a model.</p>
+<p>Evaluation results showed that layer 1 for Llama-3 outperformed on numerous metrics. Furthermore this trend was also shown in previous version, Llama-2, as seen in Figure 4. Here, MEMIT and ROME have very similar performance for model editing across layer of a model.</p>
 <p>→ Why? : Both algorithms optimize for the <strong>same objective</strong> with difference in the memorization constraints. This shows that memorization constraints plays minor effect on editing performance.</p>
 <h3 id="optimal-way-of-scaling-up-model-editing">
   Optimal way of Scaling Up model editing?
@@ -903,9 +906,9 @@ The similar trend between two editing techniques reflect the similarity in their
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/282a4994adf0ef0f086b22c4f8419bc5398dd7f0" title='Last modified by jgh1020 | May 22, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/a9e21b1362920230680dd5531dea95f645523a85" title='Last modified by jhyun213 | May 26, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 22, 2024</span>
+      <span>May 26, 2024</span>
     </a>
   </div>
 

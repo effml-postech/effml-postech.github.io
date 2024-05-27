@@ -20,7 +20,7 @@ Summary # This paper introduces a novel approach, LLMLingua-2, for task-agnostic
 <link rel="canonical" href="http://localhost:1313/docs/spring24/24_/">
 <link rel="stylesheet" href="/book.min.309b7ed028807cdb68d8d61e26d609f48369c098dbf5e4d8c0dcf4cdf49feafc.css" integrity="sha256-MJt&#43;0CiAfNto2NYeJtYJ9INpwJjb9eTYwNz0zfSf6vw=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.69d539257fd7dad2bc289dd230cf62a9dc850368a661706e7ea773611e9e96b7.js" integrity="sha256-adU5JX/X2tK8KJ3SMM9iqdyFA2imYXBufqdzYR6elrc=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.4a691cc797b715a80e21a2b605e5ac5cce9cd5c81f6aa58b04b3886e2f42ffd7.js" integrity="sha256-Smkcx5e3FagOIaK2BeWsXM6c1cgfaqWLBLOIbi9C/9c=" crossorigin="anonymous"></script>
 
   
 
@@ -747,9 +747,9 @@ This blog post is written by Seungjoo Shin, and Sua Choi</p>
 <li>Segment each long context into <strong>multiple chunks</strong>, each containing no more than 512 tokens and ending with a period.</li>
 </ul>
 <img src="./fig9.png" width="100%" height="100%" style="margin-left: auto; margin-right: auto; display: block;"/>
-<h4 id="compared-to-instructions-of-llmlingua-2">
-  Compared to Instructions of LLMLingua [2]
-  <a class="anchor" href="#compared-to-instructions-of-llmlingua-2">#</a>
+<h4 id="compared-to-instructions-of-llmlingua-2reference">
+  Compared to Instructions of LLMLingua <a href="#reference">[2]</a>
+  <a class="anchor" href="#compared-to-instructions-of-llmlingua-2reference">#</a>
 </h4>
 <img src="./fig10.png" width="100%" height="100%" style="margin-left: auto; margin-right: auto; display: block;"/>
 <h3 id="data-annotation">
@@ -789,12 +789,33 @@ This blog post is written by Seungjoo Shin, and Sua Choi</p>
   <a class="anchor" href="#notations">#</a>
 </h4>
 <ul>
-<li>$\mathbb{S}_{comp}$: the set of words in the compressed text.</li>
-<li>$\mathbb{S}_{ori}$: the set of words in the original text.</li>
+<li>
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(\mathbb{S}_{comp}\)
+</span>
+ : the set of words in the compressed text.</li>
+<li><span>
+  \(\mathbb{S}_{ori}\)
+</span>
+ : the set of words in the original text.</li>
 <li>| · |: the cardinality of a set.</li>
-<li>$l(·)$: the annotation function.
+<li><span>
+  \(l(·)\)
+</span>
+ : the annotation function.
 <ul>
-<li><em>e.g.</em>, $l(w) = True$ signifies that word $w \in \mathbb{S}<em>{ori}$ corresponds to a word in $\mathbb{S}</em>{comp}$.</li>
+<li><em>e.g.</em>, <span>
+  \(l(w) = True\)
+</span>
+ signifies that word <span>
+  \(w \in \mathbb{S}_{ori}\)
+</span>
+ corresponds to a word in <span>
+  \(\mathbb{S}_{comp}\)
+</span>
+ .</li>
 </ul>
 </li>
 </ul>
@@ -806,11 +827,13 @@ This blog post is written by Seungjoo Shin, and Sua Choi</p>
 <li>
 <p>A metric to evaluate the quality of the compressed texts generated from data distillation.</p>
 <p><strong>Variation Rate (VR)</strong> is defined as:
-$$
-\begin{equation}
-VR = \frac{1}{|\mathbb{S}<em>{comp}|} \displaystyle\sum</em>{w \in \mathbb{S}<em>{comp}} \mathbb{I}(w \notin \mathbb{S}</em>{ori}).
-\end{equation}
-$$</p>
+<span>
+  \[    \begin{equation}
+        VR = \frac{1}{|\mathbb{S}_{comp}|} \displaystyle\sum_{w \in \mathbb{S}_{comp}} \mathbb{I}(w \notin \mathbb{S}_{ori}).
+    \end{equation}
+    \]
+</span>
+</p>
 </li>
 <li>
 <p>LLMLingua-2 <strong>excludes</strong> the examples with the <u>top 5% highest variation rates</u>.</p>
@@ -824,11 +847,13 @@ $$</p>
 <li>
 <p>A metric to evaluate the quality of the automatically annotated labels.</p>
 <p><strong>Alignment Gap (AG)</strong> is defined as:
-$$
-\begin{equation}
-AG = \frac  {1}{|\mathbb{S}<em>{ori}|} \displaystyle\sum</em>{w \in \mathbb{S}<em>{comp}} \mathbb{I}(w \in \mathbb{S}</em>{ori}) - \frac{1}{|\mathbb{S}<em>{ori}|} \displaystyle\sum</em>{w \in \mathbb{S}_{ori}} \mathbb{I}(l(w) = True).
-\end{equation}
-$$</p>
+<span>
+  \[    \begin{equation}
+        AG = \frac  {1}{|\mathbb{S}_{ori}|} \displaystyle\sum_{w \in \mathbb{S}_{comp}} \mathbb{I}(w \in \mathbb{S}_{ori}) - \frac{1}{|\mathbb{S}_{ori}|} \displaystyle\sum_{w \in \mathbb{S}_{ori}} \mathbb{I}(l(w) = True).
+    \end{equation}
+    \]
+</span>
+</p>
 </li>
 <li>
 <p>LLMLingua-2 <strong>discards</strong> examples of <u>the highest 10% alignment gap</u>.</p>
@@ -847,39 +872,116 @@ $$</p>
   Architecture
   <a class="anchor" href="#architecture">#</a>
 </h4>
-<p>They utilize a <strong>Transformer encoder</strong> (Devlin et al., 2019) as the feature encoder $f_\theta$ and add a linear classification layer on top.
-Given an original prompt consisting of $N$ words $\boldsymbol{x} = {x_i}<em>{i=1}^{N}$, this can be formulated as:
-$$
-\begin{gather}
-\boldsymbol{h} = f</em>{\theta}(\boldsymbol{x}), \
-p(x_i,\Theta) = \mathrm{softmax}(Wh_i +b),
-\end{gather}
-$$
-where $\boldsymbol{h}={h_i}_{i=1}^{N}$ denotes feature vectors for all words, $p(x_i, \Theta) \in \mathbb{R}^2$ denotes the probability distribution of labels ${\mathtt{preserve}, \mathtt{discard}}$ for the $i$-th word $x_i$, and $\Theta = {\theta, W, b}$ represent all the trainable parameters.</p>
+<p>They utilize a <strong>Transformer encoder</strong> <a href="#reference">[10]</a> as the feature encoder <span>
+  \(f_\theta\)
+</span>
+  and add a linear classification layer on top.
+Given an original prompt consisting of <span>
+  \(N\)
+</span>
+  words <span>
+  \(\boldsymbol{x} = \{x_i\}_{i=1}^{N}\)
+</span>
+ , this can be formulated as:
+<span>
+  \[\begin{gather}
+    \boldsymbol{h} = f_{\theta}(\boldsymbol{x}), \\
+    p(x_i,\Theta) = \mathrm{softmax}(Wh_i &#43;b),
+\end{gather}\]
+</span>
+
+where <span>
+  \(\boldsymbol{h}=\{h_i\}_{i=1}^{N}\)
+</span>
+  denotes feature vectors for all words, <span>
+  \(p(x_i, \Theta) \in \mathbb{R}^2\)
+</span>
+  denotes the probability distribution of labels <span>
+  \(\{\mathtt{preserve}, \mathtt{discard}\}\)
+</span>
+  for the <span>
+  \(i\)
+</span>
+ -th word <span>
+  \(x_i\)
+</span>
+ , and <span>
+  \(\Theta = \{\theta, W, b\}\)
+</span>
+  represent all the trainable parameters.</p>
 <h4 id="training">
   Training
   <a class="anchor" href="#training">#</a>
 </h4>
-<p>Let $\boldsymbol{y} = {y_i}_{i=1}^{N}$ denote the corresponding labels for all words in $\boldsymbol{x}$, then they employ cross entropy loss to train the model. The loss function $\mathcal{L}$ <em>w.r.t.</em> $\boldsymbol{x}$ is:</p>
-<p>$$
-\begin{equation}
-\mathcal{L}(\Theta) = \frac{1}{N} \displaystyle\sum_{i=1}^{N}\mathrm{CrossEntropy}(y_i, p(x_i, \Theta)).
-\end{equation}
-$$</p>
+<p>Let <span>
+  \(\boldsymbol{y} = \{y_i\}_{i=1}^{N}\)
+</span>
+  denote the corresponding labels for all words in <span>
+  \(\boldsymbol{x}\)
+</span>
+ , then they employ cross entropy loss to train the model. The loss function <span>
+  \(\mathcal{L}\)
+</span>
+  <em>w.r.t.</em> <span>
+  \(\boldsymbol{x}\)
+</span>
+  is:</p>
+<span>
+  \[\begin{equation}
+    \mathcal{L}(\Theta) = \frac{1}{N} \displaystyle\sum_{i=1}^{N}\mathrm{CrossEntropy}(y_i, p(x_i, \Theta)).
+\end{equation}\]
+</span>
+
 <h3 id="compression-strategy">
   Compression Strategy
   <a class="anchor" href="#compression-strategy">#</a>
 </h3>
-<p>Compressing the original prompt $\boldsymbol{x} = {x_i}_{i=1}^N$ with a target compression ratio $1/\tau$, where $\tau$ is defined as the quotient of the number of words in the compressed prompt and the number of words in the original prompt $\boldsymbol{x}$.</p>
+<p>Compressing the original prompt <span>
+  \(\boldsymbol{x} = \{x_i\}_{i=1}^N\)
+</span>
+  with a target compression ratio <span>
+  \(1/\tau\)
+</span>
+ , where <span>
+  \(\tau\)
+</span>
+  is defined as the quotient of the number of words in the compressed prompt and the number of words in the original prompt <span>
+  \(\boldsymbol{x}\)
+</span>
+ .</p>
 <ol>
 <li>
-<p>They derive the target number of tokens to be preserved in the compressed prompt $\tilde {\boldsymbol{x}} : \tilde{N} = \tau N$.</p>
+<p>They derive the target number of tokens to be preserved in the compressed prompt <span>
+  \(\tilde {\boldsymbol{x}} : \tilde{N} = \tau N\)
+</span>
+ .</p>
 </li>
 <li>
-<p>Next, they use the token classification model to predict the probability $p_i$ of each word $x_i$ being labeled as $\mathtt{preserve}$.</p>
+<p>Next, they use the token classification model to predict the probability <span>
+  \(p_i\)
+</span>
+  of each word <span>
+  \(x_i\)
+</span>
+  being labeled as <span>
+  \(\mathtt{preserve}\)
+</span>
+ .</p>
 </li>
 <li>
-<p>Finally, they retain the top $\tilde{N}$ words in the original prompt $\boldsymbol{x}$ with the highest $p_i$ and maintain their original order to form the compressed prompt $\tilde{\boldsymbol{x}}$.</p>
+<p>Finally, they retain the top <span>
+  \(\tilde{N}\)
+</span>
+  words in the original prompt <span>
+  \(\boldsymbol{x}\)
+</span>
+  with the highest <span>
+  \(p_i\)
+</span>
+  and maintain their original order to form the compressed prompt <span>
+  \(\tilde{\boldsymbol{x}}\)
+</span>
+ .</p>
 </li>
 </ol>
 <h2 id="4-experiments">
@@ -953,9 +1055,9 @@ In this sense, one of the probable research directions would be generalizing the
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/6d8bd2a611a4851071c417cff6d5597f4c73a27a" title='Last modified by suah1126 | May 25, 2024' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/effml-postech/blog-post/commit/184a9de186d7859e809a391c8fdd6d84ad0917e9" title='Last modified by Sua Choi | May 27, 2024' target="_blank" rel="noopener">
       <img src="/svg/calendar.svg" class="book-icon" alt="" />
-      <span>May 25, 2024</span>
+      <span>May 27, 2024</span>
     </a>
   </div>
 
