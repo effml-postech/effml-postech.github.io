@@ -828,9 +828,9 @@ This blog post is written by Seungjoo Shin, and Sua Choi</p>
 <p>A metric to evaluate the quality of the compressed texts generated from data distillation.</p>
 <p><strong>Variation Rate (VR)</strong> is defined as:
 <span>
-  \[    \begin{equation}
+  \[    
         VR = \frac{1}{|\mathbb{S}_{comp}|} \displaystyle\sum_{w \in \mathbb{S}_{comp}} \mathbb{I}(w \notin \mathbb{S}_{ori}).
-    \end{equation}
+    
     \]
 </span>
 </p>
@@ -848,9 +848,9 @@ This blog post is written by Seungjoo Shin, and Sua Choi</p>
 <p>A metric to evaluate the quality of the automatically annotated labels.</p>
 <p><strong>Alignment Gap (AG)</strong> is defined as:
 <span>
-  \[    \begin{equation}
+  \[    
         AG = \frac  {1}{|\mathbb{S}_{ori}|} \displaystyle\sum_{w \in \mathbb{S}_{comp}} \mathbb{I}(w \in \mathbb{S}_{ori}) - \frac{1}{|\mathbb{S}_{ori}|} \displaystyle\sum_{w \in \mathbb{S}_{ori}} \mathbb{I}(l(w) = True).
-    \end{equation}
+    
     \]
 </span>
 </p>
@@ -884,10 +884,8 @@ Given an original prompt consisting of <span>
 </span>
  , this can be formulated as:
 <span>
-  \[\begin{gather}
-    \boldsymbol{h} = f_{\theta}(\boldsymbol{x}), \\
-    p(x_i,\Theta) = \mathrm{softmax}(Wh_i &#43;b),
-\end{gather}\]
+  \[    \boldsymbol{h} = f_{\theta}(\boldsymbol{x}), \\
+    p(x_i,\Theta) = \mathrm{softmax}(Wh_i &#43;b),\]
 </span>
 
 where <span>
@@ -927,9 +925,7 @@ where <span>
 </span>
   is:</p>
 <span>
-  \[\begin{equation}
-    \mathcal{L}(\Theta) = \frac{1}{N} \displaystyle\sum_{i=1}^{N}\mathrm{CrossEntropy}(y_i, p(x_i, \Theta)).
-\end{equation}\]
+  \[    \mathcal{L}(\Theta) = \frac{1}{N} \displaystyle\sum_{i=1}^{N}\mathrm{CrossEntropy}(y_i, p(x_i, \Theta)).\]
 </span>
 
 <h3 id="compression-strategy">
